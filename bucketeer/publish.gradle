@@ -1,9 +1,9 @@
 apply plugin: 'maven-publish'
 
-publishing {
-  def properties = new Properties()
-  properties.load(rootProject.file('local.properties').newDataInputStream())
+def properties = new Properties()
+properties.load(rootProject.file('local.properties').newDataInputStream())
 
+publishing {
   repositories {
     maven {
       name = "GitHubPackages"
