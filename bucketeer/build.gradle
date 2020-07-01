@@ -1,0 +1,169 @@
+import org.apache.tools.ant.filters.ConcatFilter
+
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'com.google.protobuf'
+apply from: "publish.gradle"
+
+task CopyProtos doLast {
+  delete {
+    delete "src/main/proto/proto"
+  }
+
+  copy {
+    from fileTree("../../bucketeer/proto/feature")
+        .filter {
+          ["reason.proto",
+           "evaluation.proto",
+           "variation.proto"].contains(it.name)
+        }
+    into "src/main/proto/proto/feature"
+    filter(ConcatFilter, append: file("proto_header"))
+  }
+  copy {
+    from fileTree("../../bucketeer/proto/user")
+        .filter {
+          ["user.proto"].contains(it.name)
+        }
+    into "src/main/proto/proto/user"
+    filter(ConcatFilter, append: file("proto_header"))
+  }
+  copy {
+    from fileTree("../../bucketeer/proto/gateway")
+        .filter { ["service.proto"].contains(it.name) }
+    into "src/main/proto/proto/gateway"
+    filter(ConcatFilter, append: file("proto_header"))
+  }
+  copy {
+    from fileTree("../../bucketeer/proto/event/client")
+        .filter { ["event.proto"].contains(it.name) }
+    into "src/main/proto/proto/event/client"
+    filter(ConcatFilter, append: file("proto_header"))
+  }
+}
+
+afterEvaluate {
+  android.libraryVariants.all { variant ->
+    getTasksByName("generate${variant.name.capitalize()}Proto", true)[0].dependsOn(CopyProtos)
+  }
+}
+
+android {
+  defaultPublishConfig "release"
+  compileSdkVersion project.findProperty("android.compileSdkVersion") as int
+  defaultConfig {
+    def isTest = !gradle.startParameter.taskNames.findAll { it.contains("Test") }.isEmpty()
+    if (isTest) {
+      minSdkVersion project.findProperty("android.testMinSdkVersion") as int
+    } else {
+      minSdkVersion project.findProperty("android.minSdkVersion") as int
+    }
+    targetSdkVersion project.findProperty("android.targetSdkVersion") as int
+
+    testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    testInstrumentationRunnerArguments clearPackageData: 'true'
+  }
+
+  buildTypes {
+    debug {
+      def properties = new Properties()
+      properties.load(rootProject.file('local.properties').newDataInputStream())
+      def API_KEY = properties.getProperty("api_key") ?: System.getenv("API_KEY")
+      def API_URL = properties.getProperty("api_url") ?: System.getenv("API_URL")
+      buildConfigField("String", "API_KEY", "\"${API_KEY}\"")
+      buildConfigField("String", "API_URL", "\"${API_URL}\"")
+    }
+    release {
+      minifyEnabled true
+      consumerProguardFiles 'proguard-rules.pro'
+      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+    }
+  }
+
+  sourceSets {
+    String sharedTestDir = 'src/sharedTest/java'
+    test {
+      java.srcDir sharedTestDir
+    }
+    androidTest {
+      java.srcDir sharedTestDir
+    }
+  }
+  compileOptions {
+    sourceCompatibility 1.8
+    targetCompatibility 1.8
+  }
+  packagingOptions {
+    exclude 'google/protobuf/descriptor.proto'
+  }
+  lintOptions {
+    disable 'InvalidPackage'
+    xmlReport true
+  }
+}
+
+dependencies {
+
+  // gRPC
+  implementation "io.grpc:grpc-okhttp:$versions.GRPC"
+  implementation "io.grpc:grpc-protobuf-lite:$versions.GRPC"
+  implementation "io.grpc:grpc-stub:$versions.GRPC"
+  implementation "com.google.firebase:protolite-well-known-types:$versions.PROTOLITE_WELL_KNOWN_TYPES"
+  compileOnly "com.google.api.grpc:proto-google-common-protos:$versions.COMMON_PROTOS"
+  compileOnly "javax.annotation:javax.annotation-api:$versions.JAVAX_ANNOTATION"
+
+  // Kotlin
+  implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$versions.KOTLIN"
+
+  // Google Play Services
+  implementation "com.google.android.gms:play-services-basement:$versions.GOOGLE_PLAY_SERVICES"
+
+  // Test
+  testImplementation "junit:junit:$versions.JUNIT"
+  testImplementation "org.robolectric:robolectric:$versions.ROBOLECTRIC"
+  testImplementation "org.mockito:mockito-core:$versions.MOCKITO_ANDROID"
+  testImplementation "com.nhaarman:mockito-kotlin:$versions.MOCKITO_KOTLIN"
+  testImplementation "org.amshove.kluent:kluent-android:$versions.KLUENT"
+  testImplementation "com.google.firebase:protolite-well-known-types:$versions.PROTOLITE_WELL_KNOWN_TYPES"
+  androidTestImplementation "androidx.test.espresso:espresso-core:$versions.ANDROIDX_TEST_ESPRESSO"
+  androidTestImplementation "androidx.test.espresso:espresso-contrib:$versions.ANDROIDX_TEST_ESPRESSO"
+  androidTestImplementation "androidx.test:rules:$versions.ANDROIDX_TEST"
+  androidTestImplementation "androidx.test.ext:junit:$versions.ANDROIDX_TEST_EXT"
+  androidTestImplementation "org.mockito:mockito-android:$versions.MOCKITO_ANDROID"
+  androidTestImplementation("com.nhaarman:mockito-kotlin:$versions.MOCKITO_KOTLIN") {
+    exclude group: 'org.mockito', module: 'mockito-core'
+  }
+  androidTestImplementation("org.amshove.kluent:kluent-android:$versions.KLUENT") {
+    exclude group: 'org.mockito', module: 'mockito-core'
+  }
+  androidTestImplementation "com.google.firebase:protolite-well-known-types:$versions.PROTOLITE_WELL_KNOWN_TYPES"
+  androidTestUtil "androidx.test:orchestrator:$versions.ANDROIDX_TEST"
+}
+
+protobuf {
+  protoc {
+    artifact = "com.google.protobuf:protoc:$versions.PROTOC"
+  }
+  plugins {
+    javalite {
+      artifact = "com.google.protobuf:protoc-gen-javalite:$versions.PROTOC_JAVALITE"
+    }
+    grpc {
+      artifact = "io.grpc:protoc-gen-grpc-java:$versions.GRPC"
+    }
+  }
+  generateProtoTasks {
+    all().each { task ->
+      task.builtins {
+        remove java
+      }
+      task.plugins {
+        javalite {}
+        grpc {
+          option 'lite'
+        }
+      }
+    }
+  }
+}

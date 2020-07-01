@@ -1,0 +1,60 @@
+buildscript {
+
+    ext {
+      versions = [
+          KOTLIN: '1.3.72',
+          // Google
+          GOOGLE_PLAY_SERVICES: '17.2.1',
+          // gRPC
+          COMMON_PROTOS: '1.17.0',
+          GRPC  : '1.25.0',
+          JAVAX_ANNOTATION: '1.3.2',
+          PROTOC: '3.11.4',
+          PROTOC_JAVALITE: '3.0.0',
+          PROTOLITE_WELL_KNOWN_TYPES: '17.0.0',
+          // Test
+          ANDROIDX_TEST_ESPRESSO: '3.2.0',
+          ANDROIDX_TEST: '1.1.1',
+          ANDROIDX_TEST_EXT: '1.1.1',
+          JUNIT: '4.13',
+          KLUENT: '1.60',
+          MOCKITO_ANDROID: '3.3.3',
+          MOCKITO_KOTLIN: '1.6.0',
+          ROBOLECTRIC: '4.3.1',
+      ]
+    }
+    repositories {
+        google()
+        jcenter()
+        mavenLocal()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.5.1'
+        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.10'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.KOTLIN"
+    }
+}
+
+allprojects {
+    def properties = new Properties()
+    properties.load(rootProject.file('local.properties').newDataInputStream())
+
+    repositories {
+        google()
+        jcenter()
+        repositories {
+            maven {
+                name = "BucketeerGitHubPackages"
+                url = uri("https://maven.pkg.github.com/abema/bucketeeer")
+                credentials {
+                    username = properties.getProperty("gpr.user") ?: System.getenv("GITHUB_USER_FOR_RELEASE")
+                    password = properties.getProperty("gpr.key") ?: System.getenv("GITHUB_API_TOKEN_FOR_RELEASE")
+                }
+            }
+        }
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}

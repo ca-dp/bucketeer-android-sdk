@@ -1,0 +1,161 @@
+package jp.bucketeer.sdk.evaluation.db
+
+import bucketeer.feature.EvaluationOuterClass
+import jp.bucketeer.sdk.database.DatabaseOpenHelper
+import jp.bucketeer.sdk.evaluation1
+import jp.bucketeer.sdk.evaluation2
+import jp.bucketeer.sdk.ext.getBlob
+import jp.bucketeer.sdk.ext.getString
+import jp.bucketeer.sdk.user1Evaluations
+import jp.bucketeer.sdk.user2Evaluations
+import org.amshove.kluent.shouldEqual
+import org.junit.After
+import org.junit.Before
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.RuntimeEnvironment
+
+@RunWith(RobolectricTestRunner::class)
+class CurrentEvaluationDaoImplTest {
+  private lateinit var currentEvaluationDao: CurrentEvaluationDaoImpl
+  private lateinit var openHelper: DatabaseOpenHelper
+
+  @Before fun setUp() {
+    openHelper = DatabaseOpenHelper(RuntimeEnvironment.application, null)
+    currentEvaluationDao = CurrentEvaluationDaoImpl(openHelper)
+  }
+
+  @After fun tearDown() {
+    openHelper.close()
+  }
+
+  @Test fun upsertEvaluation_insertToDB() {
+    currentEvaluationDao.upsertEvaluation(user1Evaluations.evaluationsList[0])
+
+    val projection = arrayOf(
+        CurrentEvaluationEntity.COLUMN_USER_ID,
+        CurrentEvaluationEntity.COLUMN_EVALUATION
+    )
+
+    val c = currentEvaluationDao.sqLiteOpenHelper.readableDatabase.query(
+        CurrentEvaluationEntity.TABLE_NAME,
+        projection,
+        null,
+        null,
+        null,
+        null,
+        null
+    )
+
+    c.use {
+      it.moveToFirst()
+      c.getString(CurrentEvaluationEntity.COLUMN_USER_ID) shouldEqual "user id 1"
+      val blob = c.getBlob(CurrentEvaluationEntity.COLUMN_EVALUATION)
+
+      EvaluationOuterClass.Evaluation.newBuilder().mergeFrom(blob).build() shouldEqual evaluation1
+      c.moveToNext() shouldEqual false
+    }
+  }
+
+  @Test fun upsertEvaluation_update() {
+    val sourceEvaluation = user1Evaluations.evaluationsList[0]
+    val updatedVariation = sourceEvaluation.variation.toBuilder().setValue("update value").build()
+    val updatedEvaluation = user1Evaluations.evaluationsList[0].toBuilder()
+        .setVariation(updatedVariation).build()
+
+    currentEvaluationDao.upsertEvaluation(sourceEvaluation)
+    val beforeEvaluations = currentEvaluationDao.getEvaluations("user id 1")
+    beforeEvaluations[0].variation.value shouldEqual "test variation value1"
+
+    currentEvaluationDao.upsertEvaluation(updatedEvaluation)
+    val afterEvaluations = currentEvaluationDao.getEvaluations("user id 1")
+    afterEvaluations[0].variation.value shouldEqual "update value"
+  }
+
+  @Test fun deleteNotIn_deleteAll() {
+    currentEvaluationDao.upsertEvaluation(user1Evaluations.evaluationsList[0])
+    currentEvaluationDao.upsertEvaluation(user1Evaluations.evaluationsList[1])
+    currentEvaluationDao.upsertEvaluation(user2Evaluations.evaluationsList[0])
+
+    currentEvaluationDao.deleteNotIn("user id 1", listOf("unknown id1", "unknown id2"))
+
+    val evaluations1 = currentEvaluationDao.getEvaluations("user id 1")
+    val evaluations2 = currentEvaluationDao.getEvaluations("user id 2")
+
+    evaluations1.size shouldEqual 0
+
+    evaluations2.size shouldEqual 1
+    evaluations2[0].featureId shouldEqual "test-feature-3"
+  }
+
+  @Test fun deleteNotIn_deleteOneItem() {
+    currentEvaluationDao.upsertEvaluation(user1Evaluations.evaluationsList[0])
+    currentEvaluationDao.upsertEvaluation(user1Evaluations.evaluationsList[1])
+    currentEvaluationDao.upsertEvaluation(user2Evaluations.evaluationsList[0])
+
+    currentEvaluationDao.deleteNotIn("user id 1", listOf("test-feature-1", "unknown id1"))
+
+    val evaluations1 = currentEvaluationDao.getEvaluations("user id 1")
+    val evaluations2 = currentEvaluationDao.getEvaluations("user id 2")
+
+    evaluations1.size shouldEqual 1
+    evaluations1[0].featureId shouldEqual "test-feature-1"
+
+    evaluations2.size shouldEqual 1
+    evaluations2[0].featureId shouldEqual "test-feature-3"
+  }
+
+  @Test fun deleteNotIn_notDelete() {
+    currentEvaluationDao.upsertEvaluation(user1Evaluations.evaluationsList[0])
+    currentEvaluationDao.upsertEvaluation(user1Evaluations.evaluationsList[1])
+    currentEvaluationDao.upsertEvaluation(user2Evaluations.evaluationsList[0])
+
+    currentEvaluationDao.deleteNotIn("user id 1", listOf("test-feature-1", "test-feature-2"))
+
+    val evaluations1 = currentEvaluationDao.getEvaluations("user id 1")
+    val evaluations2 = currentEvaluationDao.getEvaluations("user id 2")
+
+    evaluations1.size shouldEqual 2
+    evaluations1[0].featureId shouldEqual "test-feature-1"
+    evaluations1[1].featureId shouldEqual "test-feature-2"
+
+    evaluations2.size shouldEqual 1
+    evaluations2[0].featureId shouldEqual "test-feature-3"
+  }
+
+  @Test fun getEvaluations_returnEmptyIfAddNoItem() {
+    val actual = currentEvaluationDao.getEvaluations("user id 1")
+
+    actual.size shouldEqual 0
+  }
+
+  @Test fun getEvaluations_returnEmptyIfTargetUserItemIsEmpty() {
+    currentEvaluationDao.upsertEvaluation(user2Evaluations.evaluationsList[0])
+    val actual = currentEvaluationDao.getEvaluations("user id 1")
+
+    actual.size shouldEqual 0
+  }
+
+  @Test fun getEvaluations_returnSingleItemIfAddTargetUserItem() {
+    val evaluation = user1Evaluations.evaluationsList[0]
+
+    currentEvaluationDao.upsertEvaluation(evaluation)
+    val actual = currentEvaluationDao.getEvaluations("user id 1")
+
+    actual.size shouldEqual 1
+    actual[0] shouldEqual evaluation1
+  }
+
+  @Test fun getEvaluations_returnMultipleItemIfAddSomeItems() {
+    currentEvaluationDao.upsertEvaluation(user1Evaluations.evaluationsList[0])
+    currentEvaluationDao.upsertEvaluation(user2Evaluations.evaluationsList[0])
+    currentEvaluationDao.upsertEvaluation(user1Evaluations.evaluationsList[1])
+
+    val actual = currentEvaluationDao.getEvaluations("user id 1")
+
+    actual.size shouldEqual 2
+    actual[0] shouldEqual evaluation1
+    actual[1] shouldEqual evaluation2
+  }
+}
