@@ -42,11 +42,6 @@ allprojects {
     repositories {
         google()
         jcenter()
-        repositories {
-            maven {
-                url = uri("https://dl.bintray.com/bucketeer-bot/maven")
-            }
-        }
     }
 }
 
