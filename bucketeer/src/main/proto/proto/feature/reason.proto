@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package bucketeer.feature;
+option go_package = "github.com/ca-dp/bucketeer/proto/feature";
+
+message Reason {
+  enum Type {
+    TARGET = 0;
+    RULE = 1;
+    DEFAULT = 3;
+    CLIENT = 4;
+    OFF_VARIATION = 5;
+  }
+  Type type = 1;
+  string rule_id = 2;
+}
+option optimize_for = CODE_SIZE;

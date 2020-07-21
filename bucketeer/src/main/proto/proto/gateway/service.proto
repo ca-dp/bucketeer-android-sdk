@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+package bucketeer.gateway;
+option go_package = "github.com/ca-dp/bucketeer/proto/gateway";
+
+import "google/api/annotations.proto";
+
+import "proto/user/user.proto";
+import "proto/feature/evaluation.proto";
+import "proto/event/client/event.proto";
+
+message PingRequest {}
+
+message PingResponse {
+  int64 time = 1;
+}
+
+message GetEvaluationsRequest {
+  string tag = 1;
+  user.User user = 2;
+  string user_evaluations_id = 3;
+}
+
+message GetEvaluationsResponse {
+  feature.UserEvaluations.State state = 1;
+  feature.UserEvaluations evaluations = 2;
+  string user_evaluations_id = 3;
+}
+
+message RegisterEventsRequest {
+  repeated bucketeer.event.client.Event events = 1;
+}
+
+message RegisterEventsResponse {
+  message Error {
+    bool retriable = 1;
+    string message = 2;
+  }
+  map<string, Error> errors = 1;
+}
+
+service Gateway {
+  rpc Ping(PingRequest) returns (PingResponse) {
+    option (google.api.http) = {
+      post: "/ping"
+      body: "*"
+    };
+  }
+  rpc GetEvaluations(GetEvaluationsRequest) returns (GetEvaluationsResponse) {
+    option (google.api.http) = {
+      post: "/get_evaluations"
+      body: "*"
+    };
+  }
+  rpc RegisterEvents(RegisterEventsRequest) returns (RegisterEventsResponse) {
+    option (google.api.http) = {
+      post: "/register_events"
+      body: "*"
+    };
+  }
+}
+option optimize_for = CODE_SIZE;
