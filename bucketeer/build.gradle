@@ -1,5 +1,3 @@
-import org.apache.tools.ant.filters.ConcatFilter
-
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
@@ -8,49 +6,6 @@ apply from: "publish.gradle"
 
 def properties = new Properties()
 properties.load(rootProject.file('local.properties').newDataInputStream())
-
-task CopyProtos doLast {
-  delete {
-    delete "src/main/proto/proto"
-  }
-
-  copy {
-    from fileTree("../../bucketeer/proto/feature")
-        .filter {
-          ["reason.proto",
-           "evaluation.proto",
-           "variation.proto"].contains(it.name)
-        }
-    into "src/main/proto/proto/feature"
-    filter(ConcatFilter, append: file("proto_header"))
-  }
-  copy {
-    from fileTree("../../bucketeer/proto/user")
-        .filter {
-          ["user.proto"].contains(it.name)
-        }
-    into "src/main/proto/proto/user"
-    filter(ConcatFilter, append: file("proto_header"))
-  }
-  copy {
-    from fileTree("../../bucketeer/proto/gateway")
-        .filter { ["service.proto"].contains(it.name) }
-    into "src/main/proto/proto/gateway"
-    filter(ConcatFilter, append: file("proto_header"))
-  }
-  copy {
-    from fileTree("../../bucketeer/proto/event/client")
-        .filter { ["event.proto"].contains(it.name) }
-    into "src/main/proto/proto/event/client"
-    filter(ConcatFilter, append: file("proto_header"))
-  }
-}
-
-afterEvaluate {
-  android.libraryVariants.all { variant ->
-    getTasksByName("generate${variant.name.capitalize()}Proto", true)[0].dependsOn(CopyProtos)
-  }
-}
 
 android {
   defaultPublishConfig "release"
