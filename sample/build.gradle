@@ -38,13 +38,13 @@ android {
 }
 
 dependencies {
-  def USE_DEV_SDK = (properties.getProperty("sample.use_dev_sdk") ?: System.getenv("USE_DEV_SDK")) == "true"
+  def USE_RELEASED_SDK = (properties.getProperty("sample.use_released_sdk") ?: System.getenv("USE_RELEASED_SDK")) == "true"
   def SDK_VERSION = properties.getProperty("sample.sdk_version") ?: "latest.release"
 
-  if (USE_DEV_SDK) {
-    implementation(project(":bucketeer"))
-  } else {
+  if (USE_RELEASED_SDK) {
     implementation "jp.bucketeer:sdk-android:" + SDK_VERSION
+  } else {
+    implementation(project(":bucketeer"))
   }
   implementation 'com.facebook.stetho:stetho:1.5.0'
   implementation 'androidx.appcompat:appcompat:1.0.0'
