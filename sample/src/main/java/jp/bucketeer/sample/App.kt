@@ -68,11 +68,13 @@ class App : Application(), LifecycleObserver {
   }
 
   private fun getTag(): String {
-    return sharedPref.getString(Constants.PREFERENCE_KEY_TAG, Constants.DEFAULT_TAG)
+    return sharedPref.getString(
+        Constants.PREFERENCE_KEY_TAG, Constants.DEFAULT_TAG) ?: Constants.DEFAULT_TAG
   }
 
   private fun getUserId(): String {
-    return sharedPref.getString(Constants.PREFERENCE_KEY_USER_ID, Constants.DEFAULT_USER_ID)
+    return sharedPref.getString(
+        Constants.PREFERENCE_KEY_USER_ID, Constants.DEFAULT_USER_ID) ?: Constants.DEFAULT_USER_ID
   }
 
   companion object {

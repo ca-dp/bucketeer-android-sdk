@@ -25,7 +25,7 @@ internal class LatestEvaluationActionCreator(
 
   @VisibleForTesting
   var currentUserEvaluationsId: String = sharePref.getString(
-      Constants.PREFERENCE_KEY_USER_EVALUATION_ID, "")
+      Constants.PREFERENCE_KEY_USER_EVALUATION_ID, "") ?: ""
 
   fun refreshLatestEvaluationManuallyFromApi(user: UserOuterClass.User) {
     dispatcher.send(

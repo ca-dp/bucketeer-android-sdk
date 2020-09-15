@@ -65,9 +65,9 @@ dependencies {
   implementation "io.grpc:grpc-okhttp:$versions.GRPC"
   implementation "io.grpc:grpc-protobuf-lite:$versions.GRPC"
   implementation "io.grpc:grpc-stub:$versions.GRPC"
-  implementation "com.google.firebase:protolite-well-known-types:$versions.PROTOLITE_WELL_KNOWN_TYPES"
-  compileOnly "com.google.api.grpc:proto-google-common-protos:$versions.COMMON_PROTOS"
   compileOnly "javax.annotation:javax.annotation-api:$versions.JAVAX_ANNOTATION"
+  // This provides the protobuf.Duration for event.proto
+  compileOnly "com.google.api.grpc:proto-google-common-protos:$versions.COMMON_PROTOS"
 
   // Kotlin
   implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$versions.KOTLIN"
@@ -81,7 +81,6 @@ dependencies {
   testImplementation "org.mockito:mockito-core:$versions.MOCKITO_ANDROID"
   testImplementation "com.nhaarman:mockito-kotlin:$versions.MOCKITO_KOTLIN"
   testImplementation "org.amshove.kluent:kluent-android:$versions.KLUENT"
-  testImplementation "com.google.firebase:protolite-well-known-types:$versions.PROTOLITE_WELL_KNOWN_TYPES"
   androidTestImplementation "androidx.test.espresso:espresso-core:$versions.ANDROIDX_TEST_ESPRESSO"
   androidTestImplementation "androidx.test.espresso:espresso-contrib:$versions.ANDROIDX_TEST_ESPRESSO"
   androidTestImplementation "androidx.test:rules:$versions.ANDROIDX_TEST"
@@ -93,7 +92,6 @@ dependencies {
   androidTestImplementation("org.amshove.kluent:kluent-android:$versions.KLUENT") {
     exclude group: 'org.mockito', module: 'mockito-core'
   }
-  androidTestImplementation "com.google.firebase:protolite-well-known-types:$versions.PROTOLITE_WELL_KNOWN_TYPES"
   androidTestUtil "androidx.test:orchestrator:$versions.ANDROIDX_TEST"
 }
 
@@ -112,10 +110,11 @@ protobuf {
   generateProtoTasks {
     all().each { task ->
       task.builtins {
-        remove java
+        java {
+          option 'lite'
+        }
       }
       task.plugins {
-        javalite {}
         grpc {
           option 'lite'
         }

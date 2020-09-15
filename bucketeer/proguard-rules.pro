@@ -9,6 +9,7 @@
   *** get*();
   *** set*(***);
   *** has*();
+  <fields>;
 }
 
 # gRPC
