@@ -9,7 +9,6 @@ import io.grpc.StatusRuntimeException
 import io.grpc.okhttp.OkHttpChannelBuilder
 import jp.bucketeer.sdk.log.logd
 import jp.bucketeer.sdk.log.loge
-import javax.net.ssl.SSLContext
 
 internal class ApiClient(
     apiKey: String,
@@ -20,10 +19,8 @@ internal class ApiClient(
   private val client: GatewayGrpc.GatewayBlockingStub
 
   init {
-    val sslContext = getSSLContext()
     val channel = OkHttpChannelBuilder.forAddress(endpoint, getEndpointPort(endpoint))
         .useTransportSecurity()
-        .sslSocketFactory(sslContext.socketFactory)
         .build()
     // This workaround helps to improve the latency of the first request
     try {
@@ -33,12 +30,6 @@ internal class ApiClient(
     }
     val creds = CallCreds(apiKey)
     client = GatewayGrpc.newBlockingStub(channel).withCallCredentials(creds)
-  }
-
-  private fun getSSLContext(): SSLContext {
-    return SSLContext.getInstance("TLS").apply {
-      init(null, null, null)
-    }
   }
 
   override fun setFetchEvaluationApiCallback(f: FetchEvaluationsApiCallback) {

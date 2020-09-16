@@ -58,7 +58,6 @@ internal class BucketeerImpl constructor(
 
   init {
     try {
-      ProviderInstaller.installIfNeeded(application)
       // Here we set a callback function of get evaluation request. Since the
       // DataModule.ApiClient is instanciated before action creators, this call back
       // has to be set after actionModule is initialized. This is tricky codes but we

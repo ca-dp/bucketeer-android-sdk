@@ -73,7 +73,7 @@ dependencies {
   implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$versions.KOTLIN"
 
   // Google Play Services
-  implementation "com.google.android.gms:play-services-basement:$versions.GOOGLE_PLAY_SERVICES"
+  compileOnly "com.google.android.gms:play-services-basement:$versions.GOOGLE_PLAY_SERVICES"
 
   // Test
   testImplementation "junit:junit:$versions.JUNIT"
