@@ -33,7 +33,7 @@ sample.sdk_version=<SDK_VERSION>
 
 ### Development with Android Studio
 
-Open Android Studio and import `sdk/android`.
+Open Android Studio and import `bucketeer-android-sdk`.
 
 ### Development with command line
 
