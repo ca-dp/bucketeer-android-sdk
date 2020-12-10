@@ -19,6 +19,7 @@ message GetEvaluationsRequest {
   string tag = 1;
   user.User user = 2;
   string user_evaluations_id = 3;
+  string feature_id = 4;
 }
 
 message GetEvaluationsResponse {
