@@ -19,13 +19,23 @@ message GetEvaluationsRequest {
   string tag = 1;
   user.User user = 2;
   string user_evaluations_id = 3;
-  string feature_id = 4;
+  string feature_id = 4 [deprecated = true];  // instead, use GetEvaluation API
 }
 
 message GetEvaluationsResponse {
   feature.UserEvaluations.State state = 1;
   feature.UserEvaluations evaluations = 2;
   string user_evaluations_id = 3;
+}
+
+message GetEvaluationRequest {
+  string tag = 1;
+  user.User user = 2;
+  string feature_id = 3;
+}
+
+message GetEvaluationResponse {
+  feature.Evaluation evaluation = 1;
 }
 
 message RegisterEventsRequest {
@@ -50,6 +60,12 @@ service Gateway {
   rpc GetEvaluations(GetEvaluationsRequest) returns (GetEvaluationsResponse) {
     option (google.api.http) = {
       post: "/get_evaluations"
+      body: "*"
+    };
+  }
+  rpc GetEvaluation(GetEvaluationRequest) returns (GetEvaluationResponse) {
+    option (google.api.http) = {
+      post: "/get_evaluation"
       body: "*"
     };
   }
