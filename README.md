@@ -25,8 +25,12 @@ sample.sdk_version=<SDK_VERSION>
 
 # publish (if needed)
 # sdk.version=<SDK_VERSION>
-# bintray.user=<BINTRAY_USER>
-# bintray.api_key=<BINTRAY_API_KEY>
+# sonatype.username=<SONATYPE_USER>
+# sonatype.password=<SONATYPE_PASSWORD>
+# sonatype.stagingProfileId=<SONATYPE_STAGING_PROFILE_ID>
+# signing.keyId=<SIGNING_KEY_ID>
+# signing.password=<SIGNING_PASSWORD>
+# signing.secretKeyRingFile=<SIGNING_SECRET_KEY_RING_FILE>
 ```
 
 ## Development
@@ -77,10 +81,12 @@ Open Android Emulator, then run the command below.
 ./gradlew :bucketeer:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.package=jp.bucketeer.sdk.test.e2e
 ```
 
-Publishes SDK to JFrog Bintray and jcenter.
+Publishes SDK to Sonatype repository and releases to Maven Central.
+(Usually you don't need to publish manually because CI/CD workflow publishes automatically.)
 
 ```
-./gradlew :bucketeer:bintrayUpload
+./gradlew :bucketeer:publishReleasePublicationToSonatypeRepository
+./gradlew closeAndReleaseRepository
 ```
 
 #### project :sample (Sample)
@@ -103,7 +109,7 @@ Deletes the build directory and assembles all Release builds. (Create `./sample/
 
 If you want to use published SDK instead of local one, change `local.properties` like below,
 
-(check SDK versions [here](https://bintray.com/bucketeer-bot/maven/jp.bucketeer.sdk-android))
+(check SDK versions [here](https://repo1.maven.org/maven2/jp/bucketeer/sdk-android/))
 
 ```
 # sample
@@ -111,7 +117,7 @@ sample.use_released_sdk=true
 sample.sdk_version=X.Y.Z
 ```
 
-then build and start the example app.
+then build and start the sample app.
 
 ## SDK User Docs
 

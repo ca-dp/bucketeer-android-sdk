@@ -52,10 +52,10 @@ dependencies {
   implementation 'com.google.android.material:material:1.0.0'
   implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
 
-  androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
-  androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.1.0'
-  androidTestImplementation 'androidx.test:rules:1.1.1'
-  androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+  androidTestImplementation "androidx.test.espresso:espresso-core:$versions.ANDROIDX_TEST_ESPRESSO"
+  androidTestImplementation "androidx.test.espresso:espresso-contrib:$versions.ANDROIDX_TEST_ESPRESSO"
+  androidTestImplementation "androidx.test:rules:$versions.ANDROIDX_TEST"
+  androidTestImplementation "androidx.test.ext:junit:$versions.ANDROIDX_TEST_EXT"
   implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$versions.KOTLIN"
 }
 repositories {

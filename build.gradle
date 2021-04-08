@@ -1,49 +1,57 @@
-def properties = new Properties()
-properties.load(rootProject.file('local.properties').newDataInputStream())
-
 buildscript {
-    ext {
-      versions = [
-          KOTLIN: '1.3.72',
-          // Google
-          GOOGLE_PLAY_SERVICES: '17.2.1',
-          // gRPC
-          COMMON_PROTOS: '1.18.1',
-          GRPC  : '1.31.1',
-          JAVAX_ANNOTATION: '1.3.2',
-          PROTOC: '3.11.4',
-          PROTOC_JAVALITE: '3.0.0',
-          // Test
-          ANDROIDX_TEST_ESPRESSO: '3.2.0',
-          ANDROIDX_TEST: '1.1.1',
-          ANDROIDX_TEST_EXT: '1.1.1',
-          JUNIT: '4.13',
-          KLUENT: '1.60',
-          MOCKITO_ANDROID: '3.3.3',
-          MOCKITO_KOTLIN: '1.6.0',
-          ROBOLECTRIC: '4.3.1',
-      ]
-    }
-    repositories {
-        google()
-        jcenter()
-        mavenLocal()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.1'
-        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.10'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.KOTLIN"
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.+'
-    }
+  ext {
+    versions = [
+      // Kotlin
+      KOTLIN: '1.3.72',
+      // Gradle
+      GRADLE: '3.5.1',
+      // gRPC
+      COMMON_PROTOS: '1.18.1',
+      GRPC  : '1.31.1',
+      JAVAX_ANNOTATION: '1.3.2',
+      PROTOC: '3.11.4',
+      PROTOC_JAVALITE: '3.0.0',
+      PROTOBUF_GRADLE: '0.8.10',
+      // Google
+      GOOGLE_PLAY_SERVICES: '17.2.1',
+      // Test
+      ANDROIDX_TEST_ESPRESSO: '3.2.0',
+      ANDROIDX_TEST: '1.1.1',
+      ANDROIDX_TEST_EXT: '1.1.1',
+      JUNIT: '4.13',
+      KLUENT: '1.60',
+      MOCKITO_ANDROID: '3.3.3',
+      MOCKITO_KOTLIN: '1.6.0',
+      ROBOLECTRIC: '4.3.1',
+      // Publish
+      DOKKA: '0.10.1',
+      NEXUS_STAGING: '0.22.0',
+    ]
+  }
+  repositories {
+    google()
+    jcenter()
+    mavenCentral()
+  }
+  dependencies {
+    classpath "com.android.tools.build:gradle:$versions.GRADLE"
+    classpath "com.google.protobuf:protobuf-gradle-plugin:$versions.PROTOBUF_GRADLE"
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.KOTLIN"
+    classpath "org.jetbrains.dokka:dokka-gradle-plugin:$versions.DOKKA"
+    classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:$versions.NEXUS_STAGING"
+  }
 }
 
 allprojects {
-    repositories {
-        google()
-        jcenter()
-    }
+  repositories {
+    google()
+    jcenter()
+    mavenCentral()
+  }
 }
 
 task clean(type: Delete) {
-    delete rootProject.buildDir
+  delete rootProject.buildDir
 }
+
+apply plugin: 'io.codearte.nexus-staging'

@@ -1,103 +1,149 @@
+// ref: https://getstream.io/blog/publishing-libraries-to-mavencentral-2021/
+
 apply plugin: 'maven-publish'
-apply plugin: 'com.jfrog.bintray'
+apply plugin: 'signing'
+apply plugin: 'org.jetbrains.dokka'
 
 def properties = new Properties()
 properties.load(rootProject.file('local.properties').newDataInputStream())
-def VERSION = properties.getProperty("sdk.version") ?: System.getenv("SDK_VERSION")
 
-def GROUP_ID = project.findProperty("publish.groupId")
-def ARTIFACT_ID = project.findProperty("publish.artifactId")
-def VCS_URL = project.findProperty("publish.vcsUrl")
+ext {
+  sdkGroupId = project.findProperty('publish.groupId')
+  sdkArtifactId = project.findProperty('publish.artifactId')
+  vcsUrl = project.findProperty('publish.vcsUrl')
+  gitUrl = project.findProperty('publish.vcsUrl') + '.git'
 
-def pomConfig = {
-    licenses {
-        license {
-            name "The Apache Software License, Version 2.0"
-            url "http://www.apache.org/licenses/LICENSE-2.0.txt"
-            distribution "repo"
-        }
-    }
-    scm {
-       url VCS_URL
-    }
+  sdkVersion = properties.getProperty('sdk.version') ?: System.getenv('SDK_VERSION')
+  sonatypeUsername = properties.getProperty('sonatype.username') ?: System.getenv('SONATYPE_USERNAME')
+  sonatypePassword = properties.getProperty('sonatype.password') ?: System.getenv('SONATYPE_PASSWORD')
+  sonatypeStagingProfileId = properties.getProperty('sonatype.stagingProfileId') ?: System.getenv('SONATYPE_STAGING_PROFILE_ID')
 }
+ext['signing.keyId'] = properties.getProperty('signing.keyId') ?: System.getenv('SIGNING_KEY_ID')
+ext['signing.password'] = properties.getProperty('signing.password') ?: System.getenv('SIGNING_PASSWORD')
+ext['signing.secretKeyRingFile'] = properties.getProperty('signing.secretKeyRingFile') ?: System.getenv('SIGNING_SECRET_KEY_RING_FILE')
 
-// https://stackoverflow.com/questions/26874498/publish-an-android-library-to-maven-with-aar-and-source-jar
+group = sdkGroupId
+version = sdkVersion
+
 task androidSourcesJar(type: Jar) {
-    archiveClassifier.set('sources')
-    from android.sourceSets.main.java.srcDirs
+  archiveClassifier.set('sources')
+  from android.sourceSets.main.java.srcDirs
 }
 
-// https://github.com/bintray/gradle-bintray-plugin/blob/67718c3a65b64dbfe7534a82a178da2c57153a5d/README.md
-bintray {
-  user = properties.getProperty("bintray.user") ?: System.getenv("BINTRAY_USER")
-  key = properties.getProperty("bintray.api_key") ?: System.getenv("BINTRAY_API_KEY")
-  publish = true
-  pkg {
-    repo = 'maven'
-    name = GROUP_ID + '.' + ARTIFACT_ID
-    licenses = ['Apache-2.0']
-    vcsUrl = VCS_URL
-    version {
-      name = VERSION
-      released  = new Date()
-      gpg {
-        sign = true
-      }
-    }
-  }
-  publications = ['MyPublication'] 
+dokka {
+  outputFormat = 'html' 
+  outputDirectory = "${project.buildDir}/dokka"
 }
 
-publishing {
-  publications {
-    MyPublication(MavenPublication) {
-      artifact source: file("${project.buildDir}/outputs/aar/${project.name}-release.aar")
-      artifact androidSourcesJar
+task javadocJar(type: Jar, dependsOn: dokka) {
+  archiveClassifier.set('javadoc')
+  from dokka.outputDirectory
+}
 
-      groupId = GROUP_ID
-      artifactId = ARTIFACT_ID
-      version = VERSION
+artifacts {
+  archives androidSourcesJar
+  archives javadocJar
+}
 
-      pom.withXml {
-        def root = asNode()
-        root.children().last() + pomConfig
+afterEvaluate {
+  publishing {
+    publications {
+      release(MavenPublication) {
+        groupId = sdkGroupId
+        artifactId = sdkArtifactId
+        version = sdkVersion
 
-        // dependencies
-        final dependenciesNode = root.appendNode('dependencies')
+        artifact source: file("${project.buildDir}/outputs/aar/${project.name}-release.aar")
+        artifact androidSourcesJar
+        artifact javadocJar
 
-        ext.addDependency = { Dependency dep, String scope ->
-          if (dep.group == null || dep.version == null || dep.name == null || dep.name == "unspecified")
-            return // ignore invalid dependencies
-
-          final dependencyNode = dependenciesNode.appendNode('dependency')
-          dependencyNode.appendNode('groupId', dep.group)
-          dependencyNode.appendNode('artifactId', dep.name)
-          dependencyNode.appendNode('version', dep.version)
-          dependencyNode.appendNode('scope', scope)
-
-          if (!dep.transitive) {
-            // If this dependency is transitive, we should force exclude all its dependencies them from the POM
-            final exclusionNode = dependencyNode.appendNode('exclusions').appendNode('exclusion')
-            exclusionNode.appendNode('groupId', '*')
-            exclusionNode.appendNode('artifactId', '*')
-          } else if (!dep.properties.excludeRules.empty) {
-            // Otherwise add specified exclude rules
-            final exclusionNode = dependencyNode.appendNode('exclusions').appendNode('exclusion')
-            dep.properties.excludeRules.each { ExcludeRule rule ->
-              exclusionNode.appendNode('groupId', rule.group ?: '*')
-              exclusionNode.appendNode('artifactId', rule.module ?: '*')
+        pom {
+          name = sdkArtifactId
+          description = 'Bucketeer Official Client-side SDK for Android'
+          url = vcsUrl
+          licenses {
+            license {
+              name = 'The Apache Software License, Version 2.0'
+              url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
             }
           }
-        }
+          developers {
+            developer {
+              id = 'bucketeer-bot'
+              name = 'Bucketeer Bot'
+              email = 'bucketeer@cyberagent.co.jp'
+            }
+          }
+          scm {
+            connection = gitUrl
+            developerConnection = gitUrl
+            url = vcsUrl
+          }
+          withXml {
+            def root = asNode()
 
-        // List all "compile" dependencies (for old Gradle)
-        configurations.compile.getAllDependencies().each { dep -> addDependency(dep, "compile") }
-        // List all "api" dependencies (for new Gradle) as "compile" dependencies
-        configurations.api.getAllDependencies().each { dep -> addDependency(dep, "compile") }
-        // List all "implementation" dependencies (for new Gradle) as "runtime" dependencies
-        configurations.implementation.getAllDependencies().each { dep -> addDependency(dep, "runtime") }
+            // dependencies
+            final dependenciesNode = root.appendNode('dependencies')
+
+            ext.addDependency = { Dependency dep, String scope ->
+              if (dep.group == null || dep.version == null || dep.name == null || dep.name == 'unspecified')
+                return // ignore invalid dependencies
+
+              final dependencyNode = dependenciesNode.appendNode('dependency')
+              dependencyNode.appendNode('groupId', dep.group)
+              dependencyNode.appendNode('artifactId', dep.name)
+              dependencyNode.appendNode('version', dep.version)
+              dependencyNode.appendNode('scope', scope)
+
+              if (!dep.transitive) {
+                // If this dependency is transitive, we should force exclude all its dependencies them from the POM
+                final exclusionNode = dependencyNode.appendNode('exclusions').appendNode('exclusion')
+                exclusionNode.appendNode('groupId', '*')
+                exclusionNode.appendNode('artifactId', '*')
+              } else if (!dep.properties.excludeRules.empty) {
+                // Otherwise add specified exclude rules
+                final exclusionNode = dependencyNode.appendNode('exclusions').appendNode('exclusion')
+                dep.properties.excludeRules.each { ExcludeRule rule ->
+                exclusionNode.appendNode('groupId', rule.group ?: '*')
+                exclusionNode.appendNode('artifactId', rule.module ?: '*')
+                }
+              }
+            }
+
+            // List all "compile" dependencies (for old Gradle)
+            configurations.compile.getAllDependencies().each { dep -> addDependency(dep, 'compile') }
+            // List all "api" dependencies (for new Gradle) as "compile" dependencies
+            configurations.api.getAllDependencies().each { dep -> addDependency(dep, 'compile') }
+            // List all "implementation" dependencies (for new Gradle) as "runtime" dependencies
+            configurations.implementation.getAllDependencies().each { dep -> addDependency(dep, 'runtime') }
+          }
+        }
+      }
+    }
+
+    repositories {
+      maven {
+        name = 'sonatype'
+        def releasesRepoUrl = 'https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/'
+        def snapshotsRepoUrl = 'https://s01.oss.sonatype.org/content/repositories/snapshots/'
+        url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+        credentials {
+          username = sonatypeUsername
+          password = sonatypePassword
+        }
       }
     }
   }
+}
+
+nexusStaging {
+  serverUrl = 'https://s01.oss.sonatype.org/service/local/'
+  packageGroup = sdkGroupId
+  stagingProfileId = sonatypeStagingProfileId
+  username = sonatypeUsername
+  password = sonatypePassword
+}
+
+signing {
+  sign publishing.publications
 }
