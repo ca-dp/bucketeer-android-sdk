@@ -36,18 +36,6 @@ message GoalEvent {
   repeated bucketeer.feature.Evaluation evaluations = 6;
 }
 
-message ExperimentEvent {
-  int64 timestamp = 1;
-  string experiment_id = 2;
-  string feature_id = 3;
-  int32 feature_version = 4;
-  string goal_id = 5;
-  string user_id = 6;
-  string variation_id = 7;
-  double value = 8;
-  bucketeer.user.User user = 9;
-}
-
 message MetricsEvent {
   int64 timestamp = 1;
   google.protobuf.Any event = 2;
