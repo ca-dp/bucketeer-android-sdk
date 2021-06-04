@@ -1,6 +1,6 @@
 package jp.bucketeer.sdk
 
-import org.amshove.kluent.shouldEqual
+import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Test
 
 class BucketeerConfigTest {
@@ -9,7 +9,7 @@ class BucketeerConfigTest {
         .logSendingIntervalMillis(1)
         .logSendingMaxBatchQueueCount(2)
         .pollingEvaluationIntervalMillis(3)
-        .build() shouldEqual BucketeerConfig(
+        .build() shouldBeEqualTo BucketeerConfig(
         logSendingIntervalMillis = 1,
         logSendingMaxBatchQueueCount = 2,
         pollingEvaluationIntervalMillis = 3

@@ -8,7 +8,7 @@ import jp.bucketeer.sdk.ext.getBlob
 import jp.bucketeer.sdk.ext.getString
 import jp.bucketeer.sdk.user1Evaluations
 import jp.bucketeer.sdk.user2Evaluations
-import org.amshove.kluent.shouldEqual
+import org.amshove.kluent.shouldBeEqualTo
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -50,11 +50,11 @@ class CurrentEvaluationDaoImplTest {
 
     c.use {
       it.moveToFirst()
-      c.getString(CurrentEvaluationEntity.COLUMN_USER_ID) shouldEqual "user id 1"
+      c.getString(CurrentEvaluationEntity.COLUMN_USER_ID) shouldBeEqualTo "user id 1"
       val blob = c.getBlob(CurrentEvaluationEntity.COLUMN_EVALUATION)
 
-      EvaluationOuterClass.Evaluation.newBuilder().mergeFrom(blob).build() shouldEqual evaluation1
-      c.moveToNext() shouldEqual false
+      EvaluationOuterClass.Evaluation.newBuilder().mergeFrom(blob).build() shouldBeEqualTo evaluation1
+      c.moveToNext() shouldBeEqualTo false
     }
   }
 
@@ -66,11 +66,11 @@ class CurrentEvaluationDaoImplTest {
 
     currentEvaluationDao.upsertEvaluation(sourceEvaluation)
     val beforeEvaluations = currentEvaluationDao.getEvaluations("user id 1")
-    beforeEvaluations[0].variation.value shouldEqual "test variation value1"
+    beforeEvaluations[0].variation.value shouldBeEqualTo "test variation value1"
 
     currentEvaluationDao.upsertEvaluation(updatedEvaluation)
     val afterEvaluations = currentEvaluationDao.getEvaluations("user id 1")
-    afterEvaluations[0].variation.value shouldEqual "update value"
+    afterEvaluations[0].variation.value shouldBeEqualTo "update value"
   }
 
   @Test fun deleteNotIn_deleteAll() {
@@ -83,10 +83,10 @@ class CurrentEvaluationDaoImplTest {
     val evaluations1 = currentEvaluationDao.getEvaluations("user id 1")
     val evaluations2 = currentEvaluationDao.getEvaluations("user id 2")
 
-    evaluations1.size shouldEqual 0
+    evaluations1.size shouldBeEqualTo 0
 
-    evaluations2.size shouldEqual 1
-    evaluations2[0].featureId shouldEqual "test-feature-3"
+    evaluations2.size shouldBeEqualTo 1
+    evaluations2[0].featureId shouldBeEqualTo "test-feature-3"
   }
 
   @Test fun deleteNotIn_deleteOneItem() {
@@ -99,11 +99,11 @@ class CurrentEvaluationDaoImplTest {
     val evaluations1 = currentEvaluationDao.getEvaluations("user id 1")
     val evaluations2 = currentEvaluationDao.getEvaluations("user id 2")
 
-    evaluations1.size shouldEqual 1
-    evaluations1[0].featureId shouldEqual "test-feature-1"
+    evaluations1.size shouldBeEqualTo 1
+    evaluations1[0].featureId shouldBeEqualTo "test-feature-1"
 
-    evaluations2.size shouldEqual 1
-    evaluations2[0].featureId shouldEqual "test-feature-3"
+    evaluations2.size shouldBeEqualTo 1
+    evaluations2[0].featureId shouldBeEqualTo "test-feature-3"
   }
 
   @Test fun deleteNotIn_notDelete() {
@@ -116,25 +116,25 @@ class CurrentEvaluationDaoImplTest {
     val evaluations1 = currentEvaluationDao.getEvaluations("user id 1")
     val evaluations2 = currentEvaluationDao.getEvaluations("user id 2")
 
-    evaluations1.size shouldEqual 2
-    evaluations1[0].featureId shouldEqual "test-feature-1"
-    evaluations1[1].featureId shouldEqual "test-feature-2"
+    evaluations1.size shouldBeEqualTo 2
+    evaluations1[0].featureId shouldBeEqualTo "test-feature-1"
+    evaluations1[1].featureId shouldBeEqualTo "test-feature-2"
 
-    evaluations2.size shouldEqual 1
-    evaluations2[0].featureId shouldEqual "test-feature-3"
+    evaluations2.size shouldBeEqualTo 1
+    evaluations2[0].featureId shouldBeEqualTo "test-feature-3"
   }
 
   @Test fun getEvaluations_returnEmptyIfAddNoItem() {
     val actual = currentEvaluationDao.getEvaluations("user id 1")
 
-    actual.size shouldEqual 0
+    actual.size shouldBeEqualTo 0
   }
 
   @Test fun getEvaluations_returnEmptyIfTargetUserItemIsEmpty() {
     currentEvaluationDao.upsertEvaluation(user2Evaluations.evaluationsList[0])
     val actual = currentEvaluationDao.getEvaluations("user id 1")
 
-    actual.size shouldEqual 0
+    actual.size shouldBeEqualTo 0
   }
 
   @Test fun getEvaluations_returnSingleItemIfAddTargetUserItem() {
@@ -143,8 +143,8 @@ class CurrentEvaluationDaoImplTest {
     currentEvaluationDao.upsertEvaluation(evaluation)
     val actual = currentEvaluationDao.getEvaluations("user id 1")
 
-    actual.size shouldEqual 1
-    actual[0] shouldEqual evaluation1
+    actual.size shouldBeEqualTo 1
+    actual[0] shouldBeEqualTo evaluation1
   }
 
   @Test fun getEvaluations_returnMultipleItemIfAddSomeItems() {
@@ -154,8 +154,8 @@ class CurrentEvaluationDaoImplTest {
 
     val actual = currentEvaluationDao.getEvaluations("user id 1")
 
-    actual.size shouldEqual 2
-    actual[0] shouldEqual evaluation1
-    actual[1] shouldEqual evaluation2
+    actual.size shouldBeEqualTo 2
+    actual[0] shouldBeEqualTo evaluation1
+    actual[1] shouldBeEqualTo evaluation2
   }
 }

@@ -15,7 +15,7 @@ import jp.bucketeer.sdk.events.EventActionCreator
 import jp.bucketeer.sdk.user.UserHolder
 import jp.bucketeer.sdk.util.ObservableField
 import org.junit.Assert.assertEquals
-import org.amshove.kluent.shouldEqual
+import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -189,7 +189,7 @@ class ClientInteractorTestTrack {
 
     val currentState = clientInteractor.getCurrentState("user id 1")
 
-    currentState shouldEqual listOf(evaluation1)
+    currentState shouldBeEqualTo listOf(evaluation1)
   }
 
   @Test fun pushGoalEvent_callEventAction() {
@@ -212,8 +212,8 @@ class ClientInteractorTestTrack {
 
     val date = Date(clientInteractor.getTimestamp().toMills())
 
-    date.after(minDate) shouldEqual true
-    date.before(maxDate) shouldEqual true
+    date.after(minDate) shouldBeEqualTo true
+    date.before(maxDate) shouldBeEqualTo true
   }
 
   private fun Long.toMills() = TimeUnit.SECONDS.toMillis(this)

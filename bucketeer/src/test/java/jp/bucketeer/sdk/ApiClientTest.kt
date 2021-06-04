@@ -1,6 +1,6 @@
 package jp.bucketeer.sdk
 
-import org.amshove.kluent.shouldEqual
+import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Test
 
 class ApiClientTest {
@@ -10,7 +10,7 @@ class ApiClientTest {
     val endpoint = "api.bucketeer.jp"
     val api = ApiClient("apiKey", endpoint, "featureTag")
     val port = api.getEndpointPort(endpoint)
-    port shouldEqual ApiClient.ENDPOINT_L4_PORT
+    port shouldBeEqualTo ApiClient.ENDPOINT_L4_PORT
   }
 
   @Test
@@ -18,7 +18,7 @@ class ApiClientTest {
     val endpoint = "api.dev.bucketeer.jp"
     val api = ApiClient("apiKey", endpoint, "featureTag")
     val port = api.getEndpointPort(endpoint)
-    port shouldEqual ApiClient.ENDPOINT_L4_PORT
+    port shouldBeEqualTo ApiClient.ENDPOINT_L4_PORT
   }
 
   @Test
@@ -26,6 +26,6 @@ class ApiClientTest {
     val endpoint = "api-dev.bucketeer.jp"
     val api = ApiClient("apiKey", endpoint, "featureTag")
     val port = api.getEndpointPort(endpoint)
-    port shouldEqual ApiClient.ENDPOINT_L7_PORT
+    port shouldBeEqualTo ApiClient.ENDPOINT_L7_PORT
   }
 }

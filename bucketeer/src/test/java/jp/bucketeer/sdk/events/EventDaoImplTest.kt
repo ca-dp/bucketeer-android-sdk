@@ -17,7 +17,7 @@ import jp.bucketeer.sdk.metricsEvent7
 import jp.bucketeer.sdk.metricsEvent8
 import org.amshove.kluent.shouldBe
 import org.amshove.kluent.shouldBeIn
-import org.amshove.kluent.shouldEqual
+import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldNotEqual
 import org.junit.Before
 import org.junit.Test
@@ -41,7 +41,7 @@ class EventDaoImplTest {
 
     val expected = goalEvent1.pack()
     val actual = eventDao.getEvents()[0].event
-    actual shouldEqual expected
+    actual shouldBeEqualTo expected
     eventDao.getEvents().assertNotEmptyIds()
   }
 
@@ -50,7 +50,7 @@ class EventDaoImplTest {
 
     val expected = evaluationEvent1.pack()
     val actual = eventDao.getEvents()[0]
-    actual.event shouldEqual expected
+    actual.event shouldBeEqualTo expected
     eventDao.getEvents().assertNotEmptyIds()
   }
 
@@ -59,7 +59,7 @@ class EventDaoImplTest {
 
     val expected = metricsEvent1.pack()
     val actual = eventDao.getEvents()[0]
-    actual.event shouldEqual expected
+    actual.event shouldBeEqualTo expected
     eventDao.getEvents().assertNotEmptyIds()
   }
 
@@ -147,12 +147,12 @@ class EventDaoImplTest {
 
     eventDao.getEvents().assertNotEmptyIds()
     eventDao.getEvents().size shouldBe 6
-    eventDao.getEvents()[0].event shouldEqual evaluationEvent1.pack()
-    eventDao.getEvents()[1].event shouldEqual goalEvent2.pack()
-    eventDao.getEvents()[2].event shouldEqual metricsEvent2.pack()
-    eventDao.getEvents()[3].event shouldEqual metricsEvent4.pack()
-    eventDao.getEvents()[4].event shouldEqual metricsEvent6.pack()
-    eventDao.getEvents()[5].event shouldEqual metricsEvent8.pack()
+    eventDao.getEvents()[0].event shouldBeEqualTo evaluationEvent1.pack()
+    eventDao.getEvents()[1].event shouldBeEqualTo goalEvent2.pack()
+    eventDao.getEvents()[2].event shouldBeEqualTo metricsEvent2.pack()
+    eventDao.getEvents()[3].event shouldBeEqualTo metricsEvent4.pack()
+    eventDao.getEvents()[4].event shouldBeEqualTo metricsEvent6.pack()
+    eventDao.getEvents()[5].event shouldBeEqualTo metricsEvent8.pack()
   }
 
   private fun List<EventOuterClass.Event>.assertNotEmptyIds() {

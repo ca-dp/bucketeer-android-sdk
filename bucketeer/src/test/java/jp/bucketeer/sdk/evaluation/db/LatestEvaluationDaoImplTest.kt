@@ -10,7 +10,7 @@ import jp.bucketeer.sdk.user1
 import jp.bucketeer.sdk.user1Evaluations
 import jp.bucketeer.sdk.user2
 import org.junit.Assert.assertEquals
-import org.amshove.kluent.shouldEqual
+import org.amshove.kluent.shouldBeEqualTo
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -92,21 +92,21 @@ class LatestEvaluationDaoImplTest {
   @Test fun deleteAllAndInsert_insert() {
     latestEvaluationDao.deleteAllAndInsert(user1, user1Evaluations.evaluationsList)
 
-    latestEvaluationDao.get(user1) shouldEqual user1Evaluations.evaluationsList
+    latestEvaluationDao.get(user1) shouldBeEqualTo user1Evaluations.evaluationsList
   }
 
   @Test fun deleteAllAndInsert_deleteOld() {
     latestEvaluationDao.deleteAllAndInsert(user1, listOf(evaluation1))
     latestEvaluationDao.deleteAllAndInsert(user1, listOf(evaluation2))
 
-    latestEvaluationDao.get(user1) shouldEqual listOf(evaluation2)
+    latestEvaluationDao.get(user1) shouldBeEqualTo listOf(evaluation2)
   }
 
   @Test fun deleteAllAndInsert_notDeleteIfUserChanged() {
     latestEvaluationDao.deleteAllAndInsert(user1, listOf(evaluation1))
     latestEvaluationDao.deleteAllAndInsert(user2, listOf(evaluation2))
 
-    latestEvaluationDao.get(user1) shouldEqual listOf(evaluation1)
-    latestEvaluationDao.get(user2) shouldEqual listOf(evaluation2)
+    latestEvaluationDao.get(user1) shouldBeEqualTo listOf(evaluation1)
+    latestEvaluationDao.get(user2) shouldBeEqualTo listOf(evaluation2)
   }
 }

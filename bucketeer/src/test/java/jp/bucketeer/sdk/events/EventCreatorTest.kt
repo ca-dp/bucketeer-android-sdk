@@ -6,8 +6,8 @@ import com.google.protobuf.Any
 import com.google.protobuf.Duration
 import jp.bucketeer.sdk.evaluation1
 import jp.bucketeer.sdk.user1
+import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeGreaterOrEqualTo
-import org.amshove.kluent.shouldEqual
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -19,13 +19,13 @@ class EventCreatorTest {
     val event = generateEvaluationEvent(1234, evaluation1, user1)
 
     event.run {
-      timestamp shouldEqual 1234
-      featureId shouldEqual "test-feature-1"
-      featureVersion shouldEqual 9
-      userId shouldEqual "user id 1"
-      variationId shouldEqual "test-feature-1-variation-A"
-      user shouldEqual user1
-      reason shouldEqual ReasonOuterClass.Reason.newBuilder().setType(
+      timestamp shouldBeEqualTo 1234
+      featureId shouldBeEqualTo "test-feature-1"
+      featureVersion shouldBeEqualTo 9
+      userId shouldBeEqualTo "user id 1"
+      variationId shouldBeEqualTo "test-feature-1-variation-A"
+      user shouldBeEqualTo user1
+      reason shouldBeEqualTo ReasonOuterClass.Reason.newBuilder().setType(
           ReasonOuterClass.Reason.Type.DEFAULT).build()
     }
   }
@@ -34,12 +34,12 @@ class EventCreatorTest {
     val event = generateGoalEvent(1234, "goalId", 100.0, user1, listOf(evaluation1))
 
     event.run {
-      timestamp shouldEqual 1234
-      goalId shouldEqual "goalId"
-      userId shouldEqual "user id 1"
-      value shouldEqual 100.0
-      user shouldEqual user1
-      evaluationsList shouldEqual listOf(evaluation1)
+      timestamp shouldBeEqualTo 1234
+      goalId shouldBeEqualTo "goalId"
+      userId shouldBeEqualTo "user id 1"
+      value shouldBeEqualTo 100.0
+      user shouldBeEqualTo user1
+      evaluationsList shouldBeEqualTo listOf(evaluation1)
     }
   }
 
@@ -54,8 +54,8 @@ class EventCreatorTest {
 
     val getEvaluationLatencyMetricsEvent = event.event.unpackToGetEvaluationLatencyMetricsEvent()
     getEvaluationLatencyMetricsEvent.run {
-      labelsMap shouldEqual mapOf("tag" to "android", "state" to "FULL")
-      duration shouldEqual Duration.newBuilder().setSeconds(1).setNanos(234000000).build()
+      labelsMap shouldBeEqualTo mapOf("tag" to "android", "state" to "FULL")
+      duration shouldBeEqualTo Duration.newBuilder().setSeconds(1).setNanos(234000000).build()
     }
   }
 
@@ -74,8 +74,8 @@ class EventCreatorTest {
 
     val getEvaluationSizeMetricsEvent = event.event.unpackToGetEvaluationSizeMetricsEvent()
     getEvaluationSizeMetricsEvent.run {
-      labelsMap shouldEqual mapOf("tag" to "android", "state" to "FULL")
-      sizeByte shouldEqual 1234
+      labelsMap shouldBeEqualTo mapOf("tag" to "android", "state" to "FULL")
+      sizeByte shouldBeEqualTo 1234
     }
   }
 
@@ -93,7 +93,7 @@ class EventCreatorTest {
 
     val timeoutErrorCountMetricsEvent = event.event.unpackToTimeoutErrorCountMetricsEvent()
     timeoutErrorCountMetricsEvent.run {
-      tag shouldEqual "tag"
+      tag shouldBeEqualTo "tag"
     }
   }
 
@@ -111,7 +111,7 @@ class EventCreatorTest {
 
     val internalErrorCountMetricsEvent = event.event.unpackToInternalErrorCountMetricsEvent()
     internalErrorCountMetricsEvent.run {
-      tag shouldEqual "tag"
+      tag shouldBeEqualTo "tag"
     }
   }
 

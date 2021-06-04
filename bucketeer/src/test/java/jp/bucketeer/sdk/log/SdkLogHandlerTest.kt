@@ -1,6 +1,6 @@
 package jp.bucketeer.sdk.log
 
-import org.amshove.kluent.shouldEqual
+import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Before
 import org.junit.Test
 
@@ -34,7 +34,7 @@ class SdkLogHandlerTest {
     logwtf { "ASSERT" }
     logwtf(throwable = Exception()) { "ASSERT" }
 
-    logHistory shouldEqual listOf(
+    logHistory shouldBeEqualTo listOf(
         "2 VERBOSE null",
         "2 VERBOSE Exception",
         "3 DEBUG null",

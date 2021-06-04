@@ -3,7 +3,7 @@ package jp.bucketeer.sdk
 import bucketeer.feature.EvaluationOuterClass
 import bucketeer.feature.VariationOuterClass
 import jp.bucketeer.sdk.ext.getVariationValue
-import org.amshove.kluent.shouldEqual
+import org.amshove.kluent.shouldBeEqualTo
 import org.json.JSONObject
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -33,13 +33,13 @@ class EvaluationExtTest(
   fun getVariation_Int() {
     buildEvaluation(variationValue).getVariationValue(
         defaultValue
-    ) shouldEqual expectedValue
+    ) shouldBeEqualTo expectedValue
   }
 
   @Test fun getVariation_Long() {
     buildEvaluation(variationValue).getVariationValue(
         defaultValue.toLong()
-    ) shouldEqual expectedValue.toLong()
+    ) shouldBeEqualTo expectedValue.toLong()
   }
 }
 
@@ -66,13 +66,13 @@ class BucketeerVariationFloatTest(
   fun getVariation_Float() {
     buildEvaluation(variationValue).getVariationValue(
         defaultValue
-    ) shouldEqual expectedValue
+    ) shouldBeEqualTo expectedValue
   }
 
   @Test fun getVariation_Double() {
     buildEvaluation(variationValue).getVariationValue(
         defaultValue.toDouble()
-    ) shouldEqual expectedValue.toDouble()
+    ) shouldBeEqualTo expectedValue.toDouble()
   }
 }
 
@@ -102,7 +102,7 @@ class BucketeerVariationStringTest(
   fun getVariation_String() {
     buildEvaluation(variationValue).getVariationValue(
         defaultValue
-    ) shouldEqual expectedValue
+    ) shouldBeEqualTo expectedValue
   }
 }
 
@@ -136,7 +136,7 @@ class BucketeerVariationBoolTest(
   fun getVariation_Bool() {
     buildEvaluation(variationValue).getVariationValue(
         defaultValue
-    ) shouldEqual expectedValue
+    ) shouldBeEqualTo expectedValue
   }
 }
 
@@ -170,10 +170,10 @@ class BucketeerVariationJsonTest(
     val actual = buildEvaluation(variationValue).getVariationValue(
         JSONObject(defaultValue)
     )
-    actual.keys().asSequence().toList() shouldEqual expected.keys().asSequence().toList()
+    actual.keys().asSequence().toList() shouldBeEqualTo expected.keys().asSequence().toList()
     actual.keys().asSequence().toList().map {
       actual[it]
-    } shouldEqual expected.keys().asSequence().toList().map {
+    } shouldBeEqualTo expected.keys().asSequence().toList().map {
       expected[it]
     }
   }

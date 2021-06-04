@@ -8,7 +8,7 @@ import jp.bucketeer.sdk.evaluation.dto.CurrentEvaluationListDataChangedAction
 import jp.bucketeer.sdk.user1
 import jp.bucketeer.sdk.user1Evaluations
 import org.amshove.kluent.mock
-import org.amshove.kluent.shouldEqual
+import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Test
 
 class CurrentStoreTest {
@@ -26,7 +26,7 @@ class CurrentStoreTest {
     verify(observer).invoke(mapOf("user id 1" to user1Evaluations.evaluationsList))
     verifyNoMoreInteractions(observer)
 
-    currentStore.currentEvaluations.value["user id 1"] shouldEqual user1Evaluations.evaluationsList
-    currentStore.currentEvaluations.value["user id 2"] shouldEqual null
+    currentStore.currentEvaluations.value["user id 1"] shouldBeEqualTo user1Evaluations.evaluationsList
+    currentStore.currentEvaluations.value["user id 2"] shouldBeEqualTo null
   }
 }

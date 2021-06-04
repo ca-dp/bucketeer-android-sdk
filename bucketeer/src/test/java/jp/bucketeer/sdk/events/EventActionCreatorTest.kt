@@ -21,7 +21,7 @@ import jp.bucketeer.sdk.user1
 import org.junit.Assert
 import org.amshove.kluent.any
 import org.amshove.kluent.mock
-import org.amshove.kluent.shouldEqual
+import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -104,9 +104,9 @@ class EventActionCreatorTest {
     val mockObserver = spy(Observer { _, obj ->
       when (obj) {
         is EventListDataChangedAction -> obj.events.run {
-          this.size shouldEqual 1
+          this.size shouldBeEqualTo 1
           val event = this.first().event.unpackToEvaluationEvent()
-          event::class shouldEqual EventOuterClass.EvaluationEvent::class
+          event::class shouldBeEqualTo EventOuterClass.EvaluationEvent::class
         }
         else -> Assert.fail()
       }
@@ -146,9 +146,9 @@ class EventActionCreatorTest {
       when (obj) {
         is EventListDataChangedAction -> {
           obj.events.run {
-            this.size shouldEqual 1
+            this.size shouldBeEqualTo 1
             val event = this.first().event.unpackToGoalEvent()
-            event::class shouldEqual EventOuterClass.GoalEvent::class
+            event::class shouldBeEqualTo EventOuterClass.GoalEvent::class
           }
         }
         else -> Assert.fail()
@@ -179,9 +179,9 @@ class EventActionCreatorTest {
       when (obj) {
         is EventListDataChangedAction -> {
           obj.events.run {
-            this.size shouldEqual 1
+            this.size shouldBeEqualTo 1
             val event = this.first().event.unpackToMetricsEvent()
-            event::class shouldEqual EventOuterClass.MetricsEvent::class
+            event::class shouldBeEqualTo EventOuterClass.MetricsEvent::class
           }
         }
         else -> Assert.fail()
@@ -214,9 +214,9 @@ class EventActionCreatorTest {
       when (obj) {
         is EventListDataChangedAction -> {
           obj.events.run {
-            this.size shouldEqual 1
+            this.size shouldBeEqualTo 1
             val event = this.first().event.unpackToMetricsEvent()
-            event::class shouldEqual EventOuterClass.MetricsEvent::class
+            event::class shouldBeEqualTo EventOuterClass.MetricsEvent::class
           }
         }
         else -> Assert.fail()
@@ -249,9 +249,9 @@ class EventActionCreatorTest {
       when (obj) {
         is EventListDataChangedAction -> {
           obj.events.run {
-            this.size shouldEqual 1
+            this.size shouldBeEqualTo 1
             val event = this.first().event.unpackToMetricsEvent()
-            event::class shouldEqual EventOuterClass.MetricsEvent::class
+            event::class shouldBeEqualTo EventOuterClass.MetricsEvent::class
           }
         }
         else -> Assert.fail()
@@ -282,9 +282,9 @@ class EventActionCreatorTest {
       when (obj) {
         is EventListDataChangedAction -> {
           obj.events.run {
-            this.size shouldEqual 1
+            this.size shouldBeEqualTo 1
             val event = this.first().event.unpackToMetricsEvent()
-            event::class shouldEqual EventOuterClass.MetricsEvent::class
+            event::class shouldBeEqualTo EventOuterClass.MetricsEvent::class
           }
         }
         else -> Assert.fail()
@@ -322,7 +322,7 @@ class EventActionCreatorTest {
     val spyObserver: Observer = spy(Observer { _, obj ->
       when (obj) {
         is EventListDataChangedAction -> {
-          obj.events.size shouldEqual 6
+          obj.events.size shouldBeEqualTo 6
           obj.events[0].event.unpackToEvaluationEvent()
           obj.events[1].event.unpackToGoalEvent()
           obj.events[2].event.unpackToMetricsEvent()
