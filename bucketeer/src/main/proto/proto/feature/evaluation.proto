@@ -12,8 +12,9 @@ message Evaluation {
   int32 feature_version = 3;
   string user_id = 4;
   string variation_id = 5;
-  Variation variation = 6;
+  Variation variation = 6 [deprecated = true];
   Reason reason = 7;
+  string variation_value = 8;
 }
 
 message UserEvaluations {
