@@ -4,7 +4,7 @@ buildscript {
       // Kotlin
       KOTLIN: '1.3.72',
       // Gradle
-      GRADLE: '3.5.1',
+      GRADLE: '4.2.0',
       // gRPC
       COMMON_PROTOS: '1.18.1',
       GRPC  : '1.31.1',
@@ -22,7 +22,7 @@ buildscript {
       KLUENT: '1.60',
       MOCKITO_ANDROID: '3.3.3',
       MOCKITO_KOTLIN: '1.6.0',
-      ROBOLECTRIC: '4.3.1',
+      ROBOLECTRIC: '4.5.1',
       // Publish
       DOKKA: '0.10.1',
       NEXUS_STAGING: '0.22.0',
