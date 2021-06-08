@@ -20,6 +20,7 @@ message GetEvaluationsRequest {
   user.User user = 2;
   string user_evaluations_id = 3;
   string feature_id = 4 [deprecated = true];  // instead, use GetEvaluation API
+  bucketeer.event.client.SourceId source_id = 5;
 }
 
 message GetEvaluationsResponse {
@@ -32,6 +33,7 @@ message GetEvaluationRequest {
   string tag = 1;
   user.User user = 2;
   string feature_id = 3;
+  bucketeer.event.client.SourceId source_id = 4;
 }
 
 message GetEvaluationResponse {
