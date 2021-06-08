@@ -45,9 +45,8 @@ enum SourceId {
   ANDROID = 1;
   IOS = 2;
   WEB = 3;
-  FLUTTER = 4;
+  GOAL_BATCH = 4;
   GO_SERVER = 5;
-  GOAL_BATCH = 6;
 }
 
 message MetricsEvent {
