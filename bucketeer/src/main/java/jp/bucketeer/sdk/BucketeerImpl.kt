@@ -151,7 +151,7 @@ internal class BucketeerImpl constructor(
           featureVersion,
           userId,
           variationId,
-          variation.value,
+          variationValue,
           reason.typeValue
       )
     } ?: return null

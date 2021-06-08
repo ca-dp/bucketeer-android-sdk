@@ -39,7 +39,6 @@ import jp.bucketeer.sdk.user2
 import jp.bucketeer.sdk.userEvaluationsId1
 import jp.bucketeer.sdk.userEvaluationsId2
 import jp.bucketeer.sdk.util.userOf
-import jp.bucketeer.sdk.variation1
 import org.amshove.kluent.shouldBe
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Assert
@@ -147,7 +146,7 @@ class BucketeerTest {
       bucketeer.getVariation(
           evaluation1.featureId,
           "default"
-      ) shouldBeEqualTo variation1.value
+      ) shouldBeEqualTo evaluation1.variationValue
       callbackCountDown.countDown()
     }, 300)
     Assert.assertTrue(callbackCountDown.await(5, TimeUnit.SECONDS))
@@ -168,7 +167,7 @@ class BucketeerTest {
       bucketeer.getVariation(
           evaluation1.featureId,
           "default"
-      ) shouldBeEqualTo evaluation1.variation.value
+      ) shouldBeEqualTo evaluation1.variationValue
 
       handler.postDelayed({
         argumentCaptor<List<EventOuterClass.Event>>().apply {
@@ -201,7 +200,7 @@ class BucketeerTest {
       bucketeer.getVariation(
           evaluation1.featureId,
           "default"
-      ) shouldBeEqualTo evaluation1.variation.value
+      ) shouldBeEqualTo evaluation1.variationValue
 
       val value = 1.0
       val goalId = "goal"
@@ -247,7 +246,7 @@ class BucketeerTest {
       bucketeer.getVariation(
           evaluation1.featureId,
           "default"
-      ) shouldBeEqualTo evaluation1.variation.value
+      ) shouldBeEqualTo evaluation1.variationValue
 
       val user = userOf(user2.id, mapOf())
       whenever(api.fetchEvaluation(any(), any())).doReturn(Api.Result.Success(response2))
@@ -257,7 +256,7 @@ class BucketeerTest {
         bucketeer.getVariation(
             evaluation3.featureId,
             "default"
-        ) shouldBeEqualTo evaluation3.variation.value
+        ) shouldBeEqualTo evaluation3.variationValue
 
         handler.postDelayed({
           argumentCaptor<List<EventOuterClass.Event>>().apply {

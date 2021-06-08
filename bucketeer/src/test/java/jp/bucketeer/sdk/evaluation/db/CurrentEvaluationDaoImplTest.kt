@@ -60,17 +60,16 @@ class CurrentEvaluationDaoImplTest {
 
   @Test fun upsertEvaluation_update() {
     val sourceEvaluation = user1Evaluations.evaluationsList[0]
-    val updatedVariation = sourceEvaluation.variation.toBuilder().setValue("update value").build()
-    val updatedEvaluation = user1Evaluations.evaluationsList[0].toBuilder()
-        .setVariation(updatedVariation).build()
+    val variationValue = "update value"
+    val updatedEvaluation = sourceEvaluation.toBuilder().setVariationValue(variationValue).build()
 
     currentEvaluationDao.upsertEvaluation(sourceEvaluation)
     val beforeEvaluations = currentEvaluationDao.getEvaluations("user id 1")
-    beforeEvaluations[0].variation.value shouldBeEqualTo "test variation value1"
+    beforeEvaluations[0].variationValue shouldBeEqualTo "test variation value1"
 
     currentEvaluationDao.upsertEvaluation(updatedEvaluation)
     val afterEvaluations = currentEvaluationDao.getEvaluations("user id 1")
-    afterEvaluations[0].variation.value shouldBeEqualTo "update value"
+    afterEvaluations[0].variationValue shouldBeEqualTo "update value"
   }
 
   @Test fun deleteNotIn_deleteAll() {

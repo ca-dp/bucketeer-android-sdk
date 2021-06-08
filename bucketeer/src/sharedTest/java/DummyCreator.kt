@@ -63,7 +63,7 @@ val evaluation: Evaluation by lazy {
       evaluation1.featureVersion,
       evaluation1.userId,
       evaluation1.variationId,
-      evaluation1.variation.value,
+      evaluation1.variationValue,
       evaluation1.reason.type.number
   )
 }
@@ -75,8 +75,7 @@ val evaluation1: EvaluationOuterClass.Evaluation by lazy {
     featureVersion = 9
     userId = "user id 1"
     variationId = "test-feature-1-variation-A"
-
-    variation = variation1
+    variationValue = "test variation value1"
 
     reason = ReasonOuterClass.Reason.newBuilder().apply {
       type = ReasonOuterClass.Reason.Type.DEFAULT
@@ -91,8 +90,7 @@ val evaluation2: EvaluationOuterClass.Evaluation by lazy {
     featureVersion = 9
     userId = "user id 1"
     variationId = "test-feature-2-variation-A"
-
-    variation = variation2
+    variationValue = "test variation value2"
 
     reason = ReasonOuterClass.Reason.newBuilder().apply {
       type = ReasonOuterClass.Reason.Type.DEFAULT
@@ -107,8 +105,7 @@ val evaluation3: EvaluationOuterClass.Evaluation by lazy {
     featureVersion = 9
     userId = "user id 2"
     variationId = "test-feature-1-variation-A"
-
-    variation = variation2
+    variationValue = "test variation value2"
 
     reason = ReasonOuterClass.Reason.newBuilder().apply {
       type = ReasonOuterClass.Reason.Type.DEFAULT
@@ -128,20 +125,6 @@ val user2Evaluations: EvaluationOuterClass.UserEvaluations by lazy {
   EvaluationOuterClass.UserEvaluations.newBuilder().apply {
     id = "17388826713971171774"
     addEvaluations(evaluation3)
-  }.build()
-}
-
-val variation1: VariationOuterClass.Variation by lazy {
-  VariationOuterClass.Variation.newBuilder().apply {
-    id = "test-feature-1-variation-A"
-    value = "test variation value1"
-  }.build()
-}
-
-val variation2: VariationOuterClass.Variation by lazy {
-  VariationOuterClass.Variation.newBuilder().apply {
-    id = "test-feature-2-variation-A"
-    value = "test variation value2"
   }.build()
 }
 

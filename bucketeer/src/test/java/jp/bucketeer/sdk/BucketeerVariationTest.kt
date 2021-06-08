@@ -185,10 +185,6 @@ private fun buildEvaluation(value: String): EvaluationOuterClass.Evaluation? {
       .setFeatureId("feature_id")
       .setFeatureVersion(1)
       .setVariationId("variation_id")
-      .setVariation(
-          VariationOuterClass.Variation.newBuilder()
-              .setId("variation_id")
-              .setValue(value)
-              .build())
+      .setVariationValue(value)
       .build()
 }
