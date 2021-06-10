@@ -31,7 +31,7 @@ internal class BucketeerImpl constructor(
     private val application: Application = context.applicationContext as Application,
     private val dataModule: DataModule = DataModule(application, apiKey, endpoint, featureTag),
     private val dispatcher: Dispatcher = Dispatcher(),
-    private val actionModule: ActionCreatorModule = ActionCreatorModule(dispatcher, dataModule),
+    private val actionModule: ActionCreatorModule = ActionCreatorModule(dispatcher, dataModule, featureTag),
     private val storeModule: StoreModule = StoreModule(dispatcher),
     private val executor: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor(),
     private val clientInteractor: ClientInteractor = ClientInteractor(

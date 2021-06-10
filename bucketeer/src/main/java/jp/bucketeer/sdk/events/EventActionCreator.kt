@@ -12,14 +12,15 @@ import jp.bucketeer.sdk.log.logd
 internal class EventActionCreator(
     private val api: Api,
     private val dispatcher: Dispatcher,
-    private val eventDao: EventDao
+    private val eventDao: EventDao,
+    private val featureTag: String
 ) {
   fun pushEvaluationEvent(
       timestamp: Long,
       evaluation: EvaluationOuterClass.Evaluation,
       user: UserOuterClass.User
   ) {
-    val event = generateEvaluationEvent(timestamp, evaluation, user)
+    val event = generateEvaluationEvent(featureTag, timestamp, evaluation, user)
     eventDao.addEvent(event)
     val events = getAllEvent()
     dispatcher.send(EventListDataChangedAction(events))
@@ -30,7 +31,7 @@ internal class EventActionCreator(
       user: UserOuterClass.User,
       featureId: String
   ) {
-    val event = generateDefaultEvaluationEvent(timestamp, user, featureId)
+    val event = generateDefaultEvaluationEvent(featureTag, timestamp, user, featureId)
     eventDao.addEvent(event)
     val events = getAllEvent()
     dispatcher.send(EventListDataChangedAction(events))
@@ -45,7 +46,7 @@ internal class EventActionCreator(
       user: UserOuterClass.User,
       evaluations: List<EvaluationOuterClass.Evaluation>
   ) {
-    val event = generateGoalEvent(timestamp, goalId, value, user, evaluations)
+    val event = generateGoalEvent(featureTag, timestamp, goalId, value, user, evaluations)
     eventDao.addEvent(event)
     val events = getAllEvent()
     dispatcher.send(EventListDataChangedAction(events))

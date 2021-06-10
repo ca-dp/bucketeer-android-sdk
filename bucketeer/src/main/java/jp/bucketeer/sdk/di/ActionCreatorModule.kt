@@ -7,7 +7,8 @@ import jp.bucketeer.sdk.events.EventActionCreator
 
 internal class ActionCreatorModule(
     dispatcher: Dispatcher,
-    dataModule: DataModule
+    dataModule: DataModule,
+    featureTag: String
 ) {
   val latestEvaluationActionCreator: LatestEvaluationActionCreator = LatestEvaluationActionCreator(
       dispatcher,
@@ -19,7 +20,8 @@ internal class ActionCreatorModule(
   val eventActionCreator: EventActionCreator = EventActionCreator(
       dataModule.api,
       dispatcher,
-      dataModule.eventDao
+      dataModule.eventDao,
+      featureTag
   )
   val clientInteractorActionCreator: ClientInteractorActionCreator = ClientInteractorActionCreator(
       dispatcher,

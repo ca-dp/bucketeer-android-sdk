@@ -10,6 +10,7 @@ val NANOS_PER_MILLISECOND: Long = 1000000
 val MILLIS_PER_SECOND: Long = 1000
 
 internal fun generateGoalEvent(
+    tag: String,
     timestamp: Long,
     goalId: String,
     value: Double,
@@ -17,6 +18,8 @@ internal fun generateGoalEvent(
     evaluations: List<EvaluationOuterClass.Evaluation>
 ): EventOuterClass.GoalEvent {
   return EventOuterClass.GoalEvent.newBuilder().apply {
+    this.sourceId = EventOuterClass.SourceId.ANDROID
+    this.tag = tag
     this.timestamp = timestamp
     this.goalId = goalId
     this.userId = user.id
@@ -27,11 +30,14 @@ internal fun generateGoalEvent(
 }
 
 internal fun generateEvaluationEvent(
+    tag: String,
     timestamp: Long,
     evaluation: EvaluationOuterClass.Evaluation,
     user: UserOuterClass.User
 ): EventOuterClass.EvaluationEvent {
   return EventOuterClass.EvaluationEvent.newBuilder().apply {
+    this.sourceId = EventOuterClass.SourceId.ANDROID
+    this.tag = tag
     this.timestamp = timestamp
     this.featureId = evaluation.featureId
     this.featureVersion = evaluation.featureVersion
@@ -43,6 +49,7 @@ internal fun generateEvaluationEvent(
 }
 
 internal fun generateDefaultEvaluationEvent(
+    tag: String,
     timestamp: Long,
     user: UserOuterClass.User,
     featureId: String
@@ -51,6 +58,8 @@ internal fun generateDefaultEvaluationEvent(
       .setType(ReasonOuterClass.Reason.Type.CLIENT)
       .build()
   return EventOuterClass.EvaluationEvent.newBuilder().apply {
+    this.sourceId = EventOuterClass.SourceId.ANDROID
+    this.tag = tag
     this.timestamp = timestamp
     this.featureId = featureId
     this.userId = user.id

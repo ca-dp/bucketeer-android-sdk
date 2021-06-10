@@ -42,7 +42,10 @@ internal class ApiClient(
       val request = Service.GetEvaluationsRequest.newBuilder()
           .setUser(user)
           .setUserEvaluationsId(userEvaluationsId)
-          .setTag(featureTag).build()
+          .setTag(featureTag)
+          .setSourceId(EventOuterClass.SourceId.ANDROID)
+          .build()
+
       logd { "--> Fetch Evaluation\n$request" }
       val startTime = System.currentTimeMillis()
       val response = client.getEvaluations(request)
