@@ -10,7 +10,9 @@ import androidx.test.filters.MediumTest
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import bucketeer.event.client.EventOuterClass
 import bucketeer.feature.EvaluationOuterClass
+import bucketeer.feature.ReasonOuterClass
 import bucketeer.gateway.Service
+import bucketeer.user.UserOuterClass
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.argumentCaptor
 import com.nhaarman.mockito_kotlin.atLeastOnce
@@ -41,6 +43,7 @@ import jp.bucketeer.sdk.userEvaluationsId2
 import jp.bucketeer.sdk.util.userOf
 import org.amshove.kluent.shouldBe
 import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldBeGreaterThan
 import org.junit.Assert
 import org.junit.Assert.fail
 import org.junit.Before
@@ -98,7 +101,7 @@ class BucketeerTest {
 
   @Test
   fun getEvaluation() {
-    val bucketeer = initBucketeer(userId = user1.id)
+    val bucketeer = initBucketeer(user = user1)
     val callbackCountDown = CountDownLatch(1)
     val handler = Handler(Looper.getMainLooper())
     handler.postDelayed({
@@ -124,7 +127,7 @@ class BucketeerTest {
 
   @Test
   fun getVariation_default() {
-    val bucketeer = initBucketeer(userId = user1.id)
+    val bucketeer = initBucketeer(user = user1)
     val callbackCountDown = CountDownLatch(1)
     val handler = Handler(Looper.getMainLooper())
     handler.postDelayed({
@@ -139,7 +142,7 @@ class BucketeerTest {
 
   @Test
   fun getVariation_getValue() {
-    val bucketeer = initBucketeer(userId = user1.id)
+    val bucketeer = initBucketeer(user = user1)
     val callbackCountDown = CountDownLatch(1)
     val handler = Handler(Looper.getMainLooper())
     handler.postDelayed({
@@ -153,12 +156,53 @@ class BucketeerTest {
   }
 
   @Test
+  fun getVariation_sendDefaultEvaluation() {
+    val api: Api = mock()
+    whenever(api.registerEvent(any()))
+      .doReturn(Api.Result.Success(Service.RegisterEventsResponse.getDefaultInstance()))
+    val bucketeer = initBucketeer(
+      user = user1,
+      api = api
+    )
+    val callbackCountDown = CountDownLatch(1)
+    val handler = Handler(Looper.getMainLooper())
+    val defaultValue = "default"
+    bucketeer.getVariation(
+      evaluation1.featureId,
+      defaultValue
+    ) shouldBeEqualTo defaultValue
+    handler.postDelayed({
+      argumentCaptor<List<EventOuterClass.Event>>().apply {
+        verify(api, times(1)).registerEvent(capture())
+        allValues.size shouldBe 1
+        val reason = ReasonOuterClass.Reason.newBuilder()
+          .setType(ReasonOuterClass.Reason.Type.CLIENT)
+          .build()
+        val event = EventOuterClass
+          .EvaluationEvent
+          .parseFrom(firstValue[0].event.value)
+        event.timestamp shouldBeGreaterThan 0
+        event.featureId shouldBeEqualTo evaluation1.featureId
+        event.featureVersion shouldBeEqualTo 0
+        event.userId shouldBeEqualTo user1.id
+        event.variationId shouldBeEqualTo ""
+        event.user shouldBeEqualTo user1
+        event.reason shouldBeEqualTo reason
+        event.tag shouldBeEqualTo "android"
+        event.sourceId shouldBe EventOuterClass.SourceId.ANDROID
+        callbackCountDown.countDown()
+      }
+    }, 300)
+    Assert.assertTrue(callbackCountDown.await(5, TimeUnit.SECONDS))
+  }
+
+  @Test
   fun getVariation_sendEvaluation() {
     val api: Api = mock()
     whenever(api.registerEvent(any()))
         .doReturn(Api.Result.Success(Service.RegisterEventsResponse.getDefaultInstance()))
     val bucketeer = initBucketeer(
-        userId = user1.id,
+        user = user1,
         api = api
     )
     val callbackCountDown = CountDownLatch(1)
@@ -173,10 +217,21 @@ class BucketeerTest {
         argumentCaptor<List<EventOuterClass.Event>>().apply {
           verify(api, times(1)).registerEvent(capture())
           allValues.size shouldBe 1
-          EventOuterClass
+          val reason = ReasonOuterClass.Reason.newBuilder()
+            .setType(ReasonOuterClass.Reason.Type.DEFAULT)
+            .build()
+          val event = EventOuterClass
               .EvaluationEvent
               .parseFrom(firstValue[0].event.value)
-              .variationId shouldBeEqualTo evaluation1.variationId
+          event.timestamp shouldBeGreaterThan 0
+          event.featureId shouldBeEqualTo evaluation1.featureId
+          event.featureVersion shouldBeEqualTo evaluation1.featureVersion
+          event.userId shouldBeEqualTo user1.id
+          event.variationId shouldBeEqualTo evaluation1.variationId
+          event.user shouldBeEqualTo user1
+          event.reason shouldBeEqualTo reason
+          event.tag shouldBeEqualTo "android"
+          event.sourceId shouldBe EventOuterClass.SourceId.ANDROID
           callbackCountDown.countDown()
         }
       }, 300)
@@ -190,7 +245,7 @@ class BucketeerTest {
     whenever(api.registerEvent(any()))
         .doReturn(Api.Result.Success(Service.RegisterEventsResponse.getDefaultInstance()))
     val bucketeer = initBucketeer(
-        userId = user1.id,
+        user = user1,
         api = api
     )
 
@@ -215,12 +270,17 @@ class BucketeerTest {
           val evaluationEvent = EventOuterClass
               .EvaluationEvent
               .parseFrom(firstValue[0].event.value)
+          evaluationEvent.variationId shouldBeEqualTo evaluation1.variationId
           val goalEvent = EventOuterClass
               .GoalEvent
               .parseFrom(secondValue[0].event.value)
-          evaluationEvent.variationId shouldBeEqualTo evaluation1.variationId
+          goalEvent.timestamp shouldBeGreaterThan 0
           goalEvent.goalId shouldBeEqualTo goalId
+          goalEvent.userId shouldBeEqualTo user1.id
           goalEvent.value shouldBeEqualTo value
+          goalEvent.user shouldBeEqualTo user1
+          goalEvent.tag shouldBeEqualTo "android"
+          goalEvent.sourceId shouldBeEqualTo EventOuterClass.SourceId.ANDROID
           goalEvent.evaluationsList[0].variationId shouldBeEqualTo evaluation1.variationId
           callbackCountDown.countDown()
         }
@@ -236,7 +296,7 @@ class BucketeerTest {
         .doReturn(Api.Result.Success(Service.RegisterEventsResponse.getDefaultInstance()))
     val response2 = createEvaluationsResponse(evaluation3, userEvaluationsId2)
     val bucketeer = initBucketeer(
-        userId = user1.id,
+        user = user1,
         api = api
     )
 
@@ -299,7 +359,7 @@ class BucketeerTest {
 
   private fun initBucketeer(
       response: Service.GetEvaluationsResponse = createEvaluationsResponse(),
-      userId: String,
+      user: UserOuterClass.User,
       api: Api = mock()
   ): Bucketeer {
     whenever(api.fetchEvaluation(any(), any())).doReturn(Api.Result.Success(response))
@@ -323,7 +383,7 @@ class BucketeerTest {
         config = config,
         dataModule = dataModule
     )
-    bucketeer.setUser(userId)
+    bucketeer.setUser(user.id, user.dataMap)
 
     bucketeer.start()
     Espresso.onIdle()

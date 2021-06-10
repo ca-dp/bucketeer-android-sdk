@@ -7,6 +7,7 @@ import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
 import bucketeer.event.client.EventOuterClass
 import bucketeer.feature.EvaluationOuterClass
+import bucketeer.feature.ReasonOuterClass
 import bucketeer.user.UserOuterClass
 import jp.bucketeer.sdk.Api
 import jp.bucketeer.sdk.ApiClient
@@ -187,32 +188,54 @@ class BucketeerTest {
         .build()
   }
 
-  val userEvaluationsId1: String by lazy {
+  private val userEvaluationsId1: String by lazy {
     "user-evaluations-id-1"
   }
 
-  val timestamp = System.currentTimeMillis() / 1000
+  private val timestamp = System.currentTimeMillis() / 1000
 
-  val user1 = UserOuterClass
+  private val user1 = UserOuterClass
       .User
       .newBuilder()
       .setId(USER_ID_1)
       .build()
 
-  val evaluationEvent1 = EventOuterClass.EvaluationEvent
+  private val reason = ReasonOuterClass.Reason.newBuilder()
+    .setType(ReasonOuterClass.Reason.Type.CLIENT)
+    .build()
+
+  private val evaluationEvent1 = EventOuterClass.EvaluationEvent
       .newBuilder()
       .setTimestamp(timestamp)
       .setFeatureId(FEATURE_FLAG_ID_1)
+      .setFeatureVersion(0)
       .setUserId(USER_ID_1)
+      .setVariationId(userEvaluationsId1)
       .setUser(user1)
+      .setReason(reason)
+      .setTag(TAG)
+      .setSourceId(EventOuterClass.SourceId.ANDROID)
       .build()
 
-  val goalEvent1 = EventOuterClass.GoalEvent
+  private val evaluation1 = EvaluationOuterClass.Evaluation
+    .newBuilder()
+    .setFeatureId(FEATURE_FLAG_ID_1)
+    .setFeatureVersion(0)
+    .setUserId(USER_ID_1)
+    .setVariationId(userEvaluationsId1)
+    .setReason(reason)
+    .build()
+
+  private val goalEvent1 = EventOuterClass.GoalEvent
       .newBuilder()
       .setTimestamp(timestamp)
       .setGoalId(GOAL_ID_1)
       .setUserId(USER_ID_1)
+      .setValue(GOAL_VALUE_1)
       .setUser(user1)
+      .addEvaluations(evaluation1)
+      .setTag(TAG)
+      .setSourceId(EventOuterClass.SourceId.ANDROID)
       .build()
 
   companion object {
@@ -221,5 +244,6 @@ class BucketeerTest {
     const val FEATURE_FLAG_ID_1 = "feature-android-e2e-1"
     const val FEATURE_FLAG_1_VARIATION = "value-1"
     const val GOAL_ID_1 = "goal-android-e2e-1"
+    const val GOAL_VALUE_1 = 1.0
   }
 }

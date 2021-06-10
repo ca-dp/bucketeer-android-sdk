@@ -16,9 +16,12 @@ import org.robolectric.RobolectricTestRunner
 class EventCreatorTest {
 
   @Test fun generateEvaluationEvent() {
-    val event = generateEvaluationEvent(1234, evaluation1, user1)
+    val featureTag = "feature-tag"
+    val event = generateEvaluationEvent(featureTag, 1234, evaluation1, user1)
 
     event.run {
+      tag shouldBeEqualTo featureTag
+      sourceId shouldBeEqualTo EventOuterClass.SourceId.ANDROID
       timestamp shouldBeEqualTo 1234
       featureId shouldBeEqualTo "test-feature-1"
       featureVersion shouldBeEqualTo 9
@@ -30,10 +33,30 @@ class EventCreatorTest {
     }
   }
 
-  @Test fun generateGoalEvent() {
-    val event = generateGoalEvent(1234, "goalId", 100.0, user1, listOf(evaluation1))
+  @Test fun generateDefaultEvaluationEvent() {
+    val featureTag = "feature-tag"
+    val featureId = "feature-id"
+    val event = generateDefaultEvaluationEvent(featureTag, 1234, user1, featureId)
 
     event.run {
+      tag shouldBeEqualTo featureTag
+      featureId shouldBeEqualTo featureId
+      sourceId shouldBeEqualTo EventOuterClass.SourceId.ANDROID
+      timestamp shouldBeEqualTo 1234
+      userId shouldBeEqualTo "user id 1"
+      user shouldBeEqualTo user1
+      reason shouldBeEqualTo ReasonOuterClass.Reason.newBuilder().setType(
+          ReasonOuterClass.Reason.Type.CLIENT).build()
+    }
+  }
+
+  @Test fun generateGoalEvent() {
+    val featureTag = "feature-tag"
+    val event = generateGoalEvent(featureTag, 1234, "goalId", 100.0, user1, listOf(evaluation1))
+
+    event.run {
+      tag shouldBeEqualTo featureTag
+      sourceId shouldBeEqualTo EventOuterClass.SourceId.ANDROID
       timestamp shouldBeEqualTo 1234
       goalId shouldBeEqualTo "goalId"
       userId shouldBeEqualTo "user id 1"

@@ -32,7 +32,8 @@ class EventActionCreatorTest {
   private val dispatcher: Dispatcher = Dispatcher()
   private val api: ApiClient = mock()
   private val eventDao: EventDao = mock()
-  private val eventActionCreator = spy(EventActionCreator(api, dispatcher, eventDao))
+  private val featureTag: String = "feature-tag"
+  private val eventActionCreator = spy(EventActionCreator(api, dispatcher, eventDao, featureTag))
 
   private val evaluationEvent1 = EventOuterClass.EvaluationEvent.newBuilder().apply {
     timestamp = 1234
