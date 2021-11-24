@@ -47,6 +47,7 @@ enum SourceId {
   WEB = 3;
   GOAL_BATCH = 4;
   GO_SERVER = 5;
+  NODE_SERVER = 6;
 }
 
 message MetricsEvent {
