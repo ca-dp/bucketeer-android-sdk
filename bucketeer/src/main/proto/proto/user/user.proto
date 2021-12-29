@@ -14,6 +14,7 @@ message UserEntity {
   repeated Data data = 2 [deprecated = true];
   int64 last_seen = 3;
   repeated TaggedData tagged_data = 4;
+  int64 created_at = 5;
 }
 
 message Data {
