@@ -8,14 +8,13 @@ internal fun Cursor.asSequence(): Sequence<Cursor> {
 
 // TODO add Cursor.get(Int, Long, Double, ...)
 internal fun Cursor.getString(name: String): String {
-  return getString(getColumnIndex(name)) ?: throw IllegalStateException()
+  return getString(getColumnIndexOrThrow(name))
 }
 
 internal fun Cursor.getBlob(name: String): ByteArray {
-  return getBlob(getColumnIndex(name)) ?: throw IllegalStateException()
+  return getBlob(getColumnIndexOrThrow(name))
 }
 
 internal fun Cursor.getInt(name: String): Int {
-  return getInt(getColumnIndex(name))
+  return getInt(getColumnIndexOrThrow(name))
 }
-
