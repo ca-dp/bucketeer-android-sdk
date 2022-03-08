@@ -10,6 +10,7 @@ message Reason {
     DEFAULT = 3;
     CLIENT = 4;
     OFF_VARIATION = 5;
+    PREREQUISITE = 6;
   }
   Type type = 1;
   string rule_id = 2;
