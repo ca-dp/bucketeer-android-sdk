@@ -1,5 +1,7 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
+plugins {
+  alias(libs.plugins.android.application)
+  alias(libs.plugins.kotlin.android)
+}
 
 def properties = new Properties()
 properties.load(rootProject.file('local.properties').newDataInputStream())

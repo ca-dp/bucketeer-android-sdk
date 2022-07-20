@@ -1,3 +1,5 @@
+
+
 buildscript {
   ext {
     versions = [
@@ -30,18 +32,16 @@ buildscript {
       NEXUS_STAGING: '0.30.0',
     ]
   }
-  repositories {
-    google()
-    mavenCentral()
-    gradlePluginPortal()
-  }
-  dependencies {
-    classpath "com.android.tools.build:gradle:$versions.GRADLE"
-    classpath "com.google.protobuf:protobuf-gradle-plugin:$versions.PROTOBUF_GRADLE"
-    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.KOTLIN"
-    classpath "org.jetbrains.dokka:dokka-gradle-plugin:$versions.DOKKA"
-    classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:$versions.NEXUS_STAGING"
-  }
+}
+
+plugins {
+  alias(libs.plugins.android.application) apply false
+  alias(libs.plugins.android.library) apply false
+  alias(libs.plugins.kotlin.android) apply false
+  alias(libs.plugins.kotlin.kapt) apply false
+  alias(libs.plugins.kotlin.dokka) apply false
+  alias(libs.plugins.protobuf) apply false
+  alias(libs.plugins.nexusStaging)
 }
 
 allprojects {
@@ -54,5 +54,3 @@ allprojects {
 task clean(type: Delete) {
   delete rootProject.buildDir
 }
-
-apply plugin: 'io.codearte.nexus-staging'

@@ -1,2 +1,10 @@
+pluginManagement {
+    repositories {
+        mavenCentral()
+        google()
+        gradlePluginPortal()
+    }
+}
+
 include ':bucketeer'
 include ':sample'

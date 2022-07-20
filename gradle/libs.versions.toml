@@ -1,0 +1,15 @@
+[versions]
+agp = "7.2.1"
+grpc = "1.47.0"
+kotlin = "1.7.10"
+
+[libraries]
+
+[plugins]
+android-library = { id = "com.android.library", version.ref = "agp" }
+android-application = { id = "com.android.application", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
+kotlin-dokka = { id = "org.jetbrains.dokka", version.ref = "kotlin" }
+nexusStaging = { id = "io.codearte.nexus-staging", version = "0.30.0" }
+protobuf = { id = "com.google.protobuf", version = "0.8.19" }
