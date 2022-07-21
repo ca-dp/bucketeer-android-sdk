@@ -47,17 +47,12 @@ dependencies {
   } else {
     implementation(project(":bucketeer"))
   }
-  implementation 'com.facebook.stetho:stetho:1.6.0'
-  implementation 'androidx.appcompat:appcompat:1.4.2'
-  implementation 'com.google.android.material:material:1.6.1'
-  implementation 'androidx.lifecycle:lifecycle-runtime:2.5.0'
-  implementation 'androidx.lifecycle:lifecycle-process:2.5.0'
 
-  androidTestImplementation "androidx.test.espresso:espresso-core:$versions.ANDROIDX_TEST_ESPRESSO"
-  androidTestImplementation "androidx.test.espresso:espresso-contrib:$versions.ANDROIDX_TEST_ESPRESSO"
-  androidTestImplementation "androidx.test:rules:$versions.ANDROIDX_TEST"
-  androidTestImplementation "androidx.test.ext:junit:$versions.ANDROIDX_TEST_EXT"
-  implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$versions.KOTLIN"
+  implementation libs.stetho
+  implementation libs.androidx.appcompat
+  implementation libs.materialComponents
+  implementation libs.androidx.lifecycle.runtime
+  implementation libs.androidx.lifecycle.process
 }
 repositories {
   mavenCentral()
