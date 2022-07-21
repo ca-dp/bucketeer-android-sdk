@@ -103,14 +103,14 @@ dependencies {
 
 protobuf {
   protoc {
-    artifact = "com.google.protobuf:protoc:$versions.PROTOC"
+    artifact = libs.proto.protoc.get().toString()
   }
   plugins {
     javalite {
-      artifact = "com.google.protobuf:protoc-gen-javalite:$versions.PROTOC_JAVALITE"
+      artifact = libs.proto.protocJavalite.get().toString()
     }
     grpc {
-      artifact = "io.grpc:protoc-gen-grpc-java:$versions.GRPC"
+      artifact = libs.proto.protocGrpc.get().toString()
     }
   }
   generateProtoTasks {
