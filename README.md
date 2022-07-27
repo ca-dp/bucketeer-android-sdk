@@ -27,7 +27,6 @@ sample.sdk_version=<SDK_VERSION>
 # sdk.version=<SDK_VERSION>
 # sonatype.username=<SONATYPE_USER>
 # sonatype.password=<SONATYPE_PASSWORD>
-# sonatype.stagingProfileId=<SONATYPE_STAGING_PROFILE_ID>
 # signing.keyId=<SIGNING_KEY_ID>
 # signing.password=<SIGNING_PASSWORD>
 # signing.secretKeyRingFile=<SIGNING_SECRET_KEY_RING_FILE>
@@ -85,7 +84,7 @@ Publishes SDK to Sonatype repository and releases to Maven Central.
 (Usually you don't need to publish manually because CI/CD workflow publishes automatically.)
 
 ```
-./gradlew :bucketeer:publishReleasePublicationToSonatypeRepository
+./gradlew :bucketeer:publish --nodaemon --no-parallel
 ./gradlew closeAndReleaseRepository
 ```
 

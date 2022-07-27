@@ -1,8 +1,12 @@
+import com.vanniktech.maven.publish.AndroidSingleVariantLibrary
+
 plugins {
   alias(libs.plugins.android.library)
   alias(libs.plugins.kotlin.android)
   alias(libs.plugins.kotlin.kapt)
   alias(libs.plugins.protobuf)
+  alias(libs.plugins.kotlin.dokka)
+  alias(libs.plugins.publish)
 }
 
 def properties = new Properties()
@@ -127,6 +131,12 @@ protobuf {
       }
     }
   }
+}
+
+mavenPublishing {
+  signAllPublications()
+  configure(new AndroidSingleVariantLibrary("release"))
+  pomFromGradleProperties()
 }
 
 apply from: "publish.gradle"
