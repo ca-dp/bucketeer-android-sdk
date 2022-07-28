@@ -8,11 +8,16 @@ plugins {
   alias(libs.plugins.publish) apply false
 }
 
+apply from: "${rootProject.rootDir}/gradle/publish.gradle"
+
 allprojects {
   repositories {
     google()
     mavenCentral()
   }
+
+  group = GROUP
+  version = VERSION_NAME
 }
 
 task clean(type: Delete) {
