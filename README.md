@@ -82,7 +82,7 @@ Publishes SDK to Sonatype repository and releases to Maven Central.
 (Usually you don't need to publish manually because CI/CD workflow publishes automatically.)
 
 ```
-./gradlew :bucketeer:publish --no-daemon --no-parallel -PmavenCentralUsername=$USERNAME -PmavenCentralPassword=$PASSWORD
+./gradlew :bucketeer:publish --no-daemon --no-parallel -PmavenCentralUsername=$SONATYPE_USERNAME -PmavenCentralPassword=$SONATYPE_PASSWORD
 ./gradlew closeAndReleaseRepository
 ```
 
