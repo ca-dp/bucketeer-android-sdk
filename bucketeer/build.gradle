@@ -68,7 +68,7 @@ android {
 dependencies {
   // gRPC
   implementation libs.grpc.okhttp
-  implementation libs.okhttp
+  implementation libs.okhttp2
   implementation libs.grpc.protobufLite
   implementation libs.grpc.stub
   compileOnly libs.javaxAnnotation
