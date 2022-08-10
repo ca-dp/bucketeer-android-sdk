@@ -6,7 +6,7 @@ option go_package = "github.com/ca-dp/bucketeer/proto/feature";
 message Variation {
   string id = 1;
   string value = 2;  // this is called value because it could be a string,
-                     // number or even json object
+  // number or even json object
   string name = 3;
   string description = 4;
 }

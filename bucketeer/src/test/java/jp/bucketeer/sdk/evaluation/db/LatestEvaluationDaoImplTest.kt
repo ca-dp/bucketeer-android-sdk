@@ -24,53 +24,64 @@ class LatestEvaluationDaoImplTest {
   private lateinit var latestEvaluationDao: LatestEvaluationDaoImpl
   private lateinit var openHelper: DatabaseOpenHelper
 
-  @Before fun setUp() {
+  @Before
+  fun setUp() {
     openHelper = DatabaseOpenHelper(RuntimeEnvironment.application, null)
     latestEvaluationDao = LatestEvaluationDaoImpl(openHelper)
   }
 
-  @After fun tearDown() {
+  @After
+  fun tearDown() {
     openHelper.close()
   }
 
-  @Test fun put_insertToDB() {
+  @Test
+  fun put_insertToDB() {
     latestEvaluationDao.put(user1, listOf(evaluation1))
 
     val projection = arrayOf(
-        LatestEvaluationEntity.COLUMN_FEATURE_ID,
-        LatestEvaluationEntity.COLUMN_USER_ID,
-        LatestEvaluationEntity.COLUMN_EVALUATION
+      LatestEvaluationEntity.COLUMN_FEATURE_ID,
+      LatestEvaluationEntity.COLUMN_USER_ID,
+      LatestEvaluationEntity.COLUMN_EVALUATION
     )
 
     val c = latestEvaluationDao.sqLiteOpenHelper.readableDatabase.query(
-        LatestEvaluationEntity.TABLE_NAME,
-        projection,
-        null,
-        null,
-        null,
-        null,
-        null
+      LatestEvaluationEntity.TABLE_NAME,
+      projection,
+      null,
+      null,
+      null,
+      null,
+      null
     )
 
     c.use {
       it.moveToFirst()
-      assertEquals(evaluation1.featureId, c.getString(
-          LatestEvaluationEntity.COLUMN_FEATURE_ID))
+      assertEquals(
+        evaluation1.featureId,
+        c.getString(
+          LatestEvaluationEntity.COLUMN_FEATURE_ID
+        )
+      )
       val blob = c.getBlob(LatestEvaluationEntity.COLUMN_EVALUATION)
-      assertEquals(evaluation1,
-          EvaluationOuterClass.Evaluation.newBuilder().mergeFrom(blob).build())
+      assertEquals(
+        evaluation1,
+        EvaluationOuterClass.Evaluation.newBuilder().mergeFrom(blob).build()
+      )
 
       assertEquals(c.moveToNext(), false)
     }
   }
 
-  @Test fun get_returnEmptyIfAddNoItem() {
+  @Test
+  fun get_returnEmptyIfAddNoItem() {
     val actual = latestEvaluationDao.get(user1)
 
     assertEquals(0, actual.size)
   }
 
-  @Test fun get_returnSingleItemIfAddItem() {
+  @Test
+  fun get_returnSingleItemIfAddItem() {
     latestEvaluationDao.put(user1, user1Evaluations.evaluationsList)
     val actual = latestEvaluationDao.get(user1)
 
@@ -78,7 +89,8 @@ class LatestEvaluationDaoImplTest {
     assertEquals(evaluation1, actual[0])
   }
 
-  @Test fun get_returnMultipleItemIfAddItems() {
+  @Test
+  fun get_returnMultipleItemIfAddItems() {
     latestEvaluationDao.put(user1, listOf(evaluation1))
     latestEvaluationDao.put(user1, listOf(evaluation2))
 
@@ -89,20 +101,23 @@ class LatestEvaluationDaoImplTest {
     assertEquals(evaluation2, actual[1])
   }
 
-  @Test fun deleteAllAndInsert_insert() {
+  @Test
+  fun deleteAllAndInsert_insert() {
     latestEvaluationDao.deleteAllAndInsert(user1, user1Evaluations.evaluationsList)
 
     latestEvaluationDao.get(user1) shouldBeEqualTo user1Evaluations.evaluationsList
   }
 
-  @Test fun deleteAllAndInsert_deleteOld() {
+  @Test
+  fun deleteAllAndInsert_deleteOld() {
     latestEvaluationDao.deleteAllAndInsert(user1, listOf(evaluation1))
     latestEvaluationDao.deleteAllAndInsert(user1, listOf(evaluation2))
 
     latestEvaluationDao.get(user1) shouldBeEqualTo listOf(evaluation2)
   }
 
-  @Test fun deleteAllAndInsert_notDeleteIfUserChanged() {
+  @Test
+  fun deleteAllAndInsert_notDeleteIfUserChanged() {
     latestEvaluationDao.deleteAllAndInsert(user1, listOf(evaluation1))
     latestEvaluationDao.deleteAllAndInsert(user2, listOf(evaluation2))
 

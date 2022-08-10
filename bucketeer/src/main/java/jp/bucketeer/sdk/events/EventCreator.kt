@@ -10,12 +10,12 @@ val NANOS_PER_MILLISECOND: Long = 1000000
 val MILLIS_PER_SECOND: Long = 1000
 
 internal fun generateGoalEvent(
-    tag: String,
-    timestamp: Long,
-    goalId: String,
-    value: Double,
-    user: UserOuterClass.User,
-    evaluations: List<EvaluationOuterClass.Evaluation>
+  tag: String,
+  timestamp: Long,
+  goalId: String,
+  value: Double,
+  user: UserOuterClass.User,
+  evaluations: List<EvaluationOuterClass.Evaluation>
 ): EventOuterClass.GoalEvent {
   return EventOuterClass.GoalEvent.newBuilder().apply {
     this.sourceId = EventOuterClass.SourceId.ANDROID
@@ -30,10 +30,10 @@ internal fun generateGoalEvent(
 }
 
 internal fun generateEvaluationEvent(
-    tag: String,
-    timestamp: Long,
-    evaluation: EvaluationOuterClass.Evaluation,
-    user: UserOuterClass.User
+  tag: String,
+  timestamp: Long,
+  evaluation: EvaluationOuterClass.Evaluation,
+  user: UserOuterClass.User
 ): EventOuterClass.EvaluationEvent {
   return EventOuterClass.EvaluationEvent.newBuilder().apply {
     this.sourceId = EventOuterClass.SourceId.ANDROID
@@ -49,14 +49,14 @@ internal fun generateEvaluationEvent(
 }
 
 internal fun generateDefaultEvaluationEvent(
-    tag: String,
-    timestamp: Long,
-    user: UserOuterClass.User,
-    featureId: String
+  tag: String,
+  timestamp: Long,
+  user: UserOuterClass.User,
+  featureId: String
 ): EventOuterClass.EvaluationEvent {
   val reason = ReasonOuterClass.Reason.newBuilder()
-      .setType(ReasonOuterClass.Reason.Type.CLIENT)
-      .build()
+    .setType(ReasonOuterClass.Reason.Type.CLIENT)
+    .build()
   return EventOuterClass.EvaluationEvent.newBuilder().apply {
     this.sourceId = EventOuterClass.SourceId.ANDROID
     this.tag = tag
@@ -69,26 +69,26 @@ internal fun generateDefaultEvaluationEvent(
 }
 
 internal fun generateGetEvaluationLatencyMetricsEvent(
-    latencyMillis: Long,
-    labels: Map<String, String>
+  latencyMillis: Long,
+  labels: Map<String, String>
 ): EventOuterClass.MetricsEvent {
   return EventOuterClass.GetEvaluationLatencyMetricsEvent.newBuilder().apply {
     this.duration = Duration.newBuilder()
-        .setSeconds(latencyMillis / MILLIS_PER_SECOND)
-        .setNanos((latencyMillis % MILLIS_PER_SECOND * NANOS_PER_MILLISECOND).toInt())
-        .build()
+      .setSeconds(latencyMillis / MILLIS_PER_SECOND)
+      .setNanos((latencyMillis % MILLIS_PER_SECOND * NANOS_PER_MILLISECOND).toInt())
+      .build()
   }.putAllLabels(labels)
-      .build().toMetricsEvent()
+    .build().toMetricsEvent()
 }
 
 internal fun generateGetEvaluationSizeMetricsEvent(
-    sizeByte: Int,
-    labels: Map<String, String>
+  sizeByte: Int,
+  labels: Map<String, String>
 ): EventOuterClass.MetricsEvent {
   return EventOuterClass.GetEvaluationSizeMetricsEvent.newBuilder().apply {
     this.sizeByte = sizeByte
   }.putAllLabels(labels)
-      .build().toMetricsEvent()
+    .build().toMetricsEvent()
 }
 
 internal fun generateInternalErrorCountMetricsEvent(tag: String): EventOuterClass.MetricsEvent {

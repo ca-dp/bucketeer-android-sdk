@@ -21,31 +21,34 @@ class CurrentEvaluationDaoImplTest {
   private lateinit var currentEvaluationDao: CurrentEvaluationDaoImpl
   private lateinit var openHelper: DatabaseOpenHelper
 
-  @Before fun setUp() {
+  @Before
+  fun setUp() {
     openHelper = DatabaseOpenHelper(ApplicationProvider.getApplicationContext(), null)
     currentEvaluationDao = CurrentEvaluationDaoImpl(openHelper)
   }
 
-  @After fun tearDown() {
+  @After
+  fun tearDown() {
     openHelper.close()
   }
 
-  @Test fun upsertEvaluation_insertToDB() {
+  @Test
+  fun upsertEvaluation_insertToDB() {
     currentEvaluationDao.upsertEvaluation(user1Evaluations.evaluationsList[0])
 
     val projection = arrayOf(
-        CurrentEvaluationEntity.COLUMN_USER_ID,
-        CurrentEvaluationEntity.COLUMN_EVALUATION
+      CurrentEvaluationEntity.COLUMN_USER_ID,
+      CurrentEvaluationEntity.COLUMN_EVALUATION
     )
 
     val c = currentEvaluationDao.sqLiteOpenHelper.readableDatabase.query(
-        CurrentEvaluationEntity.TABLE_NAME,
-        projection,
-        null,
-        null,
-        null,
-        null,
-        null
+      CurrentEvaluationEntity.TABLE_NAME,
+      projection,
+      null,
+      null,
+      null,
+      null,
+      null
     )
 
     c.use {
@@ -53,12 +56,14 @@ class CurrentEvaluationDaoImplTest {
       c.getString(CurrentEvaluationEntity.COLUMN_USER_ID) shouldBeEqualTo "user id 1"
       val blob = c.getBlob(CurrentEvaluationEntity.COLUMN_EVALUATION)
 
-      EvaluationOuterClass.Evaluation.newBuilder().mergeFrom(blob).build() shouldBeEqualTo evaluation1
+      EvaluationOuterClass.Evaluation.newBuilder().mergeFrom(blob)
+        .build() shouldBeEqualTo evaluation1
       c.moveToNext() shouldBeEqualTo false
     }
   }
 
-  @Test fun upsertEvaluation_update() {
+  @Test
+  fun upsertEvaluation_update() {
     val sourceEvaluation = user1Evaluations.evaluationsList[0]
     val variationValue = "update value"
     val updatedEvaluation = sourceEvaluation.toBuilder().setVariationValue(variationValue).build()
@@ -72,7 +77,8 @@ class CurrentEvaluationDaoImplTest {
     afterEvaluations[0].variationValue shouldBeEqualTo "update value"
   }
 
-  @Test fun deleteNotIn_deleteAll() {
+  @Test
+  fun deleteNotIn_deleteAll() {
     currentEvaluationDao.upsertEvaluation(user1Evaluations.evaluationsList[0])
     currentEvaluationDao.upsertEvaluation(user1Evaluations.evaluationsList[1])
     currentEvaluationDao.upsertEvaluation(user2Evaluations.evaluationsList[0])
@@ -88,7 +94,8 @@ class CurrentEvaluationDaoImplTest {
     evaluations2[0].featureId shouldBeEqualTo "test-feature-3"
   }
 
-  @Test fun deleteNotIn_deleteOneItem() {
+  @Test
+  fun deleteNotIn_deleteOneItem() {
     currentEvaluationDao.upsertEvaluation(user1Evaluations.evaluationsList[0])
     currentEvaluationDao.upsertEvaluation(user1Evaluations.evaluationsList[1])
     currentEvaluationDao.upsertEvaluation(user2Evaluations.evaluationsList[0])
@@ -105,7 +112,8 @@ class CurrentEvaluationDaoImplTest {
     evaluations2[0].featureId shouldBeEqualTo "test-feature-3"
   }
 
-  @Test fun deleteNotIn_notDelete() {
+  @Test
+  fun deleteNotIn_notDelete() {
     currentEvaluationDao.upsertEvaluation(user1Evaluations.evaluationsList[0])
     currentEvaluationDao.upsertEvaluation(user1Evaluations.evaluationsList[1])
     currentEvaluationDao.upsertEvaluation(user2Evaluations.evaluationsList[0])
@@ -123,20 +131,23 @@ class CurrentEvaluationDaoImplTest {
     evaluations2[0].featureId shouldBeEqualTo "test-feature-3"
   }
 
-  @Test fun getEvaluations_returnEmptyIfAddNoItem() {
+  @Test
+  fun getEvaluations_returnEmptyIfAddNoItem() {
     val actual = currentEvaluationDao.getEvaluations("user id 1")
 
     actual.size shouldBeEqualTo 0
   }
 
-  @Test fun getEvaluations_returnEmptyIfTargetUserItemIsEmpty() {
+  @Test
+  fun getEvaluations_returnEmptyIfTargetUserItemIsEmpty() {
     currentEvaluationDao.upsertEvaluation(user2Evaluations.evaluationsList[0])
     val actual = currentEvaluationDao.getEvaluations("user id 1")
 
     actual.size shouldBeEqualTo 0
   }
 
-  @Test fun getEvaluations_returnSingleItemIfAddTargetUserItem() {
+  @Test
+  fun getEvaluations_returnSingleItemIfAddTargetUserItem() {
     val evaluation = user1Evaluations.evaluationsList[0]
 
     currentEvaluationDao.upsertEvaluation(evaluation)
@@ -146,7 +157,8 @@ class CurrentEvaluationDaoImplTest {
     actual[0] shouldBeEqualTo evaluation1
   }
 
-  @Test fun getEvaluations_returnMultipleItemIfAddSomeItems() {
+  @Test
+  fun getEvaluations_returnMultipleItemIfAddSomeItems() {
     currentEvaluationDao.upsertEvaluation(user1Evaluations.evaluationsList[0])
     currentEvaluationDao.upsertEvaluation(user2Evaluations.evaluationsList[0])
     currentEvaluationDao.upsertEvaluation(user1Evaluations.evaluationsList[1])

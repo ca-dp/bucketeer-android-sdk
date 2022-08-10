@@ -8,11 +8,11 @@ import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
 
 internal class EventSender(
-    private val logSendingIntervalMillis: Long,
-    private val logSendingMaxBatchQueueCount: Int,
-    private val eventActionCreator: EventActionCreator,
-    private val eventStore: EventStore,
-    private val scheduledExecutorService: ScheduledExecutorService
+  private val logSendingIntervalMillis: Long,
+  private val logSendingMaxBatchQueueCount: Int,
+  private val eventActionCreator: EventActionCreator,
+  private val eventStore: EventStore,
+  private val scheduledExecutorService: ScheduledExecutorService
 ) : ScheduledTask {
   override var isStarted: Boolean = false
   private var scheduledFuture: ScheduledFuture<*>? = null
@@ -33,10 +33,10 @@ internal class EventSender(
   private fun reschedule() {
     scheduledFuture?.cancel(false)
     scheduledFuture = scheduledExecutorService.scheduleWithFixedDelay(
-        { sendEvent() },
-        logSendingIntervalMillis,
-        logSendingIntervalMillis,
-        TimeUnit.MILLISECONDS
+      { sendEvent() },
+      logSendingIntervalMillis,
+      logSendingIntervalMillis,
+      TimeUnit.MILLISECONDS
     )
   }
 

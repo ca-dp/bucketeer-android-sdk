@@ -1,9 +1,9 @@
 package jp.bucketeer.sdk.di
 
-import jp.bucketeer.sdk.evaluation.CurrentStore
 import jp.bucketeer.sdk.dispatcher.Dispatcher
-import jp.bucketeer.sdk.events.EventStore
+import jp.bucketeer.sdk.evaluation.CurrentStore
 import jp.bucketeer.sdk.evaluation.LatestEvaluationStore
+import jp.bucketeer.sdk.events.EventStore
 
 internal class StoreModule(dispatcher: Dispatcher) {
   val latestEvaluationStore: LatestEvaluationStore by lazy {
@@ -16,4 +16,3 @@ internal class StoreModule(dispatcher: Dispatcher) {
     EventStore(dispatcher)
   }
 }
-

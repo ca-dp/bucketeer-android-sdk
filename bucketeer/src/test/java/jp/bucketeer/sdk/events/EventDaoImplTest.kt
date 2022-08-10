@@ -31,12 +31,14 @@ class EventDaoImplTest {
   private lateinit var eventDao: EventDaoImpl
   private lateinit var openHelper: DatabaseOpenHelper
 
-  @Before fun setUp() {
+  @Before
+  fun setUp() {
     openHelper = DatabaseOpenHelper(RuntimeEnvironment.application, null)
     eventDao = EventDaoImpl(openHelper)
   }
 
-  @Test fun addEvent_goal() {
+  @Test
+  fun addEvent_goal() {
     eventDao.addEvent(goalEvent1)
 
     val expected = goalEvent1.pack()
@@ -45,7 +47,8 @@ class EventDaoImplTest {
     eventDao.getEvents().assertNotEmptyIds()
   }
 
-  @Test fun addEvent_evaluation() {
+  @Test
+  fun addEvent_evaluation() {
     eventDao.addEvent(evaluationEvent1)
 
     val expected = evaluationEvent1.pack()
@@ -54,7 +57,8 @@ class EventDaoImplTest {
     eventDao.getEvents().assertNotEmptyIds()
   }
 
-  @Test fun addEvent_metrics() {
+  @Test
+  fun addEvent_metrics() {
     eventDao.addEvent(metricsEvent1)
 
     val expected = metricsEvent1.pack()
@@ -63,7 +67,8 @@ class EventDaoImplTest {
     eventDao.getEvents().assertNotEmptyIds()
   }
 
-  @Test fun addEvent_multipleEvent() {
+  @Test
+  fun addEvent_multipleEvent() {
     eventDao.addEvent(evaluationEvent1)
     eventDao.addEvent(goalEvent1)
     eventDao.addEvent(metricsEvent1)
@@ -78,18 +83,18 @@ class EventDaoImplTest {
     eventDao.addEvent(metricsEvent8)
 
     val expected = listOf(
-        evaluationEvent1.pack(),
-        goalEvent1.pack(),
-        metricsEvent1.pack(),
-        evaluationEvent2.pack(),
-        goalEvent2.pack(),
-        metricsEvent2.pack(),
-        metricsEvent3.pack(),
-        metricsEvent4.pack(),
-        metricsEvent5.pack(),
-        metricsEvent6.pack(),
-        metricsEvent7.pack(),
-        metricsEvent8.pack()
+      evaluationEvent1.pack(),
+      goalEvent1.pack(),
+      metricsEvent1.pack(),
+      evaluationEvent2.pack(),
+      goalEvent2.pack(),
+      metricsEvent2.pack(),
+      metricsEvent3.pack(),
+      metricsEvent4.pack(),
+      metricsEvent5.pack(),
+      metricsEvent6.pack(),
+      metricsEvent7.pack(),
+      metricsEvent8.pack()
     )
     val actual = eventDao.getEvents().map { it.event }
     expected.forEach {
@@ -98,7 +103,8 @@ class EventDaoImplTest {
     eventDao.getEvents().assertNotEmptyIds()
   }
 
-  @Test fun deleteAll() {
+  @Test
+  fun deleteAll() {
     eventDao.addEvent(evaluationEvent1)
     eventDao.addEvent(goalEvent1)
     eventDao.addEvent(metricsEvent1)
@@ -119,7 +125,8 @@ class EventDaoImplTest {
     eventDao.getEvents() shouldBe emptyList()
   }
 
-  @Test fun deleteAnyItems() {
+  @Test
+  fun deleteAnyItems() {
     eventDao.addEvent(evaluationEvent1)
     eventDao.addEvent(goalEvent1)
     eventDao.addEvent(metricsEvent1)
@@ -133,15 +140,15 @@ class EventDaoImplTest {
     eventDao.addEvent(metricsEvent7)
     eventDao.addEvent(metricsEvent8)
     val ids = eventDao.getEvents()
-        .filter {
-          it.event.equals(evaluationEvent2.pack())
-              || it.event.equals(goalEvent1.pack())
-              || it.event.equals(metricsEvent1.pack())
-              || it.event.equals(metricsEvent3.pack())
-              || it.event.equals(metricsEvent5.pack())
-              || it.event.equals(metricsEvent7.pack())
-        }
-        .map { it.id }
+      .filter {
+        it.event.equals(evaluationEvent2.pack()) ||
+          it.event.equals(goalEvent1.pack()) ||
+          it.event.equals(metricsEvent1.pack()) ||
+          it.event.equals(metricsEvent3.pack()) ||
+          it.event.equals(metricsEvent5.pack()) ||
+          it.event.equals(metricsEvent7.pack())
+      }
+      .map { it.id }
 
     eventDao.delete(ids)
 
@@ -159,4 +166,3 @@ class EventDaoImplTest {
     forEach { it.id.isEmpty() shouldNotBeEqualTo true }
   }
 }
-

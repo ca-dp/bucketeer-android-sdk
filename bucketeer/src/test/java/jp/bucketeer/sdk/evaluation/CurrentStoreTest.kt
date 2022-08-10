@@ -13,7 +13,8 @@ import org.mockito.kotlin.verifyNoMoreInteractions
 
 class CurrentStoreTest {
 
-  @Test fun currentEvaluations_observe() {
+  @Test
+  fun currentEvaluations_observe() {
     val dispatcher = Dispatcher()
     val currentStore = CurrentStore(dispatcher)
     val observer: (Map<String, List<EvaluationOuterClass.Evaluation>>) -> Unit = mock()
@@ -21,7 +22,8 @@ class CurrentStoreTest {
     currentStore.currentEvaluations.addObserver(observer)
 
     dispatcher.send(
-        CurrentEvaluationListDataChangedAction(user1.id, user1Evaluations.evaluationsList))
+      CurrentEvaluationListDataChangedAction(user1.id, user1Evaluations.evaluationsList)
+    )
 
     verify(observer).invoke(mapOf("user id 1" to user1Evaluations.evaluationsList))
     verifyNoMoreInteractions(observer)

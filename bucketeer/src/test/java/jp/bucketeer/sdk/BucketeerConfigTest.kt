@@ -4,15 +4,16 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Test
 
 class BucketeerConfigTest {
-  @Test fun build() {
+  @Test
+  fun build() {
     BucketeerConfig.Builder()
-        .logSendingIntervalMillis(1)
-        .logSendingMaxBatchQueueCount(2)
-        .pollingEvaluationIntervalMillis(3)
-        .build() shouldBeEqualTo BucketeerConfig(
-        logSendingIntervalMillis = 1,
-        logSendingMaxBatchQueueCount = 2,
-        pollingEvaluationIntervalMillis = 3
+      .logSendingIntervalMillis(1)
+      .logSendingMaxBatchQueueCount(2)
+      .pollingEvaluationIntervalMillis(3)
+      .build() shouldBeEqualTo BucketeerConfig(
+      logSendingIntervalMillis = 1,
+      logSendingMaxBatchQueueCount = 2,
+      pollingEvaluationIntervalMillis = 3
     )
   }
 

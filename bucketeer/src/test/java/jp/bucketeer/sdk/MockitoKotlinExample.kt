@@ -8,7 +8,8 @@ import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 
 class MockitoKotlinExample {
-  @Test fun doAction_doesSomething() {
+  @Test
+  fun doAction_doesSomething() {
     /* Given */
     val mock = mock<MyInterface> {
       on { doSomething(any()) } doReturn "text"

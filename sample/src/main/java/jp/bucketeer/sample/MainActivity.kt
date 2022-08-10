@@ -5,9 +5,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.os.Bundle
-import com.google.android.material.textfield.TextInputLayout
-import androidx.appcompat.app.AlertDialog
 import android.view.View
+import androidx.appcompat.app.AlertDialog
+import com.google.android.material.textfield.TextInputLayout
 import jp.bucketeer.sdk.Bucketeer
 import jp.bucketeer.sdk.Bucketeer.FetchUserEvaluationsCallback
 import jp.bucketeer.sdk.BucketeerException
@@ -17,8 +17,8 @@ class MainActivity : Activity() {
   private var bucketeer: Bucketeer? = null
   private val sharedPref by lazy {
     getSharedPreferences(
-        Constants.PREFERENCE_FILE_KEY,
-        Context.MODE_PRIVATE
+      Constants.PREFERENCE_FILE_KEY,
+      Context.MODE_PRIVATE
     )
   }
 
@@ -36,8 +36,10 @@ class MainActivity : Activity() {
   private fun setGetVariation() {
     val inputGetVariation = findViewById<TextInputLayout>(R.id.get_variation)
     inputGetVariation.editText?.setText(
-        sharedPref.getString(Constants.PREFERENCE_KEY_FEATURE_FLAG_ID,
-            Constants.DEFAULT_FEATURE_FLAG_ID)
+      sharedPref.getString(
+        Constants.PREFERENCE_KEY_FEATURE_FLAG_ID,
+        Constants.DEFAULT_FEATURE_FLAG_ID
+      )
     )
     findViewById<View>(R.id.btn_get_variation).setOnClickListener {
       val featureId = inputGetVariation.editText?.text.toString().trim()
@@ -58,7 +60,7 @@ class MainActivity : Activity() {
   private fun setGoalId() {
     val inputGoalId = findViewById<TextInputLayout>(R.id.goal_id)
     inputGoalId.editText?.setText(
-        sharedPref.getString(Constants.PREFERENCE_KEY_GOAL_ID, Constants.DEFAULT_GOAL_ID)
+      sharedPref.getString(Constants.PREFERENCE_KEY_GOAL_ID, Constants.DEFAULT_GOAL_ID)
     )
     findViewById<View>(R.id.btn_send_goal).setOnClickListener {
       val goalId = inputGoalId.editText?.text.toString().trim()
@@ -81,7 +83,7 @@ class MainActivity : Activity() {
   private fun setSwitchUser() {
     val inputSwitchUserId = findViewById<TextInputLayout>(R.id.switch_user_id)
     inputSwitchUserId.editText?.setText(
-        sharedPref.getString(Constants.PREFERENCE_KEY_USER_ID, Constants.DEFAULT_USER_ID)
+      sharedPref.getString(Constants.PREFERENCE_KEY_USER_ID, Constants.DEFAULT_USER_ID)
     )
     findViewById<View>(R.id.btn_switch_user).setOnClickListener {
       val userId = inputSwitchUserId.editText?.text.toString().trim()
@@ -112,7 +114,7 @@ class MainActivity : Activity() {
   private fun setTag() {
     val inputTag = findViewById<TextInputLayout>(R.id.tag)
     inputTag.editText?.setText(
-        sharedPref.getString(Constants.PREFERENCE_KEY_TAG, Constants.DEFAULT_TAG)
+      sharedPref.getString(Constants.PREFERENCE_KEY_TAG, Constants.DEFAULT_TAG)
     )
     findViewById<View>(R.id.btn_switch_tag).setOnClickListener {
       val tag = inputTag.editText?.text.toString().trim()

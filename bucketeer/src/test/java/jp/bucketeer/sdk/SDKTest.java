@@ -7,7 +7,8 @@ import org.robolectric.RobolectricTestRunner;
 @RunWith(RobolectricTestRunner.class)
 public class SDKTest {
 
-  @Test public void test() {
-    //assertEquals(SDK.test("test", this), "test");
-  }
+    @Test
+    public void test() {
+        //assertEquals(SDK.test("test", this), "test");
+    }
 }

@@ -1,9 +1,9 @@
 package jp.bucketeer.sdk.events
 
-import java.util.*
+import java.util.Arrays
 
 internal data class EventEntity(
-    val event: ByteArray
+  val event: ByteArray
 ) {
   companion object {
     const val TABLE_NAME = "event"

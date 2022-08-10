@@ -15,7 +15,8 @@ import org.robolectric.RobolectricTestRunner
 @RunWith(RobolectricTestRunner::class)
 class EventCreatorTest {
 
-  @Test fun generateEvaluationEvent() {
+  @Test
+  fun generateEvaluationEvent() {
     val featureTag = "feature-tag"
     val event = generateEvaluationEvent(featureTag, 1234, evaluation1, user1)
 
@@ -29,11 +30,13 @@ class EventCreatorTest {
       variationId shouldBeEqualTo "test-feature-1-variation-A"
       user shouldBeEqualTo user1
       reason shouldBeEqualTo ReasonOuterClass.Reason.newBuilder().setType(
-          ReasonOuterClass.Reason.Type.DEFAULT).build()
+        ReasonOuterClass.Reason.Type.DEFAULT
+      ).build()
     }
   }
 
-  @Test fun generateDefaultEvaluationEvent() {
+  @Test
+  fun generateDefaultEvaluationEvent() {
     val featureTag = "feature-tag"
     val featureId = "feature-id"
     val event = generateDefaultEvaluationEvent(featureTag, 1234, user1, featureId)
@@ -46,11 +49,13 @@ class EventCreatorTest {
       userId shouldBeEqualTo "user id 1"
       user shouldBeEqualTo user1
       reason shouldBeEqualTo ReasonOuterClass.Reason.newBuilder().setType(
-          ReasonOuterClass.Reason.Type.CLIENT).build()
+        ReasonOuterClass.Reason.Type.CLIENT
+      ).build()
     }
   }
 
-  @Test fun generateGoalEvent() {
+  @Test
+  fun generateGoalEvent() {
     val featureTag = "feature-tag"
     val event = generateGoalEvent(featureTag, 1234, "goalId", 100.0, user1, listOf(evaluation1))
 
@@ -66,10 +71,13 @@ class EventCreatorTest {
     }
   }
 
-  @Test fun generateGetEvaluationLatencyMetricsEvent() {
+  @Test
+  fun generateGetEvaluationLatencyMetricsEvent() {
     val time = System.currentTimeMillis() / 1000
-    val event = generateGetEvaluationLatencyMetricsEvent(1234,
-        mapOf("tag" to "android", "state" to "FULL"))
+    val event = generateGetEvaluationLatencyMetricsEvent(
+      1234,
+      mapOf("tag" to "android", "state" to "FULL")
+    )
 
     event.run {
       timestamp shouldBeGreaterOrEqualTo time
@@ -86,10 +94,13 @@ class EventCreatorTest {
     return EventOuterClass.GetEvaluationLatencyMetricsEvent.parseFrom(this.value)
   }
 
-  @Test fun generateGetEvaluationSizeMetricsEvent() {
+  @Test
+  fun generateGetEvaluationSizeMetricsEvent() {
     val time = System.currentTimeMillis() / 1000
-    val event = generateGetEvaluationSizeMetricsEvent(1234,
-        mapOf("tag" to "android", "state" to "FULL"))
+    val event = generateGetEvaluationSizeMetricsEvent(
+      1234,
+      mapOf("tag" to "android", "state" to "FULL")
+    )
 
     event.run {
       timestamp shouldBeGreaterOrEqualTo time
@@ -106,7 +117,8 @@ class EventCreatorTest {
     return EventOuterClass.GetEvaluationSizeMetricsEvent.parseFrom(this.value)
   }
 
-  @Test fun generateTimeoutErrorCountMetricsEvent() {
+  @Test
+  fun generateTimeoutErrorCountMetricsEvent() {
     val time = System.currentTimeMillis() / 1000
     val event = generateTimeoutErrorCountMetricsEvent("tag")
 
@@ -124,7 +136,8 @@ class EventCreatorTest {
     return EventOuterClass.TimeoutErrorCountMetricsEvent.parseFrom(this.value)
   }
 
-  @Test fun generateInternalErrorCountMetricsEvent() {
+  @Test
+  fun generateInternalErrorCountMetricsEvent() {
     val time = System.currentTimeMillis() / 1000
     val event = generateInternalErrorCountMetricsEvent("tag")
 

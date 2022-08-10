@@ -14,7 +14,7 @@ import jp.bucketeer.sdk.ext.getBlob
 import jp.bucketeer.sdk.ext.transaction
 
 internal class LatestEvaluationDaoImpl(
-    val sqLiteOpenHelper: SQLiteOpenHelper
+  val sqLiteOpenHelper: SQLiteOpenHelper
 ) : LatestEvaluationDao {
 
   override fun put(user: UserOuterClass.User, list: List<EvaluationOuterClass.Evaluation>) {
@@ -29,9 +29,9 @@ internal class LatestEvaluationDaoImpl(
   }
 
   private fun insert(
-      database: SQLiteDatabase,
-      user: UserOuterClass.User,
-      evaluation: EvaluationOuterClass.Evaluation
+    database: SQLiteDatabase,
+    user: UserOuterClass.User,
+    evaluation: EvaluationOuterClass.Evaluation
   ): Long {
     val contentValue = ContentValues().apply {
       put(COLUMN_USER_ID, user.id)
@@ -42,18 +42,18 @@ internal class LatestEvaluationDaoImpl(
   }
 
   private fun update(
-      database: SQLiteDatabase,
-      user: UserOuterClass.User,
-      evaluation: EvaluationOuterClass.Evaluation
+    database: SQLiteDatabase,
+    user: UserOuterClass.User,
+    evaluation: EvaluationOuterClass.Evaluation
   ): Int {
     val contentValues = ContentValues().apply {
       put(COLUMN_EVALUATION, evaluation.toByteArray())
     }
     return database.update(
-        TABLE_NAME,
-        contentValues,
-        "$COLUMN_USER_ID=? AND $COLUMN_FEATURE_ID=?",
-        arrayOf(user.id, evaluation.featureId)
+      TABLE_NAME,
+      contentValues,
+      "$COLUMN_USER_ID=? AND $COLUMN_FEATURE_ID=?",
+      arrayOf(user.id, evaluation.featureId)
     )
   }
 
@@ -61,39 +61,39 @@ internal class LatestEvaluationDaoImpl(
     val projection = arrayOf(COLUMN_USER_ID, COLUMN_EVALUATION)
 
     val c = sqLiteOpenHelper.readableDatabase.query(
-        TABLE_NAME,
-        projection,
-        "$COLUMN_USER_ID=?",
-        arrayOf(user.id),
-        null,
-        null,
-        null
+      TABLE_NAME,
+      projection,
+      "$COLUMN_USER_ID=?",
+      arrayOf(user.id),
+      null,
+      null,
+      null
     )
 
     return c.use {
       c.asSequence()
-          .map {
-            EvaluationOuterClass.Evaluation.parseFrom(
-                it.getBlob(COLUMN_EVALUATION)
-            )
-          }.toList()
+        .map {
+          EvaluationOuterClass.Evaluation.parseFrom(
+            it.getBlob(COLUMN_EVALUATION)
+          )
+        }.toList()
     }
   }
 
   private fun deleteAll(
-      database: SQLiteDatabase,
-      user: UserOuterClass.User
+    database: SQLiteDatabase,
+    user: UserOuterClass.User
   ) {
     database.delete(
-        TABLE_NAME,
-        "$COLUMN_USER_ID=?",
-        arrayOf(user.id)
+      TABLE_NAME,
+      "$COLUMN_USER_ID=?",
+      arrayOf(user.id)
     )
   }
 
   override fun deleteAllAndInsert(
-      user: UserOuterClass.User,
-      list: List<EvaluationOuterClass.Evaluation>
+    user: UserOuterClass.User,
+    list: List<EvaluationOuterClass.Evaluation>
   ): Boolean {
     sqLiteOpenHelper.writableDatabase.transaction {
       deleteAll(this, user)

@@ -39,9 +39,9 @@ import java.util.concurrent.TimeUnit
 class BucketeerTest {
 
   private val sql_tables = listOf(
-      CurrentEvaluationEntity.TABLE_NAME,
-      LatestEvaluationEntity.TABLE_NAME,
-      EventEntity.TABLE_NAME
+    CurrentEvaluationEntity.TABLE_NAME,
+    LatestEvaluationEntity.TABLE_NAME,
+    EventEntity.TABLE_NAME
   )
 
   @Before
@@ -50,14 +50,14 @@ class BucketeerTest {
     val sqLiteOpenHelper = DatabaseOpenHelper(context as Application)
     for (table in sql_tables) {
       sqLiteOpenHelper.writableDatabase.delete(
-          table,
-          null,
-          null
+        table,
+        null,
+        null
       )
     }
     context.getSharedPreferences(
-        Constants.PREFERENCES_NAME,
-        Context.MODE_PRIVATE
+      Constants.PREFERENCES_NAME,
+      Context.MODE_PRIVATE
     ).edit().clear().commit()
   }
 
@@ -110,15 +110,15 @@ class BucketeerTest {
   fun registerEvent() {
     val api = createApi()
     val event1 = EventOuterClass.Event
-        .newBuilder()
-        .setId(UUID.randomUUID().toString())
-        .setEvent(evaluationEvent1.pack())
-        .build()
+      .newBuilder()
+      .setId(UUID.randomUUID().toString())
+      .setEvent(evaluationEvent1.pack())
+      .build()
     val event2 = EventOuterClass.Event
-        .newBuilder()
-        .setId(UUID.randomUUID().toString())
-        .setEvent(goalEvent1.pack())
-        .build()
+      .newBuilder()
+      .setId(UUID.randomUUID().toString())
+      .setEvent(goalEvent1.pack())
+      .build()
     val events = listOf(event1, event2)
     when (val result = api.registerEvent(events)) {
       is Api.Result.Success -> {
@@ -178,14 +178,14 @@ class BucketeerTest {
   private fun createBucketeer(): Bucketeer {
     val context = InstrumentationRegistry.getInstrumentation().targetContext.applicationContext
     val config = BucketeerConfig.Builder().logSendingIntervalMillis(100)
-        .logSendingMaxBatchQueueCount(1)
-        .pollingEvaluationIntervalMillis(100)
-        .build()
+      .logSendingMaxBatchQueueCount(1)
+      .pollingEvaluationIntervalMillis(100)
+      .build()
     return Bucketeer.Builder(context).config(config)
-        .apiKey(BuildConfig.API_KEY)
-        .endpoint(BuildConfig.API_URL)
-        .featureTag(TAG)
-        .build()
+      .apiKey(BuildConfig.API_KEY)
+      .endpoint(BuildConfig.API_URL)
+      .featureTag(TAG)
+      .build()
   }
 
   private val userEvaluationsId1: String by lazy {
@@ -195,27 +195,27 @@ class BucketeerTest {
   private val timestamp = System.currentTimeMillis() / 1000
 
   private val user1 = UserOuterClass
-      .User
-      .newBuilder()
-      .setId(USER_ID_1)
-      .build()
+    .User
+    .newBuilder()
+    .setId(USER_ID_1)
+    .build()
 
   private val reason = ReasonOuterClass.Reason.newBuilder()
     .setType(ReasonOuterClass.Reason.Type.CLIENT)
     .build()
 
   private val evaluationEvent1 = EventOuterClass.EvaluationEvent
-      .newBuilder()
-      .setTimestamp(timestamp)
-      .setFeatureId(FEATURE_FLAG_ID_1)
-      .setFeatureVersion(0)
-      .setUserId(USER_ID_1)
-      .setVariationId(userEvaluationsId1)
-      .setUser(user1)
-      .setReason(reason)
-      .setTag(TAG)
-      .setSourceId(EventOuterClass.SourceId.ANDROID)
-      .build()
+    .newBuilder()
+    .setTimestamp(timestamp)
+    .setFeatureId(FEATURE_FLAG_ID_1)
+    .setFeatureVersion(0)
+    .setUserId(USER_ID_1)
+    .setVariationId(userEvaluationsId1)
+    .setUser(user1)
+    .setReason(reason)
+    .setTag(TAG)
+    .setSourceId(EventOuterClass.SourceId.ANDROID)
+    .build()
 
   private val evaluation1 = EvaluationOuterClass.Evaluation
     .newBuilder()
@@ -227,16 +227,16 @@ class BucketeerTest {
     .build()
 
   private val goalEvent1 = EventOuterClass.GoalEvent
-      .newBuilder()
-      .setTimestamp(timestamp)
-      .setGoalId(GOAL_ID_1)
-      .setUserId(USER_ID_1)
-      .setValue(GOAL_VALUE_1)
-      .setUser(user1)
-      .addEvaluations(evaluation1)
-      .setTag(TAG)
-      .setSourceId(EventOuterClass.SourceId.ANDROID)
-      .build()
+    .newBuilder()
+    .setTimestamp(timestamp)
+    .setGoalId(GOAL_ID_1)
+    .setUserId(USER_ID_1)
+    .setValue(GOAL_VALUE_1)
+    .setUser(user1)
+    .addEvaluations(evaluation1)
+    .setTag(TAG)
+    .setSourceId(EventOuterClass.SourceId.ANDROID)
+    .build()
 
   companion object {
     const val TAG = "android"

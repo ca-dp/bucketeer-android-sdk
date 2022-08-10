@@ -3,8 +3,8 @@ package jp.bucketeer.sdk.evaluation.db
 import java.util.Arrays
 
 internal data class CurrentEvaluationEntity(
-    val featureId: String,
-    val evaluation: ByteArray
+  val featureId: String,
+  val evaluation: ByteArray
 ) {
   companion object {
     const val TABLE_NAME = "current_evaluation"

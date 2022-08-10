@@ -7,20 +7,22 @@ import org.junit.Test
 class SdkLogHandlerTest {
   private val logHistory: MutableList<String> = mutableListOf()
 
-  @Before fun setUp() {
+  @Before
+  fun setUp() {
     SdkLogger.addLogger(object : LogHandler() {
       override fun log(
-          priority: Int,
-          msgCreator: (() -> String?)?,
-          th: Throwable?,
-          isLogForUser: Boolean
+        priority: Int,
+        msgCreator: (() -> String?)?,
+        th: Throwable?,
+        isLogForUser: Boolean
       ) {
         logHistory += "$priority ${msgCreator?.invoke()} ${th?.javaClass?.simpleName}"
       }
     })
   }
 
-  @Test fun log() {
+  @Test
+  fun log() {
     logv { "VERBOSE" }
     logv(throwable = Exception()) { "VERBOSE" }
     logd { "DEBUG" }
@@ -35,18 +37,18 @@ class SdkLogHandlerTest {
     logwtf(throwable = Exception()) { "ASSERT" }
 
     logHistory shouldBeEqualTo listOf(
-        "2 VERBOSE null",
-        "2 VERBOSE Exception",
-        "3 DEBUG null",
-        "3 DEBUG Exception",
-        "4 INFO null",
-        "4 INFO Exception",
-        "5 WARN null",
-        "5 WARN Exception",
-        "6 ERROR null",
-        "6 ERROR Exception",
-        "7 ASSERT null",
-        "7 ASSERT Exception"
+      "2 VERBOSE null",
+      "2 VERBOSE Exception",
+      "3 DEBUG null",
+      "3 DEBUG Exception",
+      "4 INFO null",
+      "4 INFO Exception",
+      "5 WARN null",
+      "5 WARN Exception",
+      "6 ERROR null",
+      "6 ERROR Exception",
+      "7 ASSERT null",
+      "7 ASSERT Exception"
     )
   }
 }

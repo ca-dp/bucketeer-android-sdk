@@ -47,7 +47,8 @@ class EventSenderTest {
     }
   }
 
-  @Test fun scheduleSending_sendByTimer() {
+  @Test
+  fun scheduleSending_sendByTimer() {
     val eventSender = createEventSenderWithInterval(50)
     val defaultValue = listOf(evaluationEvent1.toEvent(), goalEvent1.toEvent())
 
@@ -57,10 +58,10 @@ class EventSenderTest {
     val callbackCountDown = CountDownLatch(1)
     val executor: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor()
     val scheduler = executor.scheduleWithFixedDelay(
-        { callbackCountDown.countDown() },
-        500,
-        500,
-        TimeUnit.MILLISECONDS
+      { callbackCountDown.countDown() },
+      500,
+      500,
+      TimeUnit.MILLISECONDS
     )
 
     callbackCountDown.await(5, TimeUnit.SECONDS)
@@ -69,7 +70,8 @@ class EventSenderTest {
     assertTrue(eventObservableField.value.isEmpty())
   }
 
-  @Test fun scheduleSending_multipleSendByTimer() {
+  @Test
+  fun scheduleSending_multipleSendByTimer() {
     val eventSender = createEventSenderWithInterval(50)
     val event100 = (0 until 100).map {
       listOf(evaluationEvent1.toEvent(), goalEvent1.toEvent())
@@ -81,10 +83,10 @@ class EventSenderTest {
     val callbackCountDown = CountDownLatch(1)
     val executor: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor()
     val scheduler = executor.scheduleWithFixedDelay(
-        { callbackCountDown.countDown() },
-        500,
-        500,
-        TimeUnit.MILLISECONDS
+      { callbackCountDown.countDown() },
+      500,
+      500,
+      TimeUnit.MILLISECONDS
     )
 
     callbackCountDown.await(5, TimeUnit.SECONDS)
@@ -93,7 +95,8 @@ class EventSenderTest {
     assertTrue(eventObservableField.value.isEmpty())
   }
 
-  @Test fun scheduleSending_notSendIfNotThatTimeOrCountOver() {
+  @Test
+  fun scheduleSending_notSendIfNotThatTimeOrCountOver() {
     val eventSender = createEventSenderWithInterval(5000)
     val defaultValue = listOf(evaluationEvent1.toEvent(), goalEvent1.toEvent())
 
@@ -103,10 +106,10 @@ class EventSenderTest {
     val callbackCountDown = CountDownLatch(1)
     val executor: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor()
     val scheduler = executor.scheduleWithFixedDelay(
-        { callbackCountDown.countDown() },
-        500,
-        500,
-        TimeUnit.MILLISECONDS
+      { callbackCountDown.countDown() },
+      500,
+      500,
+      TimeUnit.MILLISECONDS
     )
 
     callbackCountDown.await(5, TimeUnit.SECONDS)
@@ -115,7 +118,8 @@ class EventSenderTest {
     assertEquals(eventObservableField.value, defaultValue)
   }
 
-  @Test fun scheduleSending_sendByEventCountOver() {
+  @Test
+  fun scheduleSending_sendByEventCountOver() {
     val eventSender = createEventSenderWithInterval(5000)
     val event50 = (0 until 25).map {
       listOf(evaluationEvent1.toEvent(), goalEvent1.toEvent())
@@ -127,10 +131,10 @@ class EventSenderTest {
     val callbackCountDown = CountDownLatch(1)
     val executor: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor()
     val scheduler = executor.scheduleWithFixedDelay(
-        { callbackCountDown.countDown() },
-        500,
-        500,
-        TimeUnit.MILLISECONDS
+      { callbackCountDown.countDown() },
+      500,
+      500,
+      TimeUnit.MILLISECONDS
     )
 
     callbackCountDown.await(5, TimeUnit.SECONDS)
@@ -152,10 +156,10 @@ class EventSenderTest {
     val callbackCountDown = CountDownLatch(1)
     val executor: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor()
     val scheduler = executor.scheduleWithFixedDelay(
-        { callbackCountDown.countDown() },
-        500,
-        500,
-        TimeUnit.MILLISECONDS
+      { callbackCountDown.countDown() },
+      500,
+      500,
+      TimeUnit.MILLISECONDS
     )
 
     callbackCountDown.await(5, TimeUnit.SECONDS)
@@ -165,14 +169,15 @@ class EventSenderTest {
   }
 
   private fun createEventSenderWithInterval(
-      logSendingIntervalMillis: Long): EventSender {
+    logSendingIntervalMillis: Long
+  ): EventSender {
     eventObservableField.value = listOf()
     return EventSender(
-        logSendingIntervalMillis,
-        QUEUE_COUNT,
-        eventActionCreator,
-        eventStore,
-        Executors.newSingleThreadScheduledExecutor()
+      logSendingIntervalMillis,
+      QUEUE_COUNT,
+      eventActionCreator,
+      eventStore,
+      Executors.newSingleThreadScheduledExecutor()
     )
   }
 

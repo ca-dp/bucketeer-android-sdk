@@ -6,27 +6,26 @@ import jp.bucketeer.sdk.evaluation.LatestEvaluationActionCreator
 import jp.bucketeer.sdk.events.EventActionCreator
 
 internal class ActionCreatorModule(
-    dispatcher: Dispatcher,
-    dataModule: DataModule,
-    featureTag: String
+  dispatcher: Dispatcher,
+  dataModule: DataModule,
+  featureTag: String
 ) {
   val latestEvaluationActionCreator: LatestEvaluationActionCreator = LatestEvaluationActionCreator(
-      dispatcher,
-      dataModule.api,
-      dataModule.latestEvaluationDao,
-      dataModule.currentEvaluationDao,
-      dataModule.sharedPreferences
+    dispatcher,
+    dataModule.api,
+    dataModule.latestEvaluationDao,
+    dataModule.currentEvaluationDao,
+    dataModule.sharedPreferences
   )
   val eventActionCreator: EventActionCreator = EventActionCreator(
-      dataModule.api,
-      dispatcher,
-      dataModule.eventDao,
-      featureTag
+    dataModule.api,
+    dispatcher,
+    dataModule.eventDao,
+    featureTag
   )
   val clientInteractorActionCreator: ClientInteractorActionCreator = ClientInteractorActionCreator(
-      dispatcher,
-      dataModule.api,
-      dataModule.currentEvaluationDao
+    dispatcher,
+    dataModule.api,
+    dataModule.currentEvaluationDao
   )
 }
-

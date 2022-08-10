@@ -19,7 +19,7 @@ import org.mockito.kotlin.mock
 class LatestEvaluationActionCreatorTest {
 
   private val sharedPref = getInstrumentation().targetContext.applicationContext
-      .getSharedPreferences(Constants.PREFERENCES_NAME, Context.MODE_PRIVATE)
+    .getSharedPreferences(Constants.PREFERENCES_NAME, Context.MODE_PRIVATE)
 
   @Before
   fun beforeExecute() {
@@ -41,16 +41,18 @@ class LatestEvaluationActionCreatorTest {
     action.updateUserEvaluationId(userEvaluationsId1)
     action.currentUserEvaluationsId shouldBe userEvaluationsId1
     sharedPref.getString(
-        Constants.PREFERENCE_KEY_USER_EVALUATION_ID, "") shouldBe userEvaluationsId1
+      Constants.PREFERENCE_KEY_USER_EVALUATION_ID,
+      ""
+    ) shouldBe userEvaluationsId1
   }
 
   private fun createLatestEvaluationActionCreator(): LatestEvaluationActionCreator {
     return LatestEvaluationActionCreator(
-        Dispatcher(),
-        mock(),
-        mock(),
-        mock(),
-        sharedPref
+      Dispatcher(),
+      mock(),
+      mock(),
+      mock(),
+      sharedPref
     )
   }
 }

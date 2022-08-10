@@ -14,7 +14,7 @@ import jp.bucketeer.sdk.ext.select
 import jp.bucketeer.sdk.ext.transaction
 
 internal class CurrentEvaluationDaoImpl(
-    internal val sqLiteOpenHelper: SQLiteOpenHelper
+  internal val sqLiteOpenHelper: SQLiteOpenHelper
 ) : CurrentEvaluationDao {
   override fun upsertEvaluation(evaluation: EvaluationOuterClass.Evaluation) {
     val contentValues = ContentValues().apply {
@@ -24,23 +24,25 @@ internal class CurrentEvaluationDaoImpl(
     }
 
     sqLiteOpenHelper.writableDatabase.insertWithOnConflict(
-        TABLE_NAME,
-        null,
-        contentValues,
-        SQLiteDatabase.CONFLICT_REPLACE)
+      TABLE_NAME,
+      null,
+      contentValues,
+      SQLiteDatabase.CONFLICT_REPLACE
+    )
   }
 
   override fun deleteNotIn(userId: String, featureIds: List<String>) {
     sqLiteOpenHelper.writableDatabase.transaction {
       val valuesNotIn = List(featureIds.count(), { "?" }).joinToString(separator = ",")
       val whereClause = "$COLUMN_USER_ID = ? AND " +
-          "$COLUMN_FEATURE_ID NOT IN ($valuesNotIn)"
+        "$COLUMN_FEATURE_ID NOT IN ($valuesNotIn)"
       val whereArgs = arrayOf(userId, *featureIds.toTypedArray())
 
       delete(
-          TABLE_NAME,
-          whereClause,
-          whereArgs)
+        TABLE_NAME,
+        whereClause,
+        whereArgs
+      )
     }
   }
 
@@ -48,18 +50,19 @@ internal class CurrentEvaluationDaoImpl(
     val selection = "$COLUMN_USER_ID = ?"
     val selectionArgs = arrayOf(userId)
     val c = sqLiteOpenHelper.readableDatabase.select(
-        table = TABLE_NAME,
-        selection = selection,
-        selectionArgs = selectionArgs)
+      table = TABLE_NAME,
+      selection = selection,
+      selectionArgs = selectionArgs
+    )
 
     return c.use {
       c.asSequence()
-          .map {
-            EvaluationOuterClass.Evaluation.newBuilder()
-                .mergeFrom(it.getBlob(COLUMN_EVALUATION))
-                .build()
-          }
-          .toList()
+        .map {
+          EvaluationOuterClass.Evaluation.newBuilder()
+            .mergeFrom(it.getBlob(COLUMN_EVALUATION))
+            .build()
+        }
+        .toList()
     }
   }
 }

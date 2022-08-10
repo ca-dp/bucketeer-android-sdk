@@ -7,8 +7,8 @@ import jp.bucketeer.sdk.evaluation.db.CurrentEvaluationEntity
 import jp.bucketeer.sdk.evaluation.db.LatestEvaluationEntity
 import jp.bucketeer.sdk.events.EventEntity
 
-internal class DatabaseOpenHelper(context: Context, fileName: String? = FILE_NAME)
-  : SQLiteOpenHelper(context, fileName, null, VERSION) {
+internal class DatabaseOpenHelper(context: Context, fileName: String? = FILE_NAME) :
+  SQLiteOpenHelper(context, fileName, null, VERSION) {
 
   companion object {
     const val FILE_NAME = "bucketeer.db"
@@ -16,7 +16,8 @@ internal class DatabaseOpenHelper(context: Context, fileName: String? = FILE_NAM
   }
 
   override fun onCreate(db: SQLiteDatabase) {
-    db.execSQL("""
+    db.execSQL(
+      """
       |CREATE TABLE ${CurrentEvaluationEntity.TABLE_NAME} (
       |   ${CurrentEvaluationEntity.COLUMN_USER_ID} TEXT NOT NULL,
       |   ${CurrentEvaluationEntity.COLUMN_FEATURE_ID} TEXT NOT NULL,
@@ -26,9 +27,11 @@ internal class DatabaseOpenHelper(context: Context, fileName: String? = FILE_NAM
       |     ${CurrentEvaluationEntity.COLUMN_FEATURE_ID}
       |   )
       |)
-      """.trimMargin())
+      """.trimMargin()
+    )
 
-    db.execSQL("""
+    db.execSQL(
+      """
       |CREATE TABLE ${LatestEvaluationEntity.TABLE_NAME} (
       |   ${LatestEvaluationEntity.COLUMN_USER_ID} TEXT,
       |   ${LatestEvaluationEntity.COLUMN_FEATURE_ID} TEXT,
@@ -38,14 +41,17 @@ internal class DatabaseOpenHelper(context: Context, fileName: String? = FILE_NAM
       |     ${LatestEvaluationEntity.COLUMN_FEATURE_ID}
       |   )
       |)
-      """.trimMargin())
+      """.trimMargin()
+    )
 
-    db.execSQL("""
+    db.execSQL(
+      """
       |CREATE TABLE ${EventEntity.TABLE_NAME} (
       |   ${EventEntity.COLUMN_ID} TEXT PRIMARY KEY,
       |   ${EventEntity.COLUMN_EVENT} BLOB
       |)
-      """.trimMargin())
+      """.trimMargin()
+    )
   }
 
   override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {

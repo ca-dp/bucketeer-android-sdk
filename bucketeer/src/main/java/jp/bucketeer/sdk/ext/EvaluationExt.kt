@@ -6,7 +6,8 @@ import org.json.JSONObject
 import java.util.Locale
 
 inline fun <reified T : Any> EvaluationOuterClass.Evaluation?.getVariationValue(
-    defaultValue: T): T {
+  defaultValue: T
+): T {
   val value = this?.variationValue
   val typedValue: T = if (value != null) {
     @Suppress("IMPLICIT_CAST_TO_ANY")

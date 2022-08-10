@@ -3,7 +3,6 @@ package jp.bucketeer.sdk
 import bucketeer.event.client.EventOuterClass
 import bucketeer.feature.EvaluationOuterClass
 import bucketeer.feature.ReasonOuterClass
-import bucketeer.feature.VariationOuterClass
 import bucketeer.gateway.Service
 import bucketeer.user.UserOuterClass
 import com.google.protobuf.Duration
@@ -19,25 +18,25 @@ val userEvaluationsId2: String by lazy {
 
 val user: User by lazy {
   User(
-      "user-id",
-      mapOf(
-          "gender" to "male",
-          "age" to "40"
-      )
+    "user-id",
+    mapOf(
+      "gender" to "male",
+      "age" to "40"
+    )
   )
 }
 
 val user1: UserOuterClass.User by lazy {
   UserOuterClass.User.newBuilder()
-      .setId("user id 1")
-      .putAllData(mapOf("age" to "28"))
-      .build()
+    .setId("user id 1")
+    .putAllData(mapOf("age" to "28"))
+    .build()
 }
 
 val user2: UserOuterClass.User by lazy {
   UserOuterClass.User.newBuilder()
-      .setId("user id 2")
-      .build()
+    .setId("user id 2")
+    .build()
 }
 
 val responsePartial: Service.GetEvaluationsResponse by lazy {
@@ -58,13 +57,13 @@ val responseFull: Service.GetEvaluationsResponse by lazy {
 
 val evaluation: Evaluation by lazy {
   Evaluation(
-      evaluation1.id,
-      evaluation1.featureId,
-      evaluation1.featureVersion,
-      evaluation1.userId,
-      evaluation1.variationId,
-      evaluation1.variationValue,
-      evaluation1.reason.type.number
+    evaluation1.id,
+    evaluation1.featureId,
+    evaluation1.featureVersion,
+    evaluation1.userId,
+    evaluation1.variationId,
+    evaluation1.variationValue,
+    evaluation1.reason.type.number
   )
 }
 
@@ -129,119 +128,123 @@ val user2Evaluations: EvaluationOuterClass.UserEvaluations by lazy {
 }
 
 val evaluationEvent1 = EventOuterClass.EvaluationEvent
-    .newBuilder()
-    .setFeatureId("evaluation1")
-    .build()
+  .newBuilder()
+  .setFeatureId("evaluation1")
+  .build()
 
 val evaluationEvent2 = EventOuterClass.EvaluationEvent
-    .newBuilder()
-    .setFeatureId("evaluation2")
-    .build()
+  .newBuilder()
+  .setFeatureId("evaluation2")
+  .build()
 
 val goalEvent1 = EventOuterClass.GoalEvent
-    .newBuilder()
-    .setGoalId("goal1")
-    .addAllEvaluations(user1Evaluations.evaluationsList)
-    .build()
+  .newBuilder()
+  .setGoalId("goal1")
+  .addAllEvaluations(user1Evaluations.evaluationsList)
+  .build()
 
 val goalEvent2 = EventOuterClass.GoalEvent
-    .newBuilder()
-    .setGoalId("goal2")
-    .addAllEvaluations(user1Evaluations.evaluationsList)
-    .build()
+  .newBuilder()
+  .setGoalId("goal2")
+  .addAllEvaluations(user1Evaluations.evaluationsList)
+  .build()
 
 val getEvaluationLatencyMetricsEvent1 = EventOuterClass.GetEvaluationLatencyMetricsEvent
-    .newBuilder()
-    .setDuration(Duration.newBuilder()
-        .setSeconds(1)
-        .setNanos(123456789))
-    .putAllLabels(mapOf("tag" to "android", "state" to "FULL"))
-    .build()
+  .newBuilder()
+  .setDuration(
+    Duration.newBuilder()
+      .setSeconds(1)
+      .setNanos(123456789)
+  )
+  .putAllLabels(mapOf("tag" to "android", "state" to "FULL"))
+  .build()
 
 val getEvaluationLatencyMetricsEvent2 = EventOuterClass.GetEvaluationLatencyMetricsEvent
-    .newBuilder()
-    .setDuration(Duration.newBuilder()
-        .setSeconds(2)
-        .setNanos(987654321))
-    .putAllLabels(mapOf("tag" to "firetv", "state" to "PARTIAL"))
-    .build()
+  .newBuilder()
+  .setDuration(
+    Duration.newBuilder()
+      .setSeconds(2)
+      .setNanos(987654321)
+  )
+  .putAllLabels(mapOf("tag" to "firetv", "state" to "PARTIAL"))
+  .build()
 
 val getEvaluationSizeMetricsEvent1 = EventOuterClass.GetEvaluationSizeMetricsEvent
-    .newBuilder()
-    .setSizeByte(10000)
-    .putAllLabels(mapOf("tag" to "android", "state" to "FULL"))
-    .build()
+  .newBuilder()
+  .setSizeByte(10000)
+  .putAllLabels(mapOf("tag" to "android", "state" to "FULL"))
+  .build()
 
 val getEvaluationSizeMetricsEvent2 = EventOuterClass.GetEvaluationSizeMetricsEvent
-    .newBuilder()
-    .setSizeByte(20000)
-    .putAllLabels(mapOf("tag" to "android", "state" to "FULL"))
-    .build()
+  .newBuilder()
+  .setSizeByte(20000)
+  .putAllLabels(mapOf("tag" to "android", "state" to "FULL"))
+  .build()
 
 val internalErrorCountMetricsEvent1 = EventOuterClass.InternalErrorCountMetricsEvent
-    .newBuilder()
-    .setTag("tag1")
-    .build()
+  .newBuilder()
+  .setTag("tag1")
+  .build()
 
 val internalErrorCountMetricsEvent2 = EventOuterClass.InternalErrorCountMetricsEvent
-    .newBuilder()
-    .setTag("tag2")
-    .build()
+  .newBuilder()
+  .setTag("tag2")
+  .build()
 
 val timeoutErrorCountMetricsEvent1 = EventOuterClass.TimeoutErrorCountMetricsEvent
-    .newBuilder()
-    .setTag("tag1")
-    .build()
+  .newBuilder()
+  .setTag("tag1")
+  .build()
 
 val timeoutErrorCountMetricsEvent2 = EventOuterClass.TimeoutErrorCountMetricsEvent
-    .newBuilder()
-    .setTag("tag2")
-    .build()
+  .newBuilder()
+  .setTag("tag2")
+  .build()
 
 val metricsEvent1 = EventOuterClass.MetricsEvent
-    .newBuilder()
-    .setTimestamp(642128523) // 1990-05-08T01:02:03+00:00
-    .setEvent(getEvaluationLatencyMetricsEvent1.pack())
-    .build()
+  .newBuilder()
+  .setTimestamp(642128523) // 1990-05-08T01:02:03+00:00
+  .setEvent(getEvaluationLatencyMetricsEvent1.pack())
+  .build()
 
 val metricsEvent2 = EventOuterClass.MetricsEvent
-    .newBuilder()
-    .setTimestamp(724554123) // 1992-12-17T01:02:03+00:00
-    .setEvent(getEvaluationLatencyMetricsEvent2.pack())
-    .build()
+  .newBuilder()
+  .setTimestamp(724554123) // 1992-12-17T01:02:03+00:00
+  .setEvent(getEvaluationLatencyMetricsEvent2.pack())
+  .build()
 
 val metricsEvent3 = EventOuterClass.MetricsEvent
-    .newBuilder()
-    .setTimestamp(642128523) // 1990-05-08T01:02:03+00:00
-    .setEvent(getEvaluationSizeMetricsEvent1.pack())
-    .build()
+  .newBuilder()
+  .setTimestamp(642128523) // 1990-05-08T01:02:03+00:00
+  .setEvent(getEvaluationSizeMetricsEvent1.pack())
+  .build()
 
 val metricsEvent4 = EventOuterClass.MetricsEvent
-    .newBuilder()
-    .setTimestamp(724554123) // 1992-12-17T01:02:03+00:00
-    .setEvent(getEvaluationSizeMetricsEvent2.pack())
-    .build()
+  .newBuilder()
+  .setTimestamp(724554123) // 1992-12-17T01:02:03+00:00
+  .setEvent(getEvaluationSizeMetricsEvent2.pack())
+  .build()
 
 val metricsEvent5 = EventOuterClass.MetricsEvent
-    .newBuilder()
-    .setTimestamp(642128523) // 1990-05-08T01:02:03+00:00
-    .setEvent(internalErrorCountMetricsEvent1.pack())
-    .build()
+  .newBuilder()
+  .setTimestamp(642128523) // 1990-05-08T01:02:03+00:00
+  .setEvent(internalErrorCountMetricsEvent1.pack())
+  .build()
 
 val metricsEvent6 = EventOuterClass.MetricsEvent
-    .newBuilder()
-    .setTimestamp(724554123) // 1992-12-17T01:02:03+00:00
-    .setEvent(internalErrorCountMetricsEvent2.pack())
-    .build()
+  .newBuilder()
+  .setTimestamp(724554123) // 1992-12-17T01:02:03+00:00
+  .setEvent(internalErrorCountMetricsEvent2.pack())
+  .build()
 
 val metricsEvent7 = EventOuterClass.MetricsEvent
-    .newBuilder()
-    .setTimestamp(642128523) // 1990-05-08T01:02:03+00:00
-    .setEvent(timeoutErrorCountMetricsEvent1.pack())
-    .build()
+  .newBuilder()
+  .setTimestamp(642128523) // 1990-05-08T01:02:03+00:00
+  .setEvent(timeoutErrorCountMetricsEvent1.pack())
+  .build()
 
 val metricsEvent8 = EventOuterClass.MetricsEvent
-    .newBuilder()
-    .setTimestamp(724554123) // 1992-12-17T01:02:03+00:00
-    .setEvent(timeoutErrorCountMetricsEvent2.pack())
-    .build()
+  .newBuilder()
+  .setTimestamp(724554123) // 1992-12-17T01:02:03+00:00
+  .setEvent(timeoutErrorCountMetricsEvent2.pack())
+  .build()

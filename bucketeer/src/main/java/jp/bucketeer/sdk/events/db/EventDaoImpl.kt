@@ -12,7 +12,7 @@ import jp.bucketeer.sdk.ext.getBlob
 import jp.bucketeer.sdk.ext.select
 
 internal class EventDaoImpl(
-    private val sqLiteOpenHelper: SQLiteOpenHelper
+  private val sqLiteOpenHelper: SQLiteOpenHelper
 ) : EventDao {
 
   override fun addEvent(goalEvent: EventOuterClass.GoalEvent) {
@@ -38,13 +38,13 @@ internal class EventDaoImpl(
 
   override fun getEvents(): List<EventOuterClass.Event> {
     val c = sqLiteOpenHelper.readableDatabase.select(
-        table = TABLE_NAME
+      table = TABLE_NAME
     )
 
     return c.use {
       c.asSequence()
-          .map { EventOuterClass.Event.parseFrom(it.getBlob(COLUMN_EVENT)) }
-          .toList()
+        .map { EventOuterClass.Event.parseFrom(it.getBlob(COLUMN_EVENT)) }
+        .toList()
     }
   }
 
@@ -52,10 +52,9 @@ internal class EventDaoImpl(
     val valuesIn = List(ids.count(), { "?" }).joinToString(separator = ",")
     val whereArgs = ids.toTypedArray()
     sqLiteOpenHelper.writableDatabase.delete(
-        TABLE_NAME,
-        "$COLUMN_ID IN ($valuesIn)",
-        whereArgs
+      TABLE_NAME,
+      "$COLUMN_ID IN ($valuesIn)",
+      whereArgs
     )
   }
 }
-

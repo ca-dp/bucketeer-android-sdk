@@ -4,9 +4,9 @@ import bucketeer.user.UserOuterClass
 
 internal open class UserHolder {
   private val defaultUser = UserOuterClass
-      .User
-      .newBuilder()
-      .build()
+    .User
+    .newBuilder()
+    .build()
   var user: UserOuterClass.User = defaultUser
     protected set
 
@@ -21,4 +21,3 @@ internal open class UserHolder {
     }
   }
 }
-

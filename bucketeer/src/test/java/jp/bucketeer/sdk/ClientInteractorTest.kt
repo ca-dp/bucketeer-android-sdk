@@ -30,42 +30,47 @@ class ClientInteractorTest {
   private val eventActionCreator: EventActionCreator = mock()
   private val latestEvaluationActionCreator: LatestEvaluationActionCreator = mock()
   private val firstRefreshState = ObservableField<RefreshManuallyStateChangedAction.State>(
-      RefreshManuallyStateChangedAction.State.Loading)
+    RefreshManuallyStateChangedAction.State.Loading
+  )
   private val latestEvaluationStore: LatestEvaluationStore = mock<LatestEvaluationStore>().also {
     whenever(it.refreshManuallyState).thenReturn(firstRefreshState)
   }
   private val currentStore: CurrentStore = mock()
   private val userHolder: UserHolder.UpdatableUserHolder = spy(
-      UserHolder.UpdatableUserHolder().apply { updateUser(user1) }
+    UserHolder.UpdatableUserHolder().apply { updateUser(user1) }
   )
 
   private lateinit var clientInteractor: ClientInteractor
 
-  @Before fun setUp() {
+  @Before
+  fun setUp() {
     clientInteractor = ClientInteractor(
-        clientInteractorActionCreator,
-        eventActionCreator,
-        latestEvaluationActionCreator,
-        latestEvaluationStore,
-        currentStore,
-        userHolder
+      clientInteractorActionCreator,
+      eventActionCreator,
+      latestEvaluationActionCreator,
+      latestEvaluationStore,
+      currentStore,
+      userHolder
     )
   }
 
-  @Test fun refreshCurrentEvaluation_whenUserChanged() {
+  @Test
+  fun refreshCurrentEvaluation_whenUserChanged() {
     clientInteractor.setUser(user2)
     clientInteractor.fetchUserEvaluations()
 
     verify(clientInteractorActionCreator).refreshCurrentEvaluation(user2.id)
   }
 
-  @Test fun setUser() {
+  @Test
+  fun setUser() {
     clientInteractor.setUser(user2)
 
     verify(userHolder).updateUser(user2)
   }
 
-  @Test fun setUser_WaitCallback() {
+  @Test
+  fun setUser_WaitCallback() {
     clientInteractor.setUser(user2)
     firstRefreshState.value = RefreshManuallyStateChangedAction.State.Loaded
     ShadowLooper.runUiThreadTasks()
@@ -73,7 +78,8 @@ class ClientInteractorTest {
     verify(userHolder).updateUser(user2)
   }
 
-  @Test fun setUser_WaitCallbackWhenError() {
+  @Test
+  fun setUser_WaitCallbackWhenError() {
     val expectedException = RuntimeException().toBucketeerException()
 
     clientInteractor.setUser(user2)
@@ -90,31 +96,36 @@ class ClientInteractorTestGetEvaluation {
   private val eventActionCreator: EventActionCreator = mock()
   private val latestEvaluationActionCreator: LatestEvaluationActionCreator = mock()
   private val firstRefreshState = ObservableField<RefreshManuallyStateChangedAction.State>(
-      RefreshManuallyStateChangedAction.State.Loading)
+    RefreshManuallyStateChangedAction.State.Loading
+  )
   private val latestEvaluationStore: LatestEvaluationStore = mock<LatestEvaluationStore>().also {
     whenever(it.refreshManuallyState).thenReturn(firstRefreshState)
   }
   private val currentStore: CurrentStore = mock()
   private val userHolder: UserHolder.UpdatableUserHolder = spy(
-      UserHolder.UpdatableUserHolder().apply { updateUser(user1) }
+    UserHolder.UpdatableUserHolder().apply { updateUser(user1) }
   )
 
   private lateinit var clientInteractor: ClientInteractor
 
-  @Before fun setUp() {
-    clientInteractor = spy(ClientInteractor(
+  @Before
+  fun setUp() {
+    clientInteractor = spy(
+      ClientInteractor(
         clientInteractorActionCreator,
         eventActionCreator,
         latestEvaluationActionCreator,
         latestEvaluationStore,
         currentStore,
         userHolder
-    ))
+      )
+    )
   }
 
-  @Test fun getLatestEvaluation_findVariationThenReturnEvaluation() {
+  @Test
+  fun getLatestEvaluation_findVariationThenReturnEvaluation() {
     whenever(latestEvaluationStore.latestEvaluations)
-        .thenReturn(ObservableField(mutableMapOf(user1.id to listOf(evaluation2))))
+      .thenReturn(ObservableField(mutableMapOf(user1.id to listOf(evaluation2))))
     whenever(userHolder.userId).thenReturn(user1.id)
 
     val variationValue = clientInteractor.getLatestEvaluation("test-feature-2")
@@ -123,9 +134,10 @@ class ClientInteractorTestGetEvaluation {
     assertEquals(evaluation2, variationValue)
   }
 
-  @Test fun getLatestEvaluation_notFoundVariationThenReturnNull() {
+  @Test
+  fun getLatestEvaluation_notFoundVariationThenReturnNull() {
     whenever(latestEvaluationStore.latestEvaluations)
-        .thenReturn(ObservableField(mutableMapOf(user1.id to listOf(evaluation2))))
+      .thenReturn(ObservableField(mutableMapOf(user1.id to listOf(evaluation2))))
 
     val variationValue = clientInteractor.getLatestEvaluation("unknownId")
 
@@ -133,7 +145,8 @@ class ClientInteractorTestGetEvaluation {
     assertEquals(null, variationValue)
   }
 
-  @Test fun pushEvaluationEvent_createPushEvaluationAction() {
+  @Test
+  fun pushEvaluationEvent_createPushEvaluationAction() {
     userHolder.updateUser(user1)
 
     clientInteractor.pushEvaluationEvent(user1, evaluation1, 1234_5678)
@@ -148,34 +161,39 @@ class ClientInteractorTestTrack {
   private val eventActionCreator: EventActionCreator = mock()
   private val latestEvaluationActionCreator: LatestEvaluationActionCreator = mock()
   private val firstRefreshState = ObservableField<RefreshManuallyStateChangedAction.State>(
-      RefreshManuallyStateChangedAction.State.Loading)
+    RefreshManuallyStateChangedAction.State.Loading
+  )
   private val latestEvaluationStore: LatestEvaluationStore = mock<LatestEvaluationStore>().also {
     whenever(it.refreshManuallyState).thenReturn(firstRefreshState)
   }
   private val currentStore: CurrentStore = mock()
   private val userHolder: UserHolder.UpdatableUserHolder = spy(
-      UserHolder.UpdatableUserHolder().apply { updateUser(user1) }
+    UserHolder.UpdatableUserHolder().apply { updateUser(user1) }
   )
 
   private lateinit var clientInteractor: ClientInteractor
 
-  @Before fun setUp() {
-    clientInteractor = spy(ClientInteractor(
+  @Before
+  fun setUp() {
+    clientInteractor = spy(
+      ClientInteractor(
         clientInteractorActionCreator,
         eventActionCreator,
         latestEvaluationActionCreator,
         latestEvaluationStore,
         currentStore,
         userHolder
-    ))
+      )
+    )
   }
 
-  @Test fun track_callGetCurrentStateAndPushGoalEvent() {
+  @Test
+  fun track_callGetCurrentStateAndPushGoalEvent() {
     whenever(userHolder.userId).thenReturn("user id 1")
     doReturn(1234L).whenever(clientInteractor).getTimestamp()
     doReturn(listOf(evaluation1)).whenever(clientInteractor).getCurrentState("user id 1")
     doNothing().whenever(clientInteractor)
-        .pushGoalEvent(1234, "goalId", user1, 2.0, listOf(evaluation1))
+      .pushGoalEvent(1234, "goalId", user1, 2.0, listOf(evaluation1))
 
     clientInteractor.track(user1, "goalId", 2.0)
 
@@ -183,30 +201,34 @@ class ClientInteractorTestTrack {
     verify(clientInteractor).pushGoalEvent(1234, "goalId", user1, 2.0, listOf(evaluation1))
   }
 
-  @Test fun getCurrentState_returnCurrentStoreValue() {
+  @Test
+  fun getCurrentState_returnCurrentStoreValue() {
     whenever(currentStore.currentEvaluations)
-        .thenReturn(ObservableField(mapOf("user id 1" to listOf(evaluation1))))
+      .thenReturn(ObservableField(mapOf("user id 1" to listOf(evaluation1))))
 
     val currentState = clientInteractor.getCurrentState("user id 1")
 
     currentState shouldBeEqualTo listOf(evaluation1)
   }
 
-  @Test fun pushGoalEvent_callEventAction() {
+  @Test
+  fun pushGoalEvent_callEventAction() {
     clientInteractor
-        .pushGoalEvent(1234, "goalId", user1, 100.0, listOf(evaluation1))
+      .pushGoalEvent(1234, "goalId", user1, 100.0, listOf(evaluation1))
 
     verify(eventActionCreator).pushGoalEvent(1234, "goalId", 100.0, user1, listOf(evaluation1))
   }
 
-  @Test fun refreshLatestEvaluation_whenUserChanged() {
+  @Test
+  fun refreshLatestEvaluation_whenUserChanged() {
     clientInteractor.setUser(user2)
     clientInteractor.fetchUserEvaluations()
 
     verify(latestEvaluationActionCreator).refreshLatestEvaluationManuallyFromApi(user2)
   }
 
-  @Test fun getTimestamp_returnInSeconds() {
+  @Test
+  fun getTimestamp_returnInSeconds() {
     val minDate = Date(0)
     val maxDate = Date(9_999_999_999.toMills())
 

@@ -11,7 +11,8 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyNoMoreInteractions
 
 class LatestEvaluationStoreTest {
-  @Test fun latestEvaluation_observe() {
+  @Test
+  fun latestEvaluation_observe() {
     val dispatcher = Dispatcher()
     val latestStore = LatestEvaluationStore(dispatcher)
     val observer: (MutableMap<String, List<EvaluationOuterClass.Evaluation>>) -> Unit = mock()

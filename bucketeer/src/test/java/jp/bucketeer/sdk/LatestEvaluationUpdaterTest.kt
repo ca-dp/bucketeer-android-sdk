@@ -14,7 +14,8 @@ class LatestEvaluationUpdaterTest {
     updateUser(user1)
   }
 
-  @Test fun pollEvaluation_refresh() {
+  @Test
+  fun pollEvaluation_refresh() {
     val latestEvaluationUpdater = createLatestEvaluationUpdaterWithSendingInterval(50)
 
     latestEvaluationUpdater.start()
@@ -22,7 +23,8 @@ class LatestEvaluationUpdaterTest {
     verify(evaluationActionCreator, timeout(90)).refreshLatestEvaluationFromApi(user1)
   }
 
-  @Test fun pollEvaluation_refreshMultipleTimes() {
+  @Test
+  fun pollEvaluation_refreshMultipleTimes() {
     val latestEvaluationUpdater = createLatestEvaluationUpdaterWithSendingInterval(40)
 
     latestEvaluationUpdater.start()
@@ -31,13 +33,13 @@ class LatestEvaluationUpdaterTest {
   }
 
   private fun createLatestEvaluationUpdaterWithSendingInterval(
-      logSendingIntervalMillis: Long
+    logSendingIntervalMillis: Long
   ): LatestEvaluationUpdater {
     return LatestEvaluationUpdater(
-        logSendingIntervalMillis,
-        evaluationActionCreator,
-        userHolder,
-        Executors.newSingleThreadScheduledExecutor()
+      logSendingIntervalMillis,
+      evaluationActionCreator,
+      userHolder,
+      Executors.newSingleThreadScheduledExecutor()
     )
   }
 }

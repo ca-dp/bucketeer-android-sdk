@@ -16,20 +16,23 @@ import jp.bucketeer.sdk.log.logd
 import jp.bucketeer.sdk.log.loge
 
 internal class LatestEvaluationActionCreator(
-    private val dispatcher: Dispatcher,
-    val api: Api,
-    private val latestEvaluationDao: LatestEvaluationDao,
-    private val currentEvaluationDao: CurrentEvaluationDao,
-    private val sharePref: SharedPreferences
+  private val dispatcher: Dispatcher,
+  val api: Api,
+  private val latestEvaluationDao: LatestEvaluationDao,
+  private val currentEvaluationDao: CurrentEvaluationDao,
+  private val sharePref: SharedPreferences
 ) {
 
   @VisibleForTesting
   var currentUserEvaluationsId: String = sharePref.getString(
-      Constants.PREFERENCE_KEY_USER_EVALUATION_ID, "") ?: ""
+    Constants.PREFERENCE_KEY_USER_EVALUATION_ID,
+    ""
+  ) ?: ""
 
   fun refreshLatestEvaluationManuallyFromApi(user: UserOuterClass.User) {
     dispatcher.send(
-        RefreshManuallyStateChangedAction(RefreshManuallyStateChangedAction.State.Loading))
+      RefreshManuallyStateChangedAction(RefreshManuallyStateChangedAction.State.Loading)
+    )
     val result = refreshLatestEvaluationFromApi(user)
     val state = when (result) {
       is Api.Result.Success -> RefreshManuallyStateChangedAction.State.Loaded
@@ -93,8 +96,8 @@ internal class LatestEvaluationActionCreator(
   fun updateUserEvaluationId(userEvaluationsId: String) {
     currentUserEvaluationsId = userEvaluationsId
     sharePref.edit().putString(
-        Constants.PREFERENCE_KEY_USER_EVALUATION_ID,
-        userEvaluationsId
+      Constants.PREFERENCE_KEY_USER_EVALUATION_ID,
+      userEvaluationsId
     ).commit()
   }
 

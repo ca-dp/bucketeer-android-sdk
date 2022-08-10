@@ -3,9 +3,9 @@ package jp.bucketeer.sdk
 import androidx.annotation.VisibleForTesting
 
 data class BucketeerConfig @VisibleForTesting internal constructor(
-    val logSendingIntervalMillis: Long,
-    val logSendingMaxBatchQueueCount: Int,
-    val pollingEvaluationIntervalMillis: Long
+  val logSendingIntervalMillis: Long,
+  val logSendingMaxBatchQueueCount: Int,
+  val pollingEvaluationIntervalMillis: Long
 ) {
   class Builder {
     private var logSendingIntervalMillis: Long = 60_000
@@ -32,9 +32,9 @@ data class BucketeerConfig @VisibleForTesting internal constructor(
 
     fun build(): BucketeerConfig {
       return BucketeerConfig(
-          logSendingIntervalMillis,
-          logSendingMaxBatchQueueCount,
-          pollingEvaluationIntervalMillis
+        logSendingIntervalMillis,
+        logSendingMaxBatchQueueCount,
+        pollingEvaluationIntervalMillis
       )
     }
   }

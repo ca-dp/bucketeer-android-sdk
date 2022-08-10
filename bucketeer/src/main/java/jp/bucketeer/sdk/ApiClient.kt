@@ -11,17 +11,17 @@ import jp.bucketeer.sdk.log.logd
 import jp.bucketeer.sdk.log.loge
 
 internal class ApiClient(
-    apiKey: String,
-    endpoint: String,
-    private val featureTag: String
+  apiKey: String,
+  endpoint: String,
+  private val featureTag: String
 ) : Api {
   var fetchEvaluationsApiCallback: FetchEvaluationsApiCallback? = null
   private val client: GatewayGrpc.GatewayBlockingStub
 
   init {
     val channel = OkHttpChannelBuilder.forAddress(endpoint, getEndpointPort(endpoint))
-        .useTransportSecurity()
-        .build()
+      .useTransportSecurity()
+      .build()
     // This workaround helps to improve the latency of the first request
     try {
       channel.getState(true)
@@ -37,14 +37,16 @@ internal class ApiClient(
   }
 
   override fun fetchEvaluation(
-      user: UserOuterClass.User, userEvaluationsId: String) : Api.Result<Service.GetEvaluationsResponse> {
+    user: UserOuterClass.User,
+    userEvaluationsId: String
+  ): Api.Result<Service.GetEvaluationsResponse> {
     return try {
       val request = Service.GetEvaluationsRequest.newBuilder()
-          .setUser(user)
-          .setUserEvaluationsId(userEvaluationsId)
-          .setTag(featureTag)
-          .setSourceId(EventOuterClass.SourceId.ANDROID)
-          .build()
+        .setUser(user)
+        .setUserEvaluationsId(userEvaluationsId)
+        .setTag(featureTag)
+        .setSourceId(EventOuterClass.SourceId.ANDROID)
+        .build()
 
       logd { "--> Fetch Evaluation\n$request" }
       val startTime = System.currentTimeMillis()
@@ -52,8 +54,12 @@ internal class ApiClient(
       logd { "--> END Fetch Evaluation" }
       logd { "<-- Fetch Evaluation\n$response\n<-- END Evaluation response" }
       val endTime = System.currentTimeMillis()
-      fetchEvaluationsApiCallback?.onSuccess(endTime - startTime, response.getSerializedSize(),
-          featureTag, response.state.name)
+      fetchEvaluationsApiCallback?.onSuccess(
+        endTime - startTime,
+        response.getSerializedSize(),
+        featureTag,
+        response.state.name
+      )
       Api.Result.Success(response)
     } catch (e: StatusRuntimeException) {
       logd(throwable = e) { "<-- Fetch Evaluation error" }
@@ -63,13 +69,13 @@ internal class ApiClient(
   }
 
   override fun registerEvent(
-      events: List<EventOuterClass.Event>
+    events: List<EventOuterClass.Event>
   ): Api.Result<Service.RegisterEventsResponse> {
     return try {
       val registerRequestBuilder = Service.RegisterEventsRequest.newBuilder()
       val request = registerRequestBuilder
-          .addAllEvents(events)
-          .build()
+        .addAllEvents(events)
+        .build()
       logd { "--> Register events\n$request" }
       val response = client.registerEvents(request)
       logd { "--> END Register events" }
@@ -82,7 +88,7 @@ internal class ApiClient(
   }
 
   @VisibleForTesting
-  fun getEndpointPort(endpoint: String) : Int {
+  fun getEndpointPort(endpoint: String): Int {
     // FIXME: This condition should be removed once the L7 migration is done
     if (endpoint.contains(ENDPOINT_L7_PREFIX)) {
       return ENDPOINT_L7_PORT

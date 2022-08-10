@@ -1,10 +1,10 @@
 package jp.bucketeer.sdk.evaluation.db
 
-import java.util.*
+import java.util.Arrays
 
 internal data class LatestEvaluationEntity(
-    val userId: String,
-    val evaluation: ByteArray
+  val userId: String,
+  val evaluation: ByteArray
 ) {
   companion object {
     const val TABLE_NAME = "latest_evaluation"

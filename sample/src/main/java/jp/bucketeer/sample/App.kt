@@ -20,8 +20,8 @@ class App : Application(), LifecycleObserver {
 
   private val sharedPref by lazy {
     getSharedPreferences(
-        Constants.PREFERENCE_FILE_KEY,
-        Context.MODE_PRIVATE
+      Constants.PREFERENCE_FILE_KEY,
+      Context.MODE_PRIVATE
     )
   }
 
@@ -33,17 +33,18 @@ class App : Application(), LifecycleObserver {
 
   private fun initBucketeer() {
     val config = BucketeerConfig.Builder().logSendingIntervalMillis(
-        20000)
-        .logSendingMaxBatchQueueCount(10)
-        .pollingEvaluationIntervalMillis(20000)
-        .build()
+      20000
+    )
+      .logSendingMaxBatchQueueCount(10)
+      .pollingEvaluationIntervalMillis(20000)
+      .build()
     try {
       bucketeer = Bucketeer.Builder(this).config(config)
-          .apiKey(BuildConfig.API_KEY)
-          .endpoint(BuildConfig.API_URL)
-          .featureTag(getTag())
-          .logcatLogging(true)
-          .build()
+        .apiKey(BuildConfig.API_KEY)
+        .endpoint(BuildConfig.API_URL)
+        .featureTag(getTag())
+        .logcatLogging(true)
+        .build()
     } catch (e: BucketeerException) {
       Log.e(TAG, e.message, e)
     }
@@ -69,12 +70,16 @@ class App : Application(), LifecycleObserver {
 
   private fun getTag(): String {
     return sharedPref.getString(
-        Constants.PREFERENCE_KEY_TAG, Constants.DEFAULT_TAG) ?: Constants.DEFAULT_TAG
+      Constants.PREFERENCE_KEY_TAG,
+      Constants.DEFAULT_TAG
+    ) ?: Constants.DEFAULT_TAG
   }
 
   private fun getUserId(): String {
     return sharedPref.getString(
-        Constants.PREFERENCE_KEY_USER_ID, Constants.DEFAULT_USER_ID) ?: Constants.DEFAULT_USER_ID
+      Constants.PREFERENCE_KEY_USER_ID,
+      Constants.DEFAULT_USER_ID
+    ) ?: Constants.DEFAULT_USER_ID
   }
 
   companion object {

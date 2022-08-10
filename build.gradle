@@ -6,6 +6,7 @@ plugins {
   alias(libs.plugins.kotlin.dokka) apply false
   alias(libs.plugins.protobuf) apply false
   alias(libs.plugins.publish) apply false
+  alias(libs.plugins.kotlinter) apply false
 }
 
 apply from: "${rootProject.rootDir}/gradle/publish.gradle"

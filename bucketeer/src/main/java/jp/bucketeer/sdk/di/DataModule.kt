@@ -17,10 +17,10 @@ import jp.bucketeer.sdk.events.db.EventDao
 import jp.bucketeer.sdk.events.db.EventDaoImpl
 
 internal open class DataModule(
-    application: Application,
-    apiKey: String,
-    endpoint: String,
-    featureTag: String
+  application: Application,
+  apiKey: String,
+  endpoint: String,
+  featureTag: String
 ) {
   @VisibleForTesting
   internal open val api: Api = ApiClient(apiKey, endpoint, featureTag)

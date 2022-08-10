@@ -1,9 +1,9 @@
 pluginManagement {
-    repositories {
-        mavenCentral()
-        google()
-        gradlePluginPortal()
-    }
+  repositories {
+    mavenCentral()
+    google()
+    gradlePluginPortal()
+  }
 }
 
 include ':bucketeer'

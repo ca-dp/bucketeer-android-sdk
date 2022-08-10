@@ -31,22 +31,26 @@ import org.robolectric.RobolectricTestRunner
 @RunWith(RobolectricTestRunner::class)
 class LatestEvaluationActionCreatorTest {
 
-  @Test fun refreshSameUserEvaluationsId() {
+  @Test
+  fun refreshSameUserEvaluationsId() {
     val latestEvaluationDao: LatestEvaluationDao = mock()
     val currentEvaluationActionCreator: CurrentEvaluationDao = mock()
     val sharedPref: SharedPreferences = mock()
     val dispatcher: Dispatcher = mock()
     val api = mock<Api>()
     whenever(sharedPref.getString(any(), any())).thenReturn(userEvaluationsId1)
-    val evaluationActionCreator = spy(LatestEvaluationActionCreator(
+    val evaluationActionCreator = spy(
+      LatestEvaluationActionCreator(
         dispatcher,
         api,
         latestEvaluationDao,
         currentEvaluationActionCreator,
         sharedPref
-    ))
+      )
+    )
     whenever(api.fetchEvaluation(user1, userEvaluationsId1)).doReturn(
-        Api.Result.Success(responseFull))
+      Api.Result.Success(responseFull)
+    )
 
     verify(currentEvaluationActionCreator, never()).getEvaluations(any())
     verify(evaluationActionCreator, never()).updateUserEvaluationId(any())
@@ -56,63 +60,73 @@ class LatestEvaluationActionCreatorTest {
     verify(dispatcher, never()).send(any())
   }
 
-  @Test fun refresh_partialResponse() {
+  @Test
+  fun refresh_partialResponse() {
     val latestEvaluationDao: LatestEvaluationDao = mock()
     val currentEvaluationActionCreator: CurrentEvaluationDao = mock()
     val sharedPref: SharedPreferences = mock()
     val dispatcher: Dispatcher = mock()
     val api = mock<Api>()
     whenever(sharedPref.getString(any(), any())).thenReturn(userEvaluationsId2)
-    val evaluationActionCreator = spy(LatestEvaluationActionCreator(
+    val evaluationActionCreator = spy(
+      LatestEvaluationActionCreator(
         dispatcher,
         api,
         latestEvaluationDao,
         currentEvaluationActionCreator,
         sharedPref
-    ))
+      )
+    )
     val dbEvaluations = listOf(evaluation1)
     doNothing().whenever(evaluationActionCreator).updateUserEvaluationId(any())
     doNothing().whenever(evaluationActionCreator).refreshLatestEvaluationFromDao(any())
     whenever(latestEvaluationDao.get(user1))
-        .doReturn(
-            dbEvaluations
-        )
+      .doReturn(
+        dbEvaluations
+      )
     whenever(api.fetchEvaluation(user1, userEvaluationsId2)).doReturn(
-        Api.Result.Success(responsePartial))
+      Api.Result.Success(responsePartial)
+    )
 
     evaluationActionCreator.refreshLatestEvaluationFromApi(user1)
 
     verify(evaluationActionCreator, never()).updateUserEvaluationId(any())
     verify(evaluationActionCreator).refreshLatestEvaluationFromDao(any())
-    verify(latestEvaluationDao, never()).deleteAllAndInsert(user1,
-        responsePartial.evaluations.evaluationsList)
+    verify(latestEvaluationDao, never()).deleteAllAndInsert(
+      user1,
+      responsePartial.evaluations.evaluationsList
+    )
     verify(latestEvaluationDao).put(user1, responsePartial.evaluations.evaluationsList)
     verify(currentEvaluationActionCreator, never()).deleteNotIn(any(), any())
     verify(dispatcher).send(LatestEvaluationChangedAction(user1, dbEvaluations))
     verifyNoMoreInteractions(dispatcher)
   }
 
-  @Test fun refresh_fullResponse() {
+  @Test
+  fun refresh_fullResponse() {
     val latestEvaluationDao: LatestEvaluationDao = mock()
     val currentEvaluationActionCreator: CurrentEvaluationDao = mock()
     val sharedPref: SharedPreferences = mock()
     val dispatcher: Dispatcher = mock()
     val api = mock<Api>()
     whenever(sharedPref.getString(any(), any())).thenReturn(userEvaluationsId2)
-    val evaluationActionCreator = spy(LatestEvaluationActionCreator(
+    val evaluationActionCreator = spy(
+      LatestEvaluationActionCreator(
         dispatcher,
         api,
         latestEvaluationDao,
         currentEvaluationActionCreator,
         sharedPref
-    ))
+      )
+    )
     whenever(latestEvaluationDao.deleteAllAndInsert(any(), any())).thenReturn(true)
     doNothing().whenever(evaluationActionCreator).updateUserEvaluationId(any())
     doNothing().whenever(evaluationActionCreator).refreshLatestEvaluationFromDao(any())
     whenever(api.fetchEvaluation(user1, userEvaluationsId2)).doReturn(
-        Api.Result.Success(responseFull))
+      Api.Result.Success(responseFull)
+    )
     whenever(currentEvaluationActionCreator.getEvaluations(user1.id))
-        .doReturn(user1Evaluations.evaluationsList)
+      .doReturn(user1Evaluations.evaluationsList)
 
     evaluationActionCreator.refreshLatestEvaluationFromApi(user1)
 
@@ -120,32 +134,37 @@ class LatestEvaluationActionCreatorTest {
     verify(evaluationActionCreator).refreshLatestEvaluationFromDao(any())
     verify(latestEvaluationDao).deleteAllAndInsert(user1, responseFull.evaluations.evaluationsList)
     verify(currentEvaluationActionCreator)
-        .deleteNotIn(user1.id, listOf("test-feature-1", "test-feature-2"))
+      .deleteNotIn(user1.id, listOf("test-feature-1", "test-feature-2"))
     verify(currentEvaluationActionCreator).getEvaluations(user1.id)
     verify(dispatcher).send(
-        LatestEvaluationChangedAction(user1, responseFull.evaluations.evaluationsList))
+      LatestEvaluationChangedAction(user1, responseFull.evaluations.evaluationsList)
+    )
     verify(dispatcher)
-        .send(CurrentEvaluationListDataChangedAction("user id 1", user1Evaluations.evaluationsList))
+      .send(CurrentEvaluationListDataChangedAction("user id 1", user1Evaluations.evaluationsList))
     verifyNoMoreInteractions(dispatcher)
   }
 
-  @Test fun refresh_fail_to_save() {
+  @Test
+  fun refresh_fail_to_save() {
     val latestEvaluationDao: LatestEvaluationDao = mock()
     val currentEvaluationActionCreator: CurrentEvaluationDao = mock()
     val sharedPref: SharedPreferences = mock()
     val dispatcher: Dispatcher = mock()
     val api = mock<Api>()
     whenever(sharedPref.getString(any(), any())).thenReturn(userEvaluationsId1)
-    val evaluationActionCreator = spy(LatestEvaluationActionCreator(
+    val evaluationActionCreator = spy(
+      LatestEvaluationActionCreator(
         dispatcher,
         api,
         latestEvaluationDao,
         currentEvaluationActionCreator,
         sharedPref
-    ))
+      )
+    )
     whenever(latestEvaluationDao.deleteAllAndInsert(any(), any())).thenReturn(false)
     whenever(api.fetchEvaluation(user1, userEvaluationsId2)).doReturn(
-        Api.Result.Success(responseFull))
+      Api.Result.Success(responseFull)
+    )
 
     verify(evaluationActionCreator, never()).updateUserEvaluationId(any())
     verify(evaluationActionCreator, never()).refreshLatestEvaluationFromDao(any())
@@ -155,23 +174,27 @@ class LatestEvaluationActionCreatorTest {
     verifyNoMoreInteractions(dispatcher)
   }
 
-  @Test fun refresh_fail() {
+  @Test
+  fun refresh_fail() {
     val latestEvaluationDao: LatestEvaluationDao = mock()
     val currentEvaluationActionCreator: CurrentEvaluationDao = mock()
     val sharedPref: SharedPreferences = mock()
     val dispatcher: Dispatcher = mock()
     val api = mock<Api>()
     whenever(sharedPref.getString(any(), any())).thenReturn(userEvaluationsId1)
-    val evaluationActionCreator = spy(LatestEvaluationActionCreator(
+    val evaluationActionCreator = spy(
+      LatestEvaluationActionCreator(
         dispatcher,
         api,
         latestEvaluationDao,
         currentEvaluationActionCreator,
         sharedPref
-    ))
+      )
+    )
     doNothing().whenever(evaluationActionCreator).refreshLatestEvaluationFromDao(any())
     whenever(api.fetchEvaluation(user1, userEvaluationsId1)).doReturn(
-        Api.Result.Fail(RuntimeException().toBucketeerException()))
+      Api.Result.Fail(RuntimeException().toBucketeerException())
+    )
 
     evaluationActionCreator.refreshLatestEvaluationFromApi(user1)
 

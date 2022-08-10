@@ -7,7 +7,7 @@ import jp.bucketeer.sdk.util.ObservableField
 
 internal class CurrentStore(dispatcher: Dispatcher) {
   val currentEvaluations: ObservableField<Map<String, List<EvaluationOuterClass.Evaluation>>> =
-      ObservableField(mapOf())
+    ObservableField(mapOf())
 
   init {
     dispatcher.addObserver { _, arg ->

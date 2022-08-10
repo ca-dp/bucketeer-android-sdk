@@ -2,7 +2,6 @@ package jp.bucketeer.sdk
 
 import android.app.Application
 import android.content.Context
-import com.google.android.gms.security.ProviderInstaller
 import io.grpc.Status
 import io.grpc.StatusRuntimeException
 import jp.bucketeer.sdk.di.ActionCreatorModule
@@ -23,37 +22,41 @@ interface FetchEvaluationsApiCallback {
 }
 
 internal class BucketeerImpl constructor(
-    context: Context,
-    apiKey: String,
-    endpoint: String,
-    featureTag: String,
-    config: BucketeerConfig,
-    private val application: Application = context.applicationContext as Application,
-    private val dataModule: DataModule = DataModule(application, apiKey, endpoint, featureTag),
-    private val dispatcher: Dispatcher = Dispatcher(),
-    private val actionModule: ActionCreatorModule = ActionCreatorModule(dispatcher, dataModule, featureTag),
-    private val storeModule: StoreModule = StoreModule(dispatcher),
-    private val executor: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor(),
-    private val clientInteractor: ClientInteractor = ClientInteractor(
-        actionModule.clientInteractorActionCreator,
-        actionModule.eventActionCreator,
-        actionModule.latestEvaluationActionCreator,
-        storeModule.latestEvaluationStore,
-        storeModule.currentStore
-    ),
-    private val latestEvaluationUpdater: ScheduledTask = LatestEvaluationUpdater(
-        config.pollingEvaluationIntervalMillis,
-        actionModule.latestEvaluationActionCreator,
-        clientInteractor.userHolder,
-        executor
-    ),
-    private val eventSender: ScheduledTask = EventSender(
-        config.logSendingIntervalMillis,
-        config.logSendingMaxBatchQueueCount,
-        actionModule.eventActionCreator,
-        storeModule.eventStore,
-        executor
-    )
+  context: Context,
+  apiKey: String,
+  endpoint: String,
+  featureTag: String,
+  config: BucketeerConfig,
+  private val application: Application = context.applicationContext as Application,
+  private val dataModule: DataModule = DataModule(application, apiKey, endpoint, featureTag),
+  private val dispatcher: Dispatcher = Dispatcher(),
+  private val actionModule: ActionCreatorModule = ActionCreatorModule(
+    dispatcher,
+    dataModule,
+    featureTag
+  ),
+  private val storeModule: StoreModule = StoreModule(dispatcher),
+  private val executor: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor(),
+  private val clientInteractor: ClientInteractor = ClientInteractor(
+    actionModule.clientInteractorActionCreator,
+    actionModule.eventActionCreator,
+    actionModule.latestEvaluationActionCreator,
+    storeModule.latestEvaluationStore,
+    storeModule.currentStore
+  ),
+  private val latestEvaluationUpdater: ScheduledTask = LatestEvaluationUpdater(
+    config.pollingEvaluationIntervalMillis,
+    actionModule.latestEvaluationActionCreator,
+    clientInteractor.userHolder,
+    executor
+  ),
+  private val eventSender: ScheduledTask = EventSender(
+    config.logSendingIntervalMillis,
+    config.logSendingMaxBatchQueueCount,
+    actionModule.eventActionCreator,
+    storeModule.eventStore,
+    executor
+  )
 ) : Bucketeer {
 
   init {
@@ -64,8 +67,12 @@ internal class BucketeerImpl constructor(
       // chose this instead of DI action creator to another action creator.
       // Hero is needed to rethink architecture!
       dataModule.api.setFetchEvaluationApiCallback(object : FetchEvaluationsApiCallback {
-        override fun onSuccess(latencyMills: Long, sizeByte: Int, featureTag: String,
-            state: String) {
+        override fun onSuccess(
+          latencyMills: Long,
+          sizeByte: Int,
+          featureTag: String,
+          state: String
+        ) {
           executor.execute {
             onHandleEvaluationApiSuccess(latencyMills, sizeByte, featureTag, state)
           }
@@ -91,8 +98,8 @@ internal class BucketeerImpl constructor(
   }
 
   override fun setUser(
-      userId: String,
-      userData: Map<String, String>
+    userId: String,
+    userData: Map<String, String>
   ) {
     logd {
       "Bucketeer.setUser(userId = $userId, userData = $userData) called"
@@ -117,8 +124,8 @@ internal class BucketeerImpl constructor(
     }
     val user = clientInteractor.userHolder
     return User(
-        user.user.id,
-        user.user.dataMap
+      user.user.id,
+      user.user.dataMap
     )
   }
 
@@ -127,14 +134,14 @@ internal class BucketeerImpl constructor(
   }
 
   override fun fetchUserEvaluations(
-      fetchUserEvaluationsCallback: Bucketeer.FetchUserEvaluationsCallback?
+    fetchUserEvaluationsCallback: Bucketeer.FetchUserEvaluationsCallback?
   ) {
     logd {
       "Bucketeer.fetchUserEvaluations(fetchUserEvaluationsCallback = $fetchUserEvaluationsCallback) called"
     }
     if (!isUserSet) {
       throw BucketeerException.IllegalStateException(
-          "It is necessary to call setUser() before calling start()."
+        "It is necessary to call setUser() before calling start()."
       )
     }
     executor.execute {
@@ -146,13 +153,13 @@ internal class BucketeerImpl constructor(
     val evaluation = clientInteractor.getLatestEvaluation(featureId)
     evaluation?.run {
       return Evaluation(
-          id,
-          featureId,
-          featureVersion,
-          userId,
-          variationId,
-          variationValue,
-          reason.typeValue
+        id,
+        featureId,
+        featureVersion,
+        userId,
+        variationId,
+        variationValue,
+        reason.typeValue
       )
     } ?: return null
   }
@@ -186,8 +193,8 @@ internal class BucketeerImpl constructor(
   }
 
   private inline fun <reified T : Any> getVariationStringInternal(
-      featureId: String,
-      defaultValue: T
+    featureId: String,
+    defaultValue: T
   ): T {
     logd { "Bucketeer.getVariation(featureId = $featureId, defaultValue = $defaultValue) called" }
     val evaluation = clientInteractor.getLatestEvaluation(featureId)
@@ -217,7 +224,7 @@ internal class BucketeerImpl constructor(
     logd { "Bucketeer.start() called" }
     if (!isUserSet) {
       throw BucketeerException.IllegalStateException(
-          "It is necessary to call setUser() before calling start()."
+        "It is necessary to call setUser() before calling start()."
       )
     }
     executor.execute {
@@ -234,12 +241,20 @@ internal class BucketeerImpl constructor(
     }
   }
 
-  private fun onHandleEvaluationApiSuccess(latencyMills: Long, sizeByte: Int, featureTag: String,
-      state: String) {
-    actionModule.eventActionCreator.pushGetEvaluationLatencyMetricsEvent(latencyMills,
-        mapOf("tag" to featureTag, "state" to state))
-    actionModule.eventActionCreator.pushGetEvaluationSizeMetricsEvent(sizeByte,
-        mapOf("tag" to featureTag, "state" to state))
+  private fun onHandleEvaluationApiSuccess(
+    latencyMills: Long,
+    sizeByte: Int,
+    featureTag: String,
+    state: String
+  ) {
+    actionModule.eventActionCreator.pushGetEvaluationLatencyMetricsEvent(
+      latencyMills,
+      mapOf("tag" to featureTag, "state" to state)
+    )
+    actionModule.eventActionCreator.pushGetEvaluationSizeMetricsEvent(
+      sizeByte,
+      mapOf("tag" to featureTag, "state" to state)
+    )
   }
 
   private fun onHandleEvaluationApiError(featureTag: String, e: StatusRuntimeException) {

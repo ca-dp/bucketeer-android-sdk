@@ -10,15 +10,15 @@ import jp.bucketeer.sdk.events.dto.EventListDataChangedAction
 import jp.bucketeer.sdk.log.logd
 
 internal class EventActionCreator(
-    private val api: Api,
-    private val dispatcher: Dispatcher,
-    private val eventDao: EventDao,
-    private val featureTag: String
+  private val api: Api,
+  private val dispatcher: Dispatcher,
+  private val eventDao: EventDao,
+  private val featureTag: String
 ) {
   fun pushEvaluationEvent(
-      timestamp: Long,
-      evaluation: EvaluationOuterClass.Evaluation,
-      user: UserOuterClass.User
+    timestamp: Long,
+    evaluation: EvaluationOuterClass.Evaluation,
+    user: UserOuterClass.User
   ) {
     val event = generateEvaluationEvent(featureTag, timestamp, evaluation, user)
     eventDao.addEvent(event)
@@ -27,9 +27,9 @@ internal class EventActionCreator(
   }
 
   fun pushDefaultEvaluationEvent(
-      timestamp: Long,
-      user: UserOuterClass.User,
-      featureId: String
+    timestamp: Long,
+    user: UserOuterClass.User,
+    featureId: String
   ) {
     val event = generateDefaultEvaluationEvent(featureTag, timestamp, user, featureId)
     eventDao.addEvent(event)
@@ -40,11 +40,11 @@ internal class EventActionCreator(
   private fun getAllEvent(): List<EventOuterClass.Event> = eventDao.getEvents()
 
   fun pushGoalEvent(
-      timestamp: Long,
-      goalId: String,
-      value: Double,
-      user: UserOuterClass.User,
-      evaluations: List<EvaluationOuterClass.Evaluation>
+    timestamp: Long,
+    goalId: String,
+    value: Double,
+    user: UserOuterClass.User,
+    evaluations: List<EvaluationOuterClass.Evaluation>
   ) {
     val event = generateGoalEvent(featureTag, timestamp, goalId, value, user, evaluations)
     eventDao.addEvent(event)
@@ -53,8 +53,8 @@ internal class EventActionCreator(
   }
 
   fun pushGetEvaluationLatencyMetricsEvent(
-      latencyMills: Long,
-      labels: Map<String, String>
+    latencyMills: Long,
+    labels: Map<String, String>
   ) {
     val event = generateGetEvaluationLatencyMetricsEvent(latencyMills, labels)
     eventDao.addEvent(event)
@@ -63,8 +63,8 @@ internal class EventActionCreator(
   }
 
   fun pushGetEvaluationSizeMetricsEvent(
-      sizeByte: Int,
-      labels: Map<String, String>
+    sizeByte: Int,
+    labels: Map<String, String>
   ) {
     val event = generateGetEvaluationSizeMetricsEvent(sizeByte, labels)
     eventDao.addEvent(event)
@@ -86,8 +86,10 @@ internal class EventActionCreator(
     dispatcher.send(EventListDataChangedAction(events))
   }
 
-  fun send(events: List<EventOuterClass.Event>,
-      logSendingMaxBatchQueueCount: Int) {
+  fun send(
+    events: List<EventOuterClass.Event>,
+    logSendingMaxBatchQueueCount: Int
+  ) {
     if (events.isEmpty()) return
     val sendingEvents = events.take(logSendingMaxBatchQueueCount).toList()
     val registerEvent = api.registerEvent(sendingEvents)
@@ -95,12 +97,12 @@ internal class EventActionCreator(
       is Api.Result.Success -> {
         val errorMap = registerEvent.value.errorsMap
         val deleteIds = sendingEvents.map(EventOuterClass.Event::getId)
-            .filter {
-              // if the event does not contain in error, delete it
-              val error = errorMap[it] ?: return@filter true
-              // if the error is not retriable, delete it
-              !error.retriable
-            }
+          .filter {
+            // if the event does not contain in error, delete it
+            val error = errorMap[it] ?: return@filter true
+            // if the error is not retriable, delete it
+            !error.retriable
+          }
 
         eventDao.delete(deleteIds)
         dispatcher.send(EventListDataChangedAction(getAllEvent()))

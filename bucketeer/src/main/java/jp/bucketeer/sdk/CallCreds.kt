@@ -7,7 +7,11 @@ import java.util.concurrent.Executor
 
 internal class CallCreds(private val token: String) : CallCredentials() {
 
-  override fun applyRequestMetadata(request: RequestInfo, executor: Executor, applier: MetadataApplier) {
+  override fun applyRequestMetadata(
+    request: RequestInfo,
+    executor: Executor,
+    applier: MetadataApplier
+  ) {
     executor.execute {
       val headers = Metadata()
       val key = Metadata.Key.of("authorization", Metadata.ASCII_STRING_MARSHALLER)
