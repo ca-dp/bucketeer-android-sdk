@@ -23,6 +23,7 @@ class EventAdapterFactoryTest {
 
   // we don't need test case for GOAL_BATCH,
   // as it doesn't used in Client SDK.
+  @Suppress("unused")
   enum class TestCase(val json: String, val event: Event) {
     Goal(
       json = """
