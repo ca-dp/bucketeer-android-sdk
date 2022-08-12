@@ -43,6 +43,7 @@ class EventAdapterFactory : JsonAdapter.Factory {
         return Event(
           id = jsonObj["id"] as String,
           event = adapter.fromJsonValue(jsonObj["event"]) as EventData,
+          environment_namespace = jsonObj["environment_namespace"] as String,
           type = eventType
         )
       }
@@ -75,6 +76,9 @@ class EventAdapterFactory : JsonAdapter.Factory {
           }
           else -> throw BKTException.IllegalStateException("unexpected type: $type")
         }
+
+        writer.name("environment_namespace")
+        writer.jsonValue(value.environment_namespace)
 
         writer.endObject()
       }

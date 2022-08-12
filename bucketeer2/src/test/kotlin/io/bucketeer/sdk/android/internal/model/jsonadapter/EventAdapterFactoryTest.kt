@@ -37,7 +37,8 @@ class EventAdapterFactoryTest {
         |    "value": 1.04,
         |    "tag": "tag_value",
         |    "source_id": 1
-        |  }
+        |  },
+        |  "environment_namespace": "environment_namespace_value"
         |}
       """.trimMargin(),
       event = Event(
@@ -50,7 +51,8 @@ class EventAdapterFactoryTest {
           value = 1.04,
           tag = "tag_value",
           source_id = SourceID.ANDROID
-        )
+        ),
+        environment_namespace = "environment_namespace_value"
       )
     ),
     Evaluation(
@@ -70,7 +72,8 @@ class EventAdapterFactoryTest {
         |    },
         |    "tag": "tag_value",
         |    "source_id": 1
-        |  }
+        |  },
+        |  "environment_namespace": "environment_namespace_value"
         |}
       """.trimMargin(),
       event = Event(
@@ -88,7 +91,8 @@ class EventAdapterFactoryTest {
           ),
           tag = "tag_value",
           source_id = SourceID.ANDROID
-        )
+        ),
+        environment_namespace = "environment_namespace_value"
       )
     ),
     Metrics(
@@ -109,7 +113,8 @@ class EventAdapterFactoryTest {
         |        "nanos": 32000000
         |      }
         |    }
-        |  }
+        |  },
+        |  "environment_namespace": "environment_namespace_value"
         |}
       """.trimMargin(),
       event = Event(
@@ -125,7 +130,8 @@ class EventAdapterFactoryTest {
             ),
             duration = Duration(5, 32000000)
           )
-        )
+        ),
+        environment_namespace = "environment_namespace_value"
       )
     )
   }
