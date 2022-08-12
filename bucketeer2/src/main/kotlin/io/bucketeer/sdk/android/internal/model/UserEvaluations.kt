@@ -6,5 +6,4 @@ import com.squareup.moshi.JsonClass
 data class UserEvaluations(
   val id: String,
   val evaluations: List<Evaluation>
-) {
-}
+)

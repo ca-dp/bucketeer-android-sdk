@@ -49,7 +49,7 @@ class EventAdapterFactoryTest {
           user_id = "user_id_value",
           value = 1.04,
           tag = "tag_value",
-          source_id = SourceID.ANDROID,
+          source_id = SourceID.ANDROID
         )
       )
     ),
@@ -84,10 +84,10 @@ class EventAdapterFactoryTest {
           variation_id = "variation_id_value",
           reason = Reason(
             type = ReasonType.CLIENT,
-            rule_id = "rule_id_value",
+            rule_id = "rule_id_value"
           ),
           tag = "tag_value",
-          source_id = SourceID.ANDROID,
+          source_id = SourceID.ANDROID
         )
       )
     ),
