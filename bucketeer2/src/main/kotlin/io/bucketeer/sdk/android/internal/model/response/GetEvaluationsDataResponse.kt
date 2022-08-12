@@ -5,7 +5,7 @@ import io.bucketeer.sdk.android.internal.model.UserEvaluations
 import io.bucketeer.sdk.android.internal.model.UserEvaluationsState
 
 @JsonClass(generateAdapter = true)
-data class GetEvaluationDataResponse(
+data class GetEvaluationsDataResponse(
   val state: UserEvaluationsState,
   val evaluations: UserEvaluations,
   val user_evaluations_id: String
