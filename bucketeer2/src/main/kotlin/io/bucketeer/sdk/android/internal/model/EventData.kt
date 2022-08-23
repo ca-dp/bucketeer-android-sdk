@@ -12,6 +12,7 @@ sealed class EventData {
     val goal_id: String,
     val user_id: String,
     val value: Double,
+    val user: User,
     val tag: String,
     val source_id: SourceID
   ) : EventData()
@@ -23,6 +24,7 @@ sealed class EventData {
     val feature_version: Int,
     val user_id: String,
     val variation_id: String,
+    val user: User,
     val reason: Reason,
     val tag: String,
     val source_id: SourceID

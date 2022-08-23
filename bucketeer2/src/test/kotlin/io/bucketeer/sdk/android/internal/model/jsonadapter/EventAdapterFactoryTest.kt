@@ -14,6 +14,7 @@ import io.bucketeer.sdk.android.internal.model.MetricsEventType
 import io.bucketeer.sdk.android.internal.model.Reason
 import io.bucketeer.sdk.android.internal.model.ReasonType
 import io.bucketeer.sdk.android.internal.model.SourceID
+import io.bucketeer.sdk.android.internal.model.User
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -35,6 +36,13 @@ class EventAdapterFactoryTest {
         |    "goal_id": "goal_id_value",
         |    "user_id": "user_id_value",
         |    "value": 1.04,
+        |    "user": {
+        |      "id": "user_id_value",
+        |      "data": {
+        |        "gender": "male",
+        |        "age": "40"
+        |      }
+        |    },
         |    "tag": "tag_value",
         |    "source_id": 1
         |  }
@@ -48,6 +56,13 @@ class EventAdapterFactoryTest {
           goal_id = "goal_id_value",
           user_id = "user_id_value",
           value = 1.04,
+          user = User(
+            id = "user_id_value",
+            data = mapOf(
+              "gender" to "male",
+              "age" to "40"
+            )
+          ),
           tag = "tag_value",
           source_id = SourceID.ANDROID
         ),
@@ -64,6 +79,13 @@ class EventAdapterFactoryTest {
         |    "feature_version": 2,
         |    "user_id": "user_id_value",
         |    "variation_id": "variation_id_value",
+        |    "user": {
+        |      "id": "user_id_value",
+        |      "data": {
+        |        "gender": "male",
+        |        "age": "40"
+        |      }
+        |    },
         |    "reason": {
         |      "type": 4,
         |      "rule_id": "rule_id_value"
@@ -82,6 +104,13 @@ class EventAdapterFactoryTest {
           feature_version = 2,
           user_id = "user_id_value",
           variation_id = "variation_id_value",
+          user = User(
+            id = "user_id_value",
+            data = mapOf(
+              "gender" to "male",
+              "age" to "40"
+            )
+          ),
           reason = Reason(
             type = ReasonType.CLIENT,
             rule_id = "rule_id_value"
