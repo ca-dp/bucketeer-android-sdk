@@ -21,9 +21,9 @@ sealed class EventData {
   data class EvaluationEvent(
     val timestamp: Long,
     val feature_id: String,
-    val feature_version: Int,
+    val feature_version: Int = 0,
     val user_id: String,
-    val variation_id: String,
+    val variation_id: String = "",
     val user: User,
     val reason: Reason,
     val tag: String,
