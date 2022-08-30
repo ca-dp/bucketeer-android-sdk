@@ -16,5 +16,5 @@ android {
 }
 
 dependencies {
-  implementation project(":bucketeer2")
+  implementation projects.bucketeer2
 }
