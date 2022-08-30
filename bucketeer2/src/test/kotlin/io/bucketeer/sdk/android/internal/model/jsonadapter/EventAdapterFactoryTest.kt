@@ -163,7 +163,7 @@ class EventAdapterFactoryTest {
 
   @Before
   fun setup() {
-    adapter = DataModule.moshi().adapter(Event::class.java)
+    adapter = DataModule.createMoshi().adapter(Event::class.java)
   }
 
   @Test

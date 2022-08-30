@@ -17,7 +17,7 @@ class ReasonTypeAdapterTest {
 
   @Before
   fun setup() {
-    adapter = DataModule.moshi().adapter(ReasonType::class.java)
+    adapter = DataModule.createMoshi().adapter(ReasonType::class.java)
   }
 
   @Test

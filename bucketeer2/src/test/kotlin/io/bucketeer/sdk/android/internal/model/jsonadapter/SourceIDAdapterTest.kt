@@ -17,7 +17,7 @@ class SourceIDAdapterTest {
 
   @Before
   fun setup() {
-    adapter = DataModule.moshi().adapter(SourceID::class.java)
+    adapter = DataModule.createMoshi().adapter(SourceID::class.java)
   }
 
   @Test

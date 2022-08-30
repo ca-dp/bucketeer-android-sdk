@@ -17,7 +17,7 @@ class UserEvaluationsStateAdapterTest {
 
   @Before
   fun setup() {
-    adapter = DataModule.moshi().adapter(UserEvaluationsState::class.java)
+    adapter = DataModule.createMoshi().adapter(UserEvaluationsState::class.java)
   }
 
   @Test

@@ -17,7 +17,7 @@ class MetricsEventTypeAdapterTest {
 
   @Before
   fun setup() {
-    adapter = DataModule.moshi().adapter(MetricsEventType::class.java)
+    adapter = DataModule.createMoshi().adapter(MetricsEventType::class.java)
   }
 
   @Test

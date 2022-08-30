@@ -17,7 +17,7 @@ class EventTypeAdapterTest {
 
   @Before
   fun setup() {
-    adapter = DataModule.moshi().adapter(EventType::class.java)
+    adapter = DataModule.createMoshi().adapter(EventType::class.java)
   }
 
   @Test

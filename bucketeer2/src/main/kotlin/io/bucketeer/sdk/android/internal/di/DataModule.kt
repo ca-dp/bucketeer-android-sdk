@@ -20,7 +20,7 @@ internal class DataModule(
 
   companion object {
     @VisibleForTesting
-    internal fun moshi(): Moshi {
+    internal fun createMoshi(): Moshi {
       return Moshi.Builder()
         .add(EventTypeAdapter())
         .add(MetricsEventTypeAdapter())
