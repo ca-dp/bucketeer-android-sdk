@@ -10,7 +10,7 @@ def properties = new Properties()
 properties.load(rootProject.file('local.properties').newDataInputStream())
 
 android {
-  namespace = "io.io.bucketeer.sdk.android"
+  namespace = "io.bucketeer.sdk.android"
 
   compileSdkVersion project.findProperty("android.compileSdkVersion") as int
 
