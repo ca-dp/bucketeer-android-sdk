@@ -6,6 +6,9 @@ pluginManagement {
   }
 }
 
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
 include ':bucketeer'
 include ':bucketeer2'
+include ':mocks'
 include ':sample'
