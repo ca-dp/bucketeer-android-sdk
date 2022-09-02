@@ -1,22 +1,22 @@
 package io.bucketeer.sdk.android.internal
 
 import android.util.Log
+import io.bucketeer.sdk.android.BKTLogger
 
-internal object SdkLogger {
-  private val logHandlers: MutableList<LogHandler> = mutableListOf()
+internal object LoggerHolder {
+  private val logHandlers: MutableList<BKTLogger> = mutableListOf()
 
-  fun addLogger(logHandler: LogHandler) {
-    logHandlers.add(logHandler)
+  fun addLogger(logger: BKTLogger) {
+    logHandlers.add(logger)
   }
 
   fun log(
     priority: Int,
-    msgCreator: (() -> String?)? = null,
-    throwable: Throwable? = null,
-    isLogForUser: Boolean = true
+    messageCreator: (() -> String?)? = null,
+    throwable: Throwable? = null
   ) {
     logHandlers.forEach {
-      it.log(priority, msgCreator, throwable, isLogForUser)
+      it.log(priority, messageCreator, throwable)
     }
   }
 }
@@ -24,129 +24,67 @@ internal object SdkLogger {
 // TODO: Add msgCreator log methods
 internal fun logd(
   throwable: Throwable? = null,
-  isLogForUser: Boolean = true,
-  msgCreator: (() -> String?)? = null
+  messageCreator: (() -> String?)? = null
 ) {
-  SdkLogger.log(
+  LoggerHolder.log(
     Log.DEBUG,
-    msgCreator = msgCreator,
+    messageCreator = messageCreator,
     throwable = throwable,
-    isLogForUser = isLogForUser
   )
 }
 
 internal fun loge(
   throwable: Throwable? = null,
-  isLogForUser: Boolean = true,
-  msgCreator: (() -> String?)? = null
+  messageCreator: (() -> String?)? = null
 ) {
-  SdkLogger.log(
+  LoggerHolder.log(
     priority = Log.ERROR,
-    msgCreator = msgCreator,
+    messageCreator = messageCreator,
     throwable = throwable,
-    isLogForUser = isLogForUser
   )
 }
 
 internal fun logi(
   throwable: Throwable? = null,
-  isLogForUser: Boolean = true,
-  msgCreator: (() -> String?)? = null
+  messageCreator: (() -> String?)? = null
 ) {
-  SdkLogger.log(
+  LoggerHolder.log(
     priority = Log.INFO,
-    msgCreator = msgCreator,
+    messageCreator = messageCreator,
     throwable = throwable,
-    isLogForUser = isLogForUser
   )
 }
 
 internal fun logv(
   throwable: Throwable? = null,
-  isLogForUser: Boolean = true,
-  msgCreator: (() -> String?)? = null
+  messageCreator: (() -> String?)? = null
 ) {
-  SdkLogger.log(
+  LoggerHolder.log(
     priority = Log.VERBOSE,
-    msgCreator = msgCreator,
+    messageCreator = messageCreator,
     throwable = throwable,
-    isLogForUser = isLogForUser
   )
 }
 
 internal fun logw(
   throwable: Throwable? = null,
-  isLogForUser: Boolean = true,
-  msgCreator: (() -> String?)? = null
+  messageCreator: (() -> String?)? = null
 ) {
-  SdkLogger.log(
+  LoggerHolder.log(
     priority = Log.WARN,
-    msgCreator = msgCreator,
+    messageCreator = messageCreator,
     throwable = throwable,
-    isLogForUser = isLogForUser
   )
 }
 
 internal fun logwtf(
   throwable: Throwable? = null,
-  isLogForUser: Boolean = true,
-  msgCreator: (() -> String?)? = null
+  messageCreator: (() -> String?)? = null
 ) {
-  SdkLogger.log(
+  LoggerHolder.log(
     priority = Log.ASSERT,
-    msgCreator = msgCreator,
+    messageCreator = messageCreator,
     throwable = throwable,
-    isLogForUser = isLogForUser
   )
 }
 
-internal abstract class LogHandler {
-  abstract fun log(
-    priority: Int,
-    msgCreator: (() -> String?)? = null,
-    th: Throwable?,
-    isLogForUser: Boolean = true
-  )
-}
-
-internal class SdkInsideLogHandler(private val tag: String) : LogHandler() {
-  override fun log(
-    priority: Int,
-    msgCreator: (() -> String?)?,
-    th: Throwable?,
-    isLogForUser: Boolean
-  ) {
-    if (!Log.isLoggable(tag, priority)) return
-
-    val message = buildString {
-      msgCreator?.invoke()?.let { append(it) }
-      if (th != null) append("\n")
-      if (th != null) append(Log.getStackTraceString(th))
-    }
-    if (message.isBlank()) return
-
-    Log.println(priority, tag, message)
-  }
-}
-
-internal class UserLogHandler(private val tag: String) : LogHandler() {
-  override fun log(
-    priority: Int,
-    msgCreator: (() -> String?)?,
-    th: Throwable?,
-    isLogForUser: Boolean
-  ) {
-    if (!isLogForUser) return
-
-    if (!Log.isLoggable(tag, priority)) return
-
-    val message = buildString {
-      msgCreator?.invoke()?.let { append(it) }
-      if (th != null) append("\n")
-      if (th != null) append(Log.getStackTraceString(th))
-    }
-    if (message.isBlank()) return
-
-    Log.println(priority, tag, message)
-  }
-}

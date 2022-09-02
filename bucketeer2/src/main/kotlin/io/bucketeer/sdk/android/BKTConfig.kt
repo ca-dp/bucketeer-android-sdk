@@ -18,7 +18,7 @@ data class BKTConfig internal constructor(
   val eventsMaxBatchQueueCount: Int,
   val pollingInterval: Long,
   val backgroundPollingInterval: Long,
-  val debugMode: Boolean
+  val logger: BKTLogger?
 ) {
 
   companion object {
@@ -33,7 +33,7 @@ data class BKTConfig internal constructor(
     private var eventsMaxQueueSize: Int = DEFAULT_MAX_QUEUE_SIZE
     private var pollingInterval: Long = DEFAULT_POLLING_INTERVAL_MILLIS
     private var backgroundPollingInterval: Long = DEFAULT_BACKGROUND_POLLING_INTERVAL_MILLIS
-    private var debugMode: Boolean = false
+    private var logger: BKTLogger? = DefaultLogger()
 
     fun apiKey(apiKey: String): Builder {
       this.apiKey = apiKey
@@ -70,8 +70,8 @@ data class BKTConfig internal constructor(
       return this
     }
 
-    fun debugMode(debugMode: Boolean): Builder {
-      this.debugMode = debugMode
+    fun logger(logger: BKTLogger?): Builder {
+      this.logger = logger
       return this
     }
 
@@ -104,7 +104,7 @@ data class BKTConfig internal constructor(
         eventsMaxBatchQueueCount = this.eventsMaxQueueSize,
         pollingInterval = this.pollingInterval,
         backgroundPollingInterval = this.backgroundPollingInterval,
-        debugMode = this.debugMode
+        logger = this.logger
       )
     }
   }

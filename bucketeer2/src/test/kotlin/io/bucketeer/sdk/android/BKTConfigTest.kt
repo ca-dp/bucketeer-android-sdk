@@ -22,7 +22,7 @@ class BKTConfigTest {
         eventsMaxBatchQueueCount = DEFAULT_MAX_QUEUE_SIZE,
         pollingInterval = DEFAULT_POLLING_INTERVAL_MILLIS,
         backgroundPollingInterval = DEFAULT_BACKGROUND_POLLING_INTERVAL_MILLIS,
-        debugMode = false
+        logger = DefaultLogger("Bucketeer")
       )
     )
   }
@@ -103,35 +103,12 @@ class BKTConfigTest {
   }
 
   @Test
-  fun `pollingInterval - force set min value`() {
+  fun `logger - can be null`() {
     val actual = BKTConfig.builder()
       .apiKey("api-key")
       .endpoint("https://example.com")
       .featureTag("feature-tag")
-      .pollingInterval(MIN_POLLING_INTERVAL_MILLIS - 100)
-      .build()
-
-    assertThat(actual).isEqualTo(
-      BKTConfig(
-        apiKey = "api-key",
-        endpoint = "https://example.com",
-        featureTag = "feature-tag",
-        eventsFlushInterval = DEFAULT_FLUSH_INTERVAL_MILLIS,
-        eventsMaxBatchQueueCount = DEFAULT_MAX_QUEUE_SIZE,
-        pollingInterval = MIN_POLLING_INTERVAL_MILLIS,
-        backgroundPollingInterval = DEFAULT_BACKGROUND_POLLING_INTERVAL_MILLIS,
-        debugMode = false
-      )
-    )
-  }
-
-  @Test
-  fun `backgroundPollingInterval - force set min value`() {
-    val actual = BKTConfig.builder()
-      .apiKey("api-key")
-      .endpoint("https://example.com")
-      .featureTag("feature-tag")
-      .backgroundPollingInterval(MIN_BACKGROUND_POLLING_INTERVAL_MILLIS - 100)
+      .logger(null)
       .build()
 
     assertThat(actual).isEqualTo(
@@ -142,8 +119,8 @@ class BKTConfigTest {
         eventsFlushInterval = DEFAULT_FLUSH_INTERVAL_MILLIS,
         eventsMaxBatchQueueCount = DEFAULT_MAX_QUEUE_SIZE,
         pollingInterval = DEFAULT_POLLING_INTERVAL_MILLIS,
-        backgroundPollingInterval = MIN_BACKGROUND_POLLING_INTERVAL_MILLIS,
-        debugMode = false
+        backgroundPollingInterval = DEFAULT_BACKGROUND_POLLING_INTERVAL_MILLIS,
+        logger = null
       )
     )
   }
