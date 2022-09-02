@@ -1,14 +1,11 @@
 package io.bucketeer.sdk.android
 
-import io.bucketeer.sdk.android.internal.logw
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
 internal const val DEFAULT_FLUSH_INTERVAL_MILLIS: Long = 30_000 // 30 seconds
 internal const val DEFAULT_MAX_QUEUE_SIZE: Int = 50
 internal const val DEFAULT_POLLING_INTERVAL_MILLIS: Long = 600_000 // 10 minutes
 internal const val DEFAULT_BACKGROUND_POLLING_INTERVAL_MILLIS: Long = 3_600_000 // 1 hour
-internal const val MIN_POLLING_INTERVAL_MILLIS: Long = 300_000 // 5 minutes
-internal const val MIN_BACKGROUND_POLLING_INTERVAL_MILLIS: Long = 1_200_000 // 20 minutes
 
 data class BKTConfig internal constructor(
   val apiKey: String,
@@ -76,30 +73,14 @@ data class BKTConfig internal constructor(
     }
 
     fun build(): BKTConfig {
-      require(!apiKey.isNullOrEmpty()) { "apiKey is required" }
-      require(endpoint?.toHttpUrlOrNull() != null) { "endpoint is invalid" }
-      require(!featureTag.isNullOrEmpty()) { "featureTag is required" }
-
-      if (pollingInterval < MIN_POLLING_INTERVAL_MILLIS) {
-        logw {
-          "pollingInterval: $pollingInterval was set below the minimum allowed: " +
-              "$MIN_POLLING_INTERVAL_MILLIS. It will use the minimum value."
-        }
-        pollingInterval = MIN_POLLING_INTERVAL_MILLIS
-      }
-
-      if (backgroundPollingInterval < MIN_BACKGROUND_POLLING_INTERVAL_MILLIS) {
-        logw {
-          "backgroundPollingInterval: $backgroundPollingInterval was set below the minimum allowed: " +
-              "$MIN_BACKGROUND_POLLING_INTERVAL_MILLIS. It will use the minimum value."
-        }
-        backgroundPollingInterval = MIN_BACKGROUND_POLLING_INTERVAL_MILLIS
-      }
+      require(!this.apiKey.isNullOrEmpty()) { "apiKey is required" }
+      require(this.endpoint?.toHttpUrlOrNull() != null) { "endpoint is invalid" }
+      require(!this.featureTag.isNullOrEmpty()) { "featureTag is required" }
 
       return BKTConfig(
-        apiKey = apiKey!!,
-        endpoint = endpoint!!,
-        featureTag = featureTag!!,
+        apiKey = this.apiKey!!,
+        endpoint = this.endpoint!!,
+        featureTag = this.featureTag!!,
         eventsFlushInterval = this.eventsFlushInterval,
         eventsMaxBatchQueueCount = this.eventsMaxQueueSize,
         pollingInterval = this.pollingInterval,
