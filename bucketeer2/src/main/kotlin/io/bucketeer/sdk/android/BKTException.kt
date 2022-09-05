@@ -7,51 +7,17 @@ sealed class BKTException(
   message,
   cause
 ) {
-  class ApiCancelException(cause: Throwable?) : BKTException(
-    "The operation was cancelled.",
-    cause
-  )
+  // server errors
+  class BadRequestException(message: String) : BKTException(message)
+  class UnauthorizedException(message: String) : BKTException(message)
+  class FeatureNotFoundException(message: String) : BKTException(message)
+  class InvalidHttpMethodException(message: String) : BKTException(message)
+  class ApiServerException(message: String) : BKTException(message)
 
-  class ApiUnknownException(cause: Throwable?) : BKTException(
-    "Unknown error.",
-    cause
-  )
+  // sdk errors
+  class IllegalArgumentException(message: String) : BKTException(message)
+  class IllegalStateException(message: String) : BKTException(message)
 
-  class ApiInvocationFailException(message: String, cause: Throwable?) : BKTException(
-    message,
-    cause
-  )
-
-  class ApiServerException(cause: Throwable?) : BKTException(
-    "The server is currently error.",
-    cause
-  )
-
-  class ApiUnavailableException(cause: Throwable?) : BKTException(
-    "The service is currently unavailable.",
-    cause
-  )
-
-  class ApiDataLossException(cause: Throwable?) : BKTException(
-    "Unrecoverable data loss or corruption.",
-    cause
-  )
-
-  class ApiUnauthenticatedException(cause: Throwable?) : BKTException(
-    "Does not have valid authentication credentials.",
-    cause
-  )
-
-  class UnknownException(cause: Throwable?) : BKTException(
-    "Unknown error",
-    cause
-  )
-
-  class IllegalArgumentException(message: String) : BKTException(
-    message
-  )
-
-  class IllegalStateException(message: String) : BKTException(
-    message
-  )
+  // unknown errors
+  class UnknownException(message: String, cause: Throwable? = null) : BKTException(message, cause)
 }
