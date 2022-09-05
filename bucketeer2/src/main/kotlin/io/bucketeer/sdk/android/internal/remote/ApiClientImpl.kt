@@ -67,22 +67,29 @@ internal class ApiClientImpl(
     val result = actualClient.newCall(request).runCatching {
       logd { "--> Fetch Evaluation\n$body" }
 
-      val (millis, response) = measureTimeMillisWithResult { execute() }
-      if (!response.isSuccessful) {
-        throw response.toBKTException(errorResponseJsonAdapter)
+      val (millis, data) = measureTimeMillisWithResult {
+        val rawResponse = execute()
+
+        if (!rawResponse.isSuccessful) {
+          throw rawResponse.toBKTException(errorResponseJsonAdapter)
+        }
+
+        val response = requireNotNull(rawResponse.fromJson<GetEvaluationsResponse>())
+
+        response to (rawResponse.body?.contentLength() ?: -1).toInt()
       }
 
-      val result = requireNotNull(response.fromJson<GetEvaluationsResponse>())
+      val (response, contentLength) = data
 
       logd { "--> END Fetch Evaluation" }
       logd { "<-- Fetch Evaluation\n$response\n<-- END Evaluation response" }
 
       GetEvaluationsResult.Success(
-        value = result,
+        value = response,
         millis = millis,
-        sizeByte = (response.body?.contentLength() ?: -1).toInt(),
+        sizeByte = contentLength,
         featureTag = featureTag,
-        state = result.data.state
+        state = response.data.state
       )
     }
 
