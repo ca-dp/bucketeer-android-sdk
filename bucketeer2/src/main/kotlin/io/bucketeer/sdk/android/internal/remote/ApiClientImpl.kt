@@ -23,12 +23,14 @@ internal class ApiClientImpl(
   endpoint: String,
   private val apiKey: String,
   private val featureTag: String,
-  private val moshi: Moshi
+  private val moshi: Moshi,
+  defaultRequestTimeoutMillis: Long = 30_000
 ) : ApiClient {
 
   private val endpoint = endpoint.toHttpUrl()
 
   private val client: OkHttpClient = OkHttpClient.Builder()
+    .callTimeout(defaultRequestTimeoutMillis, TimeUnit.MILLISECONDS)
     .build()
 
   private val errorResponseJsonAdapter: JsonAdapter<ErrorResponse> by lazy {

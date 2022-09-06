@@ -93,7 +93,36 @@ internal class ApiClientImplTest {
   }
 
   @Test
-  fun `getEvaluations - timeout`() {
+  fun `getEvaluations - default timeout`() {
+    client = ApiClientImpl(
+      endpoint = endpoint,
+      apiKey = "api_key_value",
+      featureTag = "feature_tag_value",
+      moshi = moshi,
+      defaultRequestTimeoutMillis = 1_000
+    )
+
+    val (millis, result) = measureTimeMillisWithResult {
+      client.getEvaluations(
+        user = user1,
+        userEvaluationsId = "user_evaluation_id"
+      )
+    }
+
+    assertThat(millis).isGreaterThan(1_000)
+    assertThat(millis).isLessThan(1_500)
+
+    assertThat(result).isInstanceOf(GetEvaluationsResult.Failure::class.java)
+    val failure = result as GetEvaluationsResult.Failure
+
+    println(failure.error.cause)
+
+    assertThat(failure.error).isInstanceOf(BKTException.TimeoutException::class.java)
+    assertThat(failure.featureTag).isEqualTo("feature_tag_value")
+  }
+
+  @Test
+  fun `getEvaluations - custom timeout`() {
     client = ApiClientImpl(
       endpoint = endpoint,
       apiKey = "api_key_value",
@@ -101,11 +130,16 @@ internal class ApiClientImplTest {
       moshi = moshi
     )
 
-    val result = client.getEvaluations(
-      user = user1,
-      userEvaluationsId = "user_evaluation_id",
-      timeoutMillis = TimeUnit.SECONDS.toMillis(1)
-    )
+    val (millis, result) = measureTimeMillisWithResult {
+      client.getEvaluations(
+        user = user1,
+        userEvaluationsId = "user_evaluation_id",
+        timeoutMillis = TimeUnit.SECONDS.toMillis(1)
+      )
+    }
+
+    assertThat(millis).isGreaterThan(1_000)
+    assertThat(millis).isLessThan(1_500)
 
     assertThat(result).isInstanceOf(GetEvaluationsResult.Failure::class.java)
     val failure = result as GetEvaluationsResult.Failure
