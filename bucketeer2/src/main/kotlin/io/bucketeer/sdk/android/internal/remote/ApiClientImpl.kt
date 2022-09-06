@@ -95,14 +95,12 @@ internal class ApiClientImpl(
 
     return result.fold(
       onSuccess = { res -> res },
-      onFailure = { e -> GetEvaluationsResult.Failure(e, featureTag) }
+      onFailure = { e -> GetEvaluationsResult.Failure(e.toBKTException(), featureTag) }
     )
   }
 
   override fun registerEvents(events: List<Event>): RegisterEventsResult {
-    val body = RegisterEventsRequest(
-      events = events
-    )
+    val body = RegisterEventsRequest(events = events)
 
     val request = Request.Builder()
       .url(
@@ -129,14 +127,12 @@ internal class ApiClientImpl(
       logd { "--> END Register events" }
       logd { "<-- Register events\n$result\n<-- END Register events" }
 
-      RegisterEventsResult.Success(
-        value = result
-      )
+      RegisterEventsResult.Success(value = result)
     }
 
     return result.fold(
       onSuccess = { res -> res },
-      onFailure = { e -> RegisterEventsResult.Failure(e) }
+      onFailure = { e -> RegisterEventsResult.Failure(e.toBKTException()) }
     )
   }
 

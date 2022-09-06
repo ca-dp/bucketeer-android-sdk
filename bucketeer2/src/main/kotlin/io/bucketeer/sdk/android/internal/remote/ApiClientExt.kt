@@ -4,6 +4,9 @@ import com.squareup.moshi.JsonAdapter
 import io.bucketeer.sdk.android.BKTException
 import io.bucketeer.sdk.android.internal.model.response.ErrorResponse
 import okhttp3.Response
+import java.io.InterruptedIOException
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 import kotlin.contracts.ExperimentalContracts
 
 fun Response.toBKTException(adapter: JsonAdapter<ErrorResponse>): BKTException {
@@ -60,6 +63,18 @@ fun Response.toBKTException(adapter: JsonAdapter<ErrorResponse>): BKTException {
       )
     }
     else -> BKTException.UnknownException("Unknown error: '$errorBody'")
+  }
+}
+
+internal fun Throwable.toBKTException(): BKTException {
+  return when (this) {
+    is BKTException -> this
+    is SocketTimeoutException,
+    is InterruptedIOException ->
+      BKTException.TimeoutException("Request timeout error: ${this.message}", this)
+    is UnknownHostException ->
+      BKTException.NetworkException("Network connection error: ${this.message}", this)
+    else -> BKTException.UnknownException("Unknown error: ${this.message}", this)
   }
 }
 

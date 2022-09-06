@@ -14,6 +14,10 @@ sealed class BKTException(
   class InvalidHttpMethodException(message: String) : BKTException(message)
   class ApiServerException(message: String) : BKTException(message)
 
+  // network errors
+  class TimeoutException(message: String, cause: Throwable) : BKTException(message, cause)
+  class NetworkException(message: String, cause: Throwable) : BKTException(message, cause)
+
   // sdk errors
   class IllegalArgumentException(message: String) : BKTException(message)
   class IllegalStateException(message: String) : BKTException(message)
