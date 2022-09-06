@@ -35,7 +35,7 @@ internal class ApiClientImpl(
     moshi.adapter(ErrorResponse::class.java)
   }
 
-  override fun fetchEvaluations(
+  override fun getEvaluations(
     user: User,
     userEvaluationsId: String,
     timeoutMillis: Long?

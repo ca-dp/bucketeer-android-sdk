@@ -4,7 +4,7 @@ import io.bucketeer.sdk.android.internal.model.Event
 import io.bucketeer.sdk.android.internal.model.User
 
 interface ApiClient {
-  fun fetchEvaluations(
+  fun getEvaluations(
     user: User,
     userEvaluationsId: String,
     timeoutMillis: Long? = null
@@ -12,4 +12,3 @@ interface ApiClient {
 
   fun registerEvents(events: List<Event>): RegisterEventsResult
 }
-

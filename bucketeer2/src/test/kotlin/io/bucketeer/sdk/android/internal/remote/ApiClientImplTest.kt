@@ -34,7 +34,7 @@ internal class ApiClientImplTest {
   }
 
   @Test
-  fun `fetchEvaluations - success`() {
+  fun `getEvaluations - success`() {
     val expected = GetEvaluationsResponse(
       data = GetEvaluationsDataResponse(
         state = UserEvaluationsState.FULL,
@@ -58,7 +58,7 @@ internal class ApiClientImplTest {
       moshi = moshi
     )
 
-    val result = client.fetchEvaluations(
+    val result = client.getEvaluations(
       user = user1,
       userEvaluationsId = "user_evaluation_id"
     )
