@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.annotation.VisibleForTesting
 import androidx.sqlite.db.SupportSQLiteOpenHelper
 import com.squareup.moshi.Moshi
+import io.bucketeer.sdk.android.BKTConfig
 import io.bucketeer.sdk.android.internal.database.createDatabase
 import io.bucketeer.sdk.android.internal.evaluation.db.CurrentEvaluationDao
 import io.bucketeer.sdk.android.internal.evaluation.db.CurrentEvaluationDaoImpl
@@ -18,15 +19,24 @@ import io.bucketeer.sdk.android.internal.model.jsonadapter.MetricsEventTypeAdapt
 import io.bucketeer.sdk.android.internal.model.jsonadapter.ReasonTypeAdapter
 import io.bucketeer.sdk.android.internal.model.jsonadapter.SourceIDAdapter
 import io.bucketeer.sdk.android.internal.model.jsonadapter.UserEvaluationsStateAdapter
+import io.bucketeer.sdk.android.internal.remote.ApiClient
+import io.bucketeer.sdk.android.internal.remote.ApiClientImpl
 
 internal class DataModule(
   application: Application,
-  apiKey: String,
-  endpoint: String,
-  featureTag: String
+  val config: BKTConfig
 ) {
 
   val moshi: Moshi by lazy { createMoshi() }
+
+  val apiClient: ApiClient by lazy {
+    ApiClientImpl(
+      endpoint = config.endpoint,
+      apiKey = config.apiKey,
+      featureTag = config.featureTag,
+      moshi = moshi
+    )
+  }
 
   private val sqliteOpenHelper: SupportSQLiteOpenHelper by lazy {
     createDatabase(application)
