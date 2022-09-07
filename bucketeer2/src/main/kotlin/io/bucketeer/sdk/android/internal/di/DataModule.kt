@@ -1,10 +1,13 @@
 package io.bucketeer.sdk.android.internal.di
 
 import android.app.Application
+import android.content.Context
+import android.content.SharedPreferences
 import androidx.annotation.VisibleForTesting
 import androidx.sqlite.db.SupportSQLiteOpenHelper
 import com.squareup.moshi.Moshi
 import io.bucketeer.sdk.android.BKTConfig
+import io.bucketeer.sdk.android.internal.Constants
 import io.bucketeer.sdk.android.internal.database.createDatabase
 import io.bucketeer.sdk.android.internal.evaluation.db.EvaluationDao
 import io.bucketeer.sdk.android.internal.evaluation.db.EvaluationDaoImpl
@@ -46,6 +49,10 @@ internal class DataModule(
 
   internal val eventDao: EventDao by lazy {
     EventDaoImpl(sqliteOpenHelper, moshi)
+  }
+
+  internal val sharedPreferences: SharedPreferences by lazy {
+    application.getSharedPreferences(Constants.PREFERENCES_NAME, Context.MODE_PRIVATE)
   }
 
   companion object {
