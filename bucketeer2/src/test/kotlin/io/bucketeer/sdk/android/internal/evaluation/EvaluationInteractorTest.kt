@@ -7,7 +7,6 @@ import io.bucketeer.sdk.android.BKTConfig
 import io.bucketeer.sdk.android.internal.di.Component
 import io.bucketeer.sdk.android.internal.di.DataModule
 import io.bucketeer.sdk.android.internal.di.InteractorModule
-import io.bucketeer.sdk.android.internal.model.Evaluation
 import io.bucketeer.sdk.android.internal.model.request.GetEvaluationsRequest
 import io.bucketeer.sdk.android.internal.model.response.GetEvaluationsDataResponse
 import io.bucketeer.sdk.android.internal.model.response.GetEvaluationsResponse
@@ -103,13 +102,8 @@ class EvaluationInteractorTest {
     assertThat(interactor.currentEvaluationsId).isEqualTo("user_evaluations_id_value")
 
     assertThat(interactor.latestEvaluations[user1.id]).isEqualTo(listOf(evaluation1, evaluation2))
-    val latestEvaluations = component.dataModule.latestEvaluationDao.get(user1.id)
+    val latestEvaluations = component.dataModule.evaluationDao.get(user1.id)
     assertThat(latestEvaluations).isEqualTo(listOf(evaluation1, evaluation2))
-
-    // current evaluation should not be updated at this time
-    assertThat(interactor.currentEvaluations[user1.id]).isEqualTo(emptyList<Evaluation>())
-    val currentEvaluations = component.dataModule.currentEvaluationDao.getEvaluations(user1.id)
-    assertThat(currentEvaluations).isEqualTo(emptyList<Evaluation>())
   }
 
   @Test
@@ -131,9 +125,6 @@ class EvaluationInteractorTest {
         )
     )
     interactor.fetch(user1, null)
-
-    // update current evaluation
-    interactor.getLatestAndRefreshCurrent(user1.id, evaluation1.feature_id)
 
     val newEvaluation = evaluation1.copy(
       variation_value = evaluation1.variation_value + "_updated"
@@ -166,12 +157,9 @@ class EvaluationInteractorTest {
     assertThat(interactor.currentEvaluationsId).isEqualTo("user_evaluations_id_value_updated")
 
     assertThat(interactor.latestEvaluations[user1.id]).isEqualTo(listOf(newEvaluation))
-    val latestEvaluations = component.dataModule.latestEvaluationDao.get(user1.id)
+    val latestEvaluations = component.dataModule.evaluationDao.get(user1.id)
     assertThat(latestEvaluations).isEqualTo(listOf(newEvaluation))
 
-    assertThat(interactor.currentEvaluations[user1.id]).isEqualTo(listOf(evaluation1))
-    val currentEvaluations = component.dataModule.currentEvaluationDao.getEvaluations(user1.id)
-    assertThat(currentEvaluations).isEqualTo(listOf(evaluation1))
   }
 
   @Test
@@ -193,9 +181,6 @@ class EvaluationInteractorTest {
         )
     )
     interactor.fetch(user1, null)
-
-    // update current evaluation
-    interactor.getLatestAndRefreshCurrent(user1.id, evaluation1.feature_id)
 
     // second response(test target)
     server.enqueue(
@@ -223,11 +208,8 @@ class EvaluationInteractorTest {
     assertThat(interactor.currentEvaluationsId).isEqualTo("user_evaluations_id_value")
 
     assertThat(interactor.latestEvaluations[user1.id]).isEqualTo(listOf(evaluation1, evaluation2))
-    val latestEvaluations = component.dataModule.latestEvaluationDao.get(user1.id)
+    val latestEvaluations = component.dataModule.evaluationDao.get(user1.id)
     assertThat(latestEvaluations).isEqualTo(listOf(evaluation1, evaluation2))
 
-    assertThat(interactor.currentEvaluations[user1.id]).isEqualTo(listOf(evaluation1))
-    val currentEvaluations = component.dataModule.currentEvaluationDao.getEvaluations(user1.id)
-    assertThat(currentEvaluations).isEqualTo(listOf(evaluation1))
   }
 }
