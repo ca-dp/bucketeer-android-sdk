@@ -11,20 +11,6 @@ class Migration1to2 : Migration {
 
     db.execSQL(
       """
-      |CREATE TABLE current_evaluation (
-      |   user_id TEXT NOT NULL,
-      |   feature_id TEXT NOT NULL,
-      |   evaluation TEXT NOT NULL,
-      |   PRIMARY KEY(
-      |     user_id,
-      |     feature_id
-      |   )
-      |)
-      """.trimMargin()
-    )
-
-    db.execSQL(
-      """
       |CREATE TABLE latest_evaluation (
       |   user_id TEXT,
       |   feature_id TEXT,

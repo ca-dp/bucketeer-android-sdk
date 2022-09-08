@@ -5,7 +5,6 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.db.SupportSQLiteOpenHelper
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
 import io.bucketeer.sdk.android.internal.database.migration.Migration1to2
-import io.bucketeer.sdk.android.internal.evaluation.db.CurrentEvaluationEntity
 import io.bucketeer.sdk.android.internal.evaluation.db.LatestEvaluationEntity
 import io.bucketeer.sdk.android.internal.event.EventEntity
 
@@ -17,19 +16,6 @@ class OpenHelperCallback : SupportSQLiteOpenHelper.Callback(VERSION) {
   }
 
   override fun onCreate(db: SupportSQLiteDatabase) {
-    db.execSQL(
-      """
-      |CREATE TABLE ${CurrentEvaluationEntity.TABLE_NAME} (
-      |   ${CurrentEvaluationEntity.COLUMN_USER_ID} TEXT NOT NULL,
-      |   ${CurrentEvaluationEntity.COLUMN_FEATURE_ID} TEXT NOT NULL,
-      |   ${CurrentEvaluationEntity.COLUMN_EVALUATION} TEXT NOT NULL,
-      |   PRIMARY KEY(
-      |     ${CurrentEvaluationEntity.COLUMN_USER_ID},
-      |     ${CurrentEvaluationEntity.COLUMN_FEATURE_ID}
-      |   )
-      |)
-      """.trimMargin()
-    )
 
     db.execSQL(
       """

@@ -50,18 +50,13 @@ class MigrationTest {
 
     // Here we just compare table definition.
     // Update assertions as we add new migration.
-    val tables = mutableListOf("current_evaluation", "event", "latest_evaluation")
+    val tables = mutableListOf("event", "latest_evaluation")
     c.use {
       it.moveToFirst()
       while (!it.isAfterLast) {
         val name = c.getString("name")
         val sql = c.getString("sql")
         when (name) {
-          "current_evaluation" -> {
-            tables.remove(name)
-            assertThat(sql).contains("evaluation TEXT NOT NULL")
-            assertThat(sql).doesNotContain("BLOB")
-          }
           "event" -> {
             tables.remove(name)
             assertThat(sql).contains("event TEXT")
