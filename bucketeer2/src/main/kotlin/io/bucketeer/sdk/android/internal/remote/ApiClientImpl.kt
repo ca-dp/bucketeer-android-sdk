@@ -91,7 +91,6 @@ internal class ApiClientImpl(
         millis = millis,
         sizeByte = contentLength,
         featureTag = featureTag,
-        state = response.data.state
       )
     }
 

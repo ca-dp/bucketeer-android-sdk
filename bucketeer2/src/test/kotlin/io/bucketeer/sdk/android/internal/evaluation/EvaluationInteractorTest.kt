@@ -8,7 +8,6 @@ import io.bucketeer.sdk.android.internal.di.Component
 import io.bucketeer.sdk.android.internal.di.DataModule
 import io.bucketeer.sdk.android.internal.di.InteractorModule
 import io.bucketeer.sdk.android.internal.model.Evaluation
-import io.bucketeer.sdk.android.internal.model.UserEvaluationsState
 import io.bucketeer.sdk.android.internal.model.request.GetEvaluationsRequest
 import io.bucketeer.sdk.android.internal.model.response.GetEvaluationsDataResponse
 import io.bucketeer.sdk.android.internal.model.response.GetEvaluationsResponse
@@ -76,7 +75,6 @@ class EvaluationInteractorTest {
             .toJson(
               GetEvaluationsResponse(
                 GetEvaluationsDataResponse(
-                  state = UserEvaluationsState.FULL,
                   evaluations = user1Evaluations,
                   user_evaluations_id = "user_evaluations_id_value"
                 )
@@ -125,7 +123,6 @@ class EvaluationInteractorTest {
             .toJson(
               GetEvaluationsResponse(
                 GetEvaluationsDataResponse(
-                  state = UserEvaluationsState.FULL,
                   evaluations = user1Evaluations,
                   user_evaluations_id = "user_evaluations_id_value"
                 )
@@ -150,7 +147,6 @@ class EvaluationInteractorTest {
             .toJson(
               GetEvaluationsResponse(
                 GetEvaluationsDataResponse(
-                  state = UserEvaluationsState.FULL,
                   evaluations = user1Evaluations.copy(
                     evaluations = listOf(newEvaluation)
                   ),
@@ -180,6 +176,6 @@ class EvaluationInteractorTest {
 
   @Test
   fun `fetch - update PARTIAL`() {
-    
+
   }
 }

@@ -7,7 +7,6 @@ import com.squareup.moshi.Moshi
 import io.bucketeer.sdk.android.BKTException
 import io.bucketeer.sdk.android.internal.di.DataModule
 import io.bucketeer.sdk.android.internal.model.SourceID
-import io.bucketeer.sdk.android.internal.model.UserEvaluationsState
 import io.bucketeer.sdk.android.internal.model.request.GetEvaluationsRequest
 import io.bucketeer.sdk.android.internal.model.request.RegisterEventsRequest
 import io.bucketeer.sdk.android.internal.model.response.ErrorResponse
@@ -63,7 +62,6 @@ internal class ApiClientImplTest {
   fun `getEvaluations - success`() {
     val expected = GetEvaluationsResponse(
       data = GetEvaluationsDataResponse(
-        state = UserEvaluationsState.FULL,
         evaluations = user1Evaluations,
         user_evaluations_id = "user_evaluation_id"
       )
@@ -111,9 +109,8 @@ internal class ApiClientImplTest {
     val success = result as GetEvaluationsResult.Success
     assertThat(success.value).isEqualTo(expected)
     assertThat(success.millis).isGreaterThan(TimeUnit.SECONDS.toMillis(1))
-    assertThat(success.sizeByte).isEqualTo(737)
+    assertThat(success.sizeByte).isEqualTo(727)
     assertThat(success.featureTag).isEqualTo("feature_tag_value")
-    assertThat(success.state).isEqualTo(UserEvaluationsState.FULL)
   }
 
   @Test

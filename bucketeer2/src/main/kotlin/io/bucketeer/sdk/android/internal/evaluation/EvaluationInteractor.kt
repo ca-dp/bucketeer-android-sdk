@@ -10,7 +10,6 @@ import io.bucketeer.sdk.android.internal.logd
 import io.bucketeer.sdk.android.internal.loge
 import io.bucketeer.sdk.android.internal.model.Evaluation
 import io.bucketeer.sdk.android.internal.model.User
-import io.bucketeer.sdk.android.internal.model.UserEvaluationsState
 import io.bucketeer.sdk.android.internal.remote.ApiClient
 import io.bucketeer.sdk.android.internal.remote.GetEvaluationsResult
 import java.util.concurrent.Executor
@@ -56,31 +55,20 @@ internal class EvaluationInteractor(
 
         val newEvaluations = response.evaluations.evaluations
 
-        when (response.state) {
-          UserEvaluationsState.FULL -> {
-            val success = latestEvaluationDao.deleteAllAndInsert(user.id, newEvaluations)
-            if (!success) {
-              loge { "Failed to update latest evaluations" }
-              return result
-            }
-
-            this.currentEvaluationsId = newEvaluationsId
-
-            val featureIds = newEvaluations.map { it.feature_id }
-            currentEvaluationDao.deleteNotIn(user.id, featureIds)
-            val newCurrentEvaluations = currentEvaluationDao.getEvaluations(user.id)
-
-            latestEvaluations[user.id] = newEvaluations
-            currentEvaluations[user.id] = newCurrentEvaluations
-          }
-          UserEvaluationsState.PARTIAL -> {
-            latestEvaluationDao.put(user.id, newEvaluations)
-            latestEvaluations[user.id] = latestEvaluationDao.get(user.id)
-          }
-          UserEvaluationsState.QUEUED -> {
-            // no-op
-          }
+        val success = latestEvaluationDao.deleteAllAndInsert(user.id, newEvaluations)
+        if (!success) {
+          loge { "Failed to update latest evaluations" }
+          return result
         }
+
+        this.currentEvaluationsId = newEvaluationsId
+
+        val featureIds = newEvaluations.map { it.feature_id }
+        currentEvaluationDao.deleteNotIn(user.id, featureIds)
+        val newCurrentEvaluations = currentEvaluationDao.getEvaluations(user.id)
+
+        latestEvaluations[user.id] = newEvaluations
+        currentEvaluations[user.id] = newCurrentEvaluations
       }
       is GetEvaluationsResult.Failure -> {
         logd(result.error) { "ApiError: ${result.error.message}" }

@@ -19,7 +19,6 @@ import io.bucketeer.sdk.android.internal.model.jsonadapter.MetricsEventAdapterFa
 import io.bucketeer.sdk.android.internal.model.jsonadapter.MetricsEventTypeAdapter
 import io.bucketeer.sdk.android.internal.model.jsonadapter.ReasonTypeAdapter
 import io.bucketeer.sdk.android.internal.model.jsonadapter.SourceIDAdapter
-import io.bucketeer.sdk.android.internal.model.jsonadapter.UserEvaluationsStateAdapter
 import io.bucketeer.sdk.android.internal.remote.ApiClient
 import io.bucketeer.sdk.android.internal.remote.ApiClientImpl
 
@@ -65,7 +64,6 @@ internal class DataModule(
         .add(SourceIDAdapter())
         .add(EventAdapterFactory())
         .add(MetricsEventAdapterFactory())
-        .add(UserEvaluationsStateAdapter())
         .build()
     }
   }

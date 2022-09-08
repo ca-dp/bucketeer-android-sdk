@@ -1,6 +1,5 @@
 package io.bucketeer.sdk.android.internal.remote
 
-import io.bucketeer.sdk.android.internal.model.UserEvaluationsState
 import io.bucketeer.sdk.android.internal.model.response.GetEvaluationsResponse
 
 sealed class GetEvaluationsResult {
@@ -9,7 +8,6 @@ sealed class GetEvaluationsResult {
     val millis: Long,
     val sizeByte: Int,
     val featureTag: String,
-    val state: UserEvaluationsState
   ) : GetEvaluationsResult()
 
   data class Failure(
