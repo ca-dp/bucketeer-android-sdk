@@ -66,7 +66,7 @@ class EvaluationInteractorTest {
   }
 
   @Test
-  fun `fetch - initial FULL`() {
+  fun `fetch - initial load`() {
     server.enqueue(
       MockResponse()
         .setResponseCode(200)
@@ -113,7 +113,7 @@ class EvaluationInteractorTest {
   }
 
   @Test
-  fun `fetch - update FULL`() {
+  fun `fetch - update`() {
     // initial response(for preparation)
     server.enqueue(
       MockResponse()
@@ -175,7 +175,59 @@ class EvaluationInteractorTest {
   }
 
   @Test
-  fun `fetch - update PARTIAL`() {
+  fun `fetch - no update`() {
+// initial response(for preparation)
+    server.enqueue(
+      MockResponse()
+        .setResponseCode(200)
+        .setBody(
+          moshi.adapter(GetEvaluationsResponse::class.java)
+            .toJson(
+              GetEvaluationsResponse(
+                GetEvaluationsDataResponse(
+                  evaluations = user1Evaluations,
+                  user_evaluations_id = "user_evaluations_id_value"
+                )
+              )
+            )
+        )
+    )
+    interactor.fetch(user1, null)
 
+    // update current evaluation
+    interactor.getLatestAndRefreshCurrent(user1.id, evaluation1.feature_id)
+
+    // second response(test target)
+    server.enqueue(
+      MockResponse()
+        .setResponseCode(200)
+        .setBody(
+          moshi.adapter(GetEvaluationsResponse::class.java)
+            .toJson(
+              GetEvaluationsResponse(
+                GetEvaluationsDataResponse(
+                  evaluations = user1Evaluations,
+                  user_evaluations_id = "user_evaluations_id_value"
+                )
+              )
+            )
+        )
+    )
+
+    val result = interactor.fetch(user1, null)
+
+    assertThat(server.requestCount).isEqualTo(2)
+
+    assertThat(result).isInstanceOf(GetEvaluationsResult.Success::class.java)
+
+    assertThat(interactor.currentEvaluationsId).isEqualTo("user_evaluations_id_value")
+
+    assertThat(interactor.latestEvaluations[user1.id]).isEqualTo(listOf(evaluation1, evaluation2))
+    val latestEvaluations = component.dataModule.latestEvaluationDao.get(user1.id)
+    assertThat(latestEvaluations).isEqualTo(listOf(evaluation1, evaluation2))
+
+    assertThat(interactor.currentEvaluations[user1.id]).isEqualTo(listOf(evaluation1))
+    val currentEvaluations = component.dataModule.currentEvaluationDao.getEvaluations(user1.id)
+    assertThat(currentEvaluations).isEqualTo(listOf(evaluation1))
   }
 }
