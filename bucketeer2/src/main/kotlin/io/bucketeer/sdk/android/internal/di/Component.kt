@@ -11,8 +11,7 @@ internal class Component(
   val evaluationInteractor: EvaluationInteractor by lazy {
     interactorModule.evaluationInteractor(
       apiClient = dataModule.apiClient,
-      currentEvaluationDao = dataModule.currentEvaluationDao,
-      latestEvaluationDao = dataModule.latestEvaluationDao,
+      evaluationDao = dataModule.evaluationDao,
       sharedPreferences = dataModule.sharedPreferences,
       executor = executor
     )

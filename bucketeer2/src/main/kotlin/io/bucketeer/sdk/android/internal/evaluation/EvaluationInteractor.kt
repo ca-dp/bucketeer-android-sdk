@@ -4,8 +4,7 @@ import android.annotation.SuppressLint
 import android.content.SharedPreferences
 import androidx.annotation.VisibleForTesting
 import io.bucketeer.sdk.android.internal.Constants
-import io.bucketeer.sdk.android.internal.evaluation.db.CurrentEvaluationDao
-import io.bucketeer.sdk.android.internal.evaluation.db.LatestEvaluationDao
+import io.bucketeer.sdk.android.internal.evaluation.db.EvaluationDao
 import io.bucketeer.sdk.android.internal.logd
 import io.bucketeer.sdk.android.internal.loge
 import io.bucketeer.sdk.android.internal.model.Evaluation
@@ -16,17 +15,13 @@ import java.util.concurrent.Executor
 
 internal class EvaluationInteractor(
   private val apiClient: ApiClient,
-  private val currentEvaluationDao: CurrentEvaluationDao,
-  private val latestEvaluationDao: LatestEvaluationDao,
+  private val evaluationDao: EvaluationDao,
   private val sharedPrefs: SharedPreferences,
   private val executor: Executor,
 ) {
   // key: userId
   @VisibleForTesting
   internal val latestEvaluations = mutableMapOf<String, List<Evaluation>>()
-
-  @VisibleForTesting
-  internal val currentEvaluations = mutableMapOf<String, List<Evaluation>>()
 
   @VisibleForTesting
   internal var currentEvaluationsId: String
@@ -55,7 +50,7 @@ internal class EvaluationInteractor(
 
         val newEvaluations = response.evaluations.evaluations
 
-        val success = latestEvaluationDao.deleteAllAndInsert(user.id, newEvaluations)
+        val success = evaluationDao.deleteAllAndInsert(user.id, newEvaluations)
         if (!success) {
           loge { "Failed to update latest evaluations" }
           return result
@@ -63,12 +58,7 @@ internal class EvaluationInteractor(
 
         this.currentEvaluationsId = newEvaluationsId
 
-        val featureIds = newEvaluations.map { it.feature_id }
-        currentEvaluationDao.deleteNotIn(user.id, featureIds)
-        val newCurrentEvaluations = currentEvaluationDao.getEvaluations(user.id)
-
         latestEvaluations[user.id] = newEvaluations
-        currentEvaluations[user.id] = newCurrentEvaluations
       }
       is GetEvaluationsResult.Failure -> {
         logd(result.error) { "ApiError: ${result.error.message}" }
@@ -80,17 +70,5 @@ internal class EvaluationInteractor(
   fun getLatest(userId: String, featureId: String): Evaluation? {
     val evaluations = latestEvaluations[userId] ?: emptyList()
     return evaluations.firstOrNull { it.feature_id == featureId }
-  }
-
-  fun getLatestAndRefreshCurrent(userId: String, featureId: String): Evaluation? {
-    val evaluation = getLatest(userId, featureId) ?: return null
-
-    executor.execute {
-      currentEvaluationDao.upsertEvaluation(evaluation)
-      val newCurrentEvaluation = currentEvaluationDao.getEvaluations(userId)
-      currentEvaluations[userId] = newCurrentEvaluation
-    }
-
-    return evaluation
   }
 }
