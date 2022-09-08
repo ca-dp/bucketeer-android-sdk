@@ -5,7 +5,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.db.SupportSQLiteOpenHelper
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
 import io.bucketeer.sdk.android.internal.database.migration.Migration1to2
-import io.bucketeer.sdk.android.internal.evaluation.db.LatestEvaluationEntity
+import io.bucketeer.sdk.android.internal.evaluation.db.EvaluationEntity
 import io.bucketeer.sdk.android.internal.event.EventEntity
 
 class OpenHelperCallback : SupportSQLiteOpenHelper.Callback(VERSION) {
@@ -19,13 +19,13 @@ class OpenHelperCallback : SupportSQLiteOpenHelper.Callback(VERSION) {
 
     db.execSQL(
       """
-      |CREATE TABLE ${LatestEvaluationEntity.TABLE_NAME} (
-      |   ${LatestEvaluationEntity.COLUMN_USER_ID} TEXT,
-      |   ${LatestEvaluationEntity.COLUMN_FEATURE_ID} TEXT,
-      |   ${LatestEvaluationEntity.COLUMN_EVALUATION} TEXT,
+      |CREATE TABLE ${EvaluationEntity.TABLE_NAME} (
+      |   ${EvaluationEntity.COLUMN_USER_ID} TEXT,
+      |   ${EvaluationEntity.COLUMN_FEATURE_ID} TEXT,
+      |   ${EvaluationEntity.COLUMN_EVALUATION} TEXT,
       |   PRIMARY KEY(
-      |     ${LatestEvaluationEntity.COLUMN_USER_ID},
-      |     ${LatestEvaluationEntity.COLUMN_FEATURE_ID}
+      |     ${EvaluationEntity.COLUMN_USER_ID},
+      |     ${EvaluationEntity.COLUMN_FEATURE_ID}
       |   )
       |)
       """.trimMargin()

@@ -10,7 +10,11 @@ import io.bucketeer.sdk.android.internal.database.getString
 import io.bucketeer.sdk.android.internal.database.select
 import io.bucketeer.sdk.android.internal.di.DataModule
 import io.bucketeer.sdk.android.internal.model.Evaluation
-import io.bucketeer.sdk.android.mocks.*
+import io.bucketeer.sdk.android.mocks.evaluation1
+import io.bucketeer.sdk.android.mocks.evaluation2
+import io.bucketeer.sdk.android.mocks.evaluation3
+import io.bucketeer.sdk.android.mocks.user1
+import io.bucketeer.sdk.android.mocks.user2
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -18,9 +22,9 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
-class LatestEvaluationDaoImplTest {
+class EvaluationDaoImplTest {
 
-  private lateinit var dao: LatestEvaluationDaoImpl
+  private lateinit var dao: EvaluationDaoImpl
   private lateinit var openHelper: SupportSQLiteOpenHelper
   private lateinit var moshi: Moshi
 
@@ -29,7 +33,7 @@ class LatestEvaluationDaoImplTest {
     moshi = DataModule.createMoshi()
     openHelper = createDatabase(ApplicationProvider.getApplicationContext())
 
-    dao = LatestEvaluationDaoImpl(openHelper, moshi)
+    dao = EvaluationDaoImpl(openHelper, moshi)
   }
 
   @After
@@ -46,10 +50,10 @@ class LatestEvaluationDaoImplTest {
     c.use {
       it.moveToFirst()
 
-      assertThat(it.getString(LatestEvaluationEntity.COLUMN_FEATURE_ID))
+      assertThat(it.getString(EvaluationEntity.COLUMN_FEATURE_ID))
         .isEqualTo(evaluation1.feature_id)
 
-      val jsonStr = it.getString(LatestEvaluationEntity.COLUMN_EVALUATION)
+      val jsonStr = it.getString(EvaluationEntity.COLUMN_EVALUATION)
       val evaluation = moshi.adapter(Evaluation::class.java).fromJson(jsonStr)
       assertThat(evaluation).isEqualTo(evaluation1)
 
@@ -72,10 +76,10 @@ class LatestEvaluationDaoImplTest {
     beforeC.use {
       it.moveToFirst()
 
-      assertThat(it.getString(LatestEvaluationEntity.COLUMN_FEATURE_ID))
+      assertThat(it.getString(EvaluationEntity.COLUMN_FEATURE_ID))
         .isEqualTo(evaluation1.feature_id)
 
-      val jsonStr = it.getString(LatestEvaluationEntity.COLUMN_EVALUATION)
+      val jsonStr = it.getString(EvaluationEntity.COLUMN_EVALUATION)
       val evaluation = moshi.adapter(Evaluation::class.java).fromJson(jsonStr)
       assertThat(evaluation).isEqualTo(sourceEvaluation)
 
@@ -88,10 +92,10 @@ class LatestEvaluationDaoImplTest {
     afterC.use {
       it.moveToFirst()
 
-      assertThat(it.getString(LatestEvaluationEntity.COLUMN_FEATURE_ID))
+      assertThat(it.getString(EvaluationEntity.COLUMN_FEATURE_ID))
         .isEqualTo(evaluation1.feature_id)
 
-      val jsonStr = it.getString(LatestEvaluationEntity.COLUMN_EVALUATION)
+      val jsonStr = it.getString(EvaluationEntity.COLUMN_EVALUATION)
       val evaluation = moshi.adapter(Evaluation::class.java).fromJson(jsonStr)
       assertThat(evaluation).isEqualTo(updatedEvaluation)
 
@@ -165,12 +169,12 @@ class LatestEvaluationDaoImplTest {
 
   private fun getEvaluations(): Cursor {
     val columns = arrayOf(
-      LatestEvaluationEntity.COLUMN_FEATURE_ID,
-      LatestEvaluationEntity.COLUMN_USER_ID,
-      LatestEvaluationEntity.COLUMN_EVALUATION
+      EvaluationEntity.COLUMN_FEATURE_ID,
+      EvaluationEntity.COLUMN_USER_ID,
+      EvaluationEntity.COLUMN_EVALUATION
     )
     return openHelper.readableDatabase.select(
-      LatestEvaluationEntity.TABLE_NAME,
+      EvaluationEntity.TABLE_NAME,
       columns
     )
   }

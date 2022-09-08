@@ -11,7 +11,7 @@ class Migration1to2 : Migration {
 
     db.execSQL(
       """
-      |CREATE TABLE latest_evaluation (
+      |CREATE TABLE evaluation (
       |   user_id TEXT,
       |   feature_id TEXT,
       |   evaluation TEXT,

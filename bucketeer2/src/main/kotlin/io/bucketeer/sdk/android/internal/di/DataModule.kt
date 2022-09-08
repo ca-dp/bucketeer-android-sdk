@@ -6,8 +6,8 @@ import androidx.sqlite.db.SupportSQLiteOpenHelper
 import com.squareup.moshi.Moshi
 import io.bucketeer.sdk.android.BKTConfig
 import io.bucketeer.sdk.android.internal.database.createDatabase
-import io.bucketeer.sdk.android.internal.evaluation.db.LatestEvaluationDao
-import io.bucketeer.sdk.android.internal.evaluation.db.LatestEvaluationDaoImpl
+import io.bucketeer.sdk.android.internal.evaluation.db.EvaluationDao
+import io.bucketeer.sdk.android.internal.evaluation.db.EvaluationDaoImpl
 import io.bucketeer.sdk.android.internal.event.db.EventDao
 import io.bucketeer.sdk.android.internal.event.db.EventDaoImpl
 import io.bucketeer.sdk.android.internal.model.jsonadapter.EventAdapterFactory
@@ -40,8 +40,8 @@ internal class DataModule(
     createDatabase(application)
   }
 
-  internal val latestEvaluationDao: LatestEvaluationDao by lazy {
-    LatestEvaluationDaoImpl(sqliteOpenHelper, moshi)
+  internal val evaluationDao: EvaluationDao by lazy {
+    EvaluationDaoImpl(sqliteOpenHelper, moshi)
   }
 
   internal val eventDao: EventDao by lazy {

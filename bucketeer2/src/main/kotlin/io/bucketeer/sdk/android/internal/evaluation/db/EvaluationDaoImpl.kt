@@ -9,16 +9,16 @@ import io.bucketeer.sdk.android.internal.database.asSequence
 import io.bucketeer.sdk.android.internal.database.getString
 import io.bucketeer.sdk.android.internal.database.select
 import io.bucketeer.sdk.android.internal.database.transaction
-import io.bucketeer.sdk.android.internal.evaluation.db.LatestEvaluationEntity.COLUMN_EVALUATION
-import io.bucketeer.sdk.android.internal.evaluation.db.LatestEvaluationEntity.COLUMN_FEATURE_ID
-import io.bucketeer.sdk.android.internal.evaluation.db.LatestEvaluationEntity.COLUMN_USER_ID
-import io.bucketeer.sdk.android.internal.evaluation.db.LatestEvaluationEntity.TABLE_NAME
+import io.bucketeer.sdk.android.internal.evaluation.db.EvaluationEntity.COLUMN_EVALUATION
+import io.bucketeer.sdk.android.internal.evaluation.db.EvaluationEntity.COLUMN_FEATURE_ID
+import io.bucketeer.sdk.android.internal.evaluation.db.EvaluationEntity.COLUMN_USER_ID
+import io.bucketeer.sdk.android.internal.evaluation.db.EvaluationEntity.TABLE_NAME
 import io.bucketeer.sdk.android.internal.model.Evaluation
 
-internal class LatestEvaluationDaoImpl(
+internal class EvaluationDaoImpl(
   private val sqLiteOpenHelper: SupportSQLiteOpenHelper,
   moshi: Moshi
-) : LatestEvaluationDao {
+) : EvaluationDao {
 
   private val adapter = moshi.adapter(Evaluation::class.java)
 
