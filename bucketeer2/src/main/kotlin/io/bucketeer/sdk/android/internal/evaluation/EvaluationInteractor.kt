@@ -21,7 +21,7 @@ internal class EvaluationInteractor(
 ) {
   // key: userId
   @VisibleForTesting
-  internal val latestEvaluations = mutableMapOf<String, List<Evaluation>>()
+  internal val evaluations = mutableMapOf<String, List<Evaluation>>()
 
   @VisibleForTesting
   internal var currentEvaluationsId: String
@@ -58,7 +58,7 @@ internal class EvaluationInteractor(
 
         this.currentEvaluationsId = newEvaluationsId
 
-        latestEvaluations[user.id] = newEvaluations
+        evaluations[user.id] = newEvaluations
       }
       is GetEvaluationsResult.Failure -> {
         logd(result.error) { "ApiError: ${result.error.message}" }
@@ -68,7 +68,7 @@ internal class EvaluationInteractor(
   }
 
   fun getLatest(userId: String, featureId: String): Evaluation? {
-    val evaluations = latestEvaluations[userId] ?: emptyList()
+    val evaluations = evaluations[userId] ?: emptyList()
     return evaluations.firstOrNull { it.feature_id == featureId }
   }
 }

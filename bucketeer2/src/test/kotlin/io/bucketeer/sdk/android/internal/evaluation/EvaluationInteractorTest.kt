@@ -101,7 +101,7 @@ class EvaluationInteractorTest {
 
     assertThat(interactor.currentEvaluationsId).isEqualTo("user_evaluations_id_value")
 
-    assertThat(interactor.latestEvaluations[user1.id]).isEqualTo(listOf(evaluation1, evaluation2))
+    assertThat(interactor.evaluations[user1.id]).isEqualTo(listOf(evaluation1, evaluation2))
     val latestEvaluations = component.dataModule.evaluationDao.get(user1.id)
     assertThat(latestEvaluations).isEqualTo(listOf(evaluation1, evaluation2))
   }
@@ -156,7 +156,7 @@ class EvaluationInteractorTest {
 
     assertThat(interactor.currentEvaluationsId).isEqualTo("user_evaluations_id_value_updated")
 
-    assertThat(interactor.latestEvaluations[user1.id]).isEqualTo(listOf(newEvaluation))
+    assertThat(interactor.evaluations[user1.id]).isEqualTo(listOf(newEvaluation))
     val latestEvaluations = component.dataModule.evaluationDao.get(user1.id)
     assertThat(latestEvaluations).isEqualTo(listOf(newEvaluation))
 
@@ -207,7 +207,7 @@ class EvaluationInteractorTest {
 
     assertThat(interactor.currentEvaluationsId).isEqualTo("user_evaluations_id_value")
 
-    assertThat(interactor.latestEvaluations[user1.id]).isEqualTo(listOf(evaluation1, evaluation2))
+    assertThat(interactor.evaluations[user1.id]).isEqualTo(listOf(evaluation1, evaluation2))
     val latestEvaluations = component.dataModule.evaluationDao.get(user1.id)
     assertThat(latestEvaluations).isEqualTo(listOf(evaluation1, evaluation2))
 
