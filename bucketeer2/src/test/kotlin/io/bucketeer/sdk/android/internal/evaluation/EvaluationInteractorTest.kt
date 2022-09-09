@@ -22,7 +22,6 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import java.util.concurrent.Executors
 
 @RunWith(RobolectricTestRunner::class)
 class EvaluationInteractorTest {
@@ -47,7 +46,6 @@ class EvaluationInteractorTest {
           .build(),
       ),
       interactorModule = InteractorModule(),
-      executor = Executors.newSingleThreadScheduledExecutor()
     )
 
     interactor = component.evaluationInteractor
@@ -58,7 +56,6 @@ class EvaluationInteractorTest {
   @After
   fun tearDown() {
     server.shutdown()
-    component.executor.shutdownNow()
     component.dataModule.sharedPreferences.edit()
       .clear()
       .commit()

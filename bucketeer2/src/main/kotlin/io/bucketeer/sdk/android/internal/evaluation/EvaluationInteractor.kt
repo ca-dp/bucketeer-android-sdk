@@ -11,13 +11,11 @@ import io.bucketeer.sdk.android.internal.model.Evaluation
 import io.bucketeer.sdk.android.internal.model.User
 import io.bucketeer.sdk.android.internal.remote.ApiClient
 import io.bucketeer.sdk.android.internal.remote.GetEvaluationsResult
-import java.util.concurrent.Executor
 
 internal class EvaluationInteractor(
   private val apiClient: ApiClient,
   private val evaluationDao: EvaluationDao,
   private val sharedPrefs: SharedPreferences,
-  private val executor: Executor,
 ) {
   // key: userId
   @VisibleForTesting
