@@ -79,6 +79,20 @@ internal class EvaluationDaoImpl(
     }
   }
 
+  override fun getAll(): List<Evaluation> {
+    val projection = arrayOf(COLUMN_EVALUATION)
+    val c = sqLiteOpenHelper.readableDatabase.select(
+      table = TABLE_NAME,
+      columns = projection,
+    )
+
+    return c.use {
+      c.asSequence()
+        .mapNotNull { adapter.fromJson(it.getString(COLUMN_EVALUATION)) }
+        .toList()
+    }
+  }
+
   private fun deleteAll(
     database: SupportSQLiteDatabase,
     userId: String

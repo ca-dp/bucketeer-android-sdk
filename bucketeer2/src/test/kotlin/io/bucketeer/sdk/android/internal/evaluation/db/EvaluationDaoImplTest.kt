@@ -132,6 +132,16 @@ class EvaluationDaoImplTest {
   }
 
   @Test
+  fun getAll() {
+    dao.put(user1.id, listOf(evaluation1, evaluation2))
+    dao.put(user2.id, listOf(evaluation3))
+
+    val actual = dao.getAll()
+
+    assertThat(actual).containsExactly(evaluation1, evaluation2, evaluation3)
+  }
+
+  @Test
   fun `deleteAllAndInsert - insert`() {
     dao.deleteAllAndInsert(user1.id, listOf(evaluation1))
 
