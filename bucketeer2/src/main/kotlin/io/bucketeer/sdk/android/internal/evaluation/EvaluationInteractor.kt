@@ -65,6 +65,12 @@ internal class EvaluationInteractor(
     return result
   }
 
+  fun refreshCache() {
+    val saved = evaluationDao.getAll().groupBy { it.user_id }
+    evaluations.clear()
+    evaluations.putAll(saved)
+  }
+
   fun getLatest(userId: String, featureId: String): Evaluation? {
     val evaluations = evaluations[userId] ?: emptyList()
     return evaluations.firstOrNull { it.feature_id == featureId }
