@@ -12,6 +12,11 @@ import io.bucketeer.sdk.android.internal.model.User
 import io.bucketeer.sdk.android.internal.remote.ApiClient
 import io.bucketeer.sdk.android.internal.remote.GetEvaluationsResult
 
+/**
+ * Evaluation business logics.
+ *
+ * All methods in this class must be sync to keep things simple.
+ */
 internal class EvaluationInteractor(
   private val apiClient: ApiClient,
   private val evaluationDao: EvaluationDao,
@@ -72,7 +77,7 @@ internal class EvaluationInteractor(
   }
 
   fun getLatest(userId: String, featureId: String): Evaluation? {
-    val evaluations = evaluations[userId] ?: emptyList()
+    val evaluations = evaluations[userId] ?: return null
     return evaluations.firstOrNull { it.feature_id == featureId }
   }
 }

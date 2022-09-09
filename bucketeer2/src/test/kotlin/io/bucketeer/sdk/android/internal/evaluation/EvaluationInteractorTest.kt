@@ -13,8 +13,10 @@ import io.bucketeer.sdk.android.internal.model.response.GetEvaluationsResponse
 import io.bucketeer.sdk.android.internal.remote.GetEvaluationsResult
 import io.bucketeer.sdk.android.mocks.evaluation1
 import io.bucketeer.sdk.android.mocks.evaluation2
+import io.bucketeer.sdk.android.mocks.evaluation3
 import io.bucketeer.sdk.android.mocks.user1
 import io.bucketeer.sdk.android.mocks.user1Evaluations
+import io.bucketeer.sdk.android.mocks.user2
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
@@ -224,5 +226,35 @@ class EvaluationInteractorTest {
         user2.id to listOf(evaluation3)
       )
     )
+  }
+
+  @Test
+  fun `getLatest - has cache`() {
+    component.dataModule.evaluationDao.put(user1.id, listOf(evaluation1, evaluation2))
+    component.dataModule.evaluationDao.put(user2.id, listOf(evaluation3))
+
+    interactor.refreshCache()
+
+    val actual = interactor.getLatest(user1.id, evaluation1.feature_id)
+
+    assertThat(actual).isEqualTo(evaluation1)
+  }
+
+  @Test
+  fun `getLatest - no cache`() {
+    val actual = interactor.getLatest(user1.id, evaluation1.feature_id)
+
+    assertThat(actual).isNull()
+  }
+
+  @Test
+  fun `getLatest - no corresponding evaluation`() {
+    component.dataModule.evaluationDao.put(user1.id, listOf(evaluation1))
+
+    interactor.refreshCache()
+
+    val actual = interactor.getLatest(user1.id, "invalid_feature_id")
+
+    assertThat(actual).isNull()
   }
 }
