@@ -1,3 +1,5 @@
+@file:Suppress("ktlint:filename")
+
 package io.bucketeer.sdk.android.mocks
 
 import io.bucketeer.sdk.android.internal.model.Evaluation
@@ -11,8 +13,8 @@ val user1Evaluations: UserEvaluations by lazy {
     id = "17388826713971171773",
     evaluations = listOf(
       evaluation1,
-      evaluation2
-    )
+      evaluation2,
+    ),
   )
 }
 
@@ -33,11 +35,11 @@ val evaluation1: Evaluation by lazy {
     variation_value = "test variation value1",
     variation = Variation(
       id = "test-feature-1-variation-A",
-      value = "test variation value1"
+      value = "test variation value1",
     ),
     reason = Reason(
       type = ReasonType.DEFAULT,
-    )
+    ),
   )
 }
 
@@ -54,8 +56,8 @@ val evaluation2: Evaluation by lazy {
       value = "test variation value2",
     ),
     reason = Reason(
-      type = ReasonType.DEFAULT
-    )
+      type = ReasonType.DEFAULT,
+    ),
   )
 }
 
@@ -69,10 +71,10 @@ val evaluation3: Evaluation by lazy {
     variation_value = "test variation value2",
     variation = Variation(
       id = "test-feature-1-variation-A",
-      value = "test variation value2"
+      value = "test variation value2",
     ),
     reason = Reason(
-      type = ReasonType.DEFAULT
-    )
+      type = ReasonType.DEFAULT,
+    ),
   )
 }

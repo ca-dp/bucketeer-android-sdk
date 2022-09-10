@@ -76,7 +76,7 @@ class EventDaoImplTest {
       evaluationEvent1,
       goalEvent1,
       metricsEvent1,
-      evaluationEvent2
+      evaluationEvent2,
     )
   }
 

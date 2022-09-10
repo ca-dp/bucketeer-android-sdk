@@ -1,7 +1,7 @@
 package io.bucketeer.sdk.android.internal.event
 
 internal data class EventEntity(
-  val event: ByteArray
+  val event: ByteArray,
 ) {
   companion object {
     const val TABLE_NAME = "event"

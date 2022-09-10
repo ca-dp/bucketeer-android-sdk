@@ -13,7 +13,7 @@ internal object SdkLogger {
     priority: Int,
     msgCreator: (() -> String?)? = null,
     throwable: Throwable? = null,
-    isLogForUser: Boolean = true
+    isLogForUser: Boolean = true,
   ) {
     logHandlers.forEach {
       it.log(priority, msgCreator, throwable, isLogForUser)
@@ -25,78 +25,78 @@ internal object SdkLogger {
 fun logd(
   throwable: Throwable? = null,
   isLogForUser: Boolean = true,
-  msgCreator: (() -> String?)? = null
+  msgCreator: (() -> String?)? = null,
 ) {
   SdkLogger.log(
     Log.DEBUG,
     msgCreator = msgCreator,
     throwable = throwable,
-    isLogForUser = isLogForUser
+    isLogForUser = isLogForUser,
   )
 }
 
 fun loge(
   throwable: Throwable? = null,
   isLogForUser: Boolean = true,
-  msgCreator: (() -> String?)? = null
+  msgCreator: (() -> String?)? = null,
 ) {
   SdkLogger.log(
     priority = Log.ERROR,
     msgCreator = msgCreator,
     throwable = throwable,
-    isLogForUser = isLogForUser
+    isLogForUser = isLogForUser,
   )
 }
 
 fun logi(
   throwable: Throwable? = null,
   isLogForUser: Boolean = true,
-  msgCreator: (() -> String?)? = null
+  msgCreator: (() -> String?)? = null,
 ) {
   SdkLogger.log(
     priority = Log.INFO,
     msgCreator = msgCreator,
     throwable = throwable,
-    isLogForUser = isLogForUser
+    isLogForUser = isLogForUser,
   )
 }
 
 fun logv(
   throwable: Throwable? = null,
   isLogForUser: Boolean = true,
-  msgCreator: (() -> String?)? = null
+  msgCreator: (() -> String?)? = null,
 ) {
   SdkLogger.log(
     priority = Log.VERBOSE,
     msgCreator = msgCreator,
     throwable = throwable,
-    isLogForUser = isLogForUser
+    isLogForUser = isLogForUser,
   )
 }
 
 fun logw(
   throwable: Throwable? = null,
   isLogForUser: Boolean = true,
-  msgCreator: (() -> String?)? = null
+  msgCreator: (() -> String?)? = null,
 ) {
   SdkLogger.log(
     priority = Log.WARN,
     msgCreator = msgCreator,
     throwable = throwable,
-    isLogForUser = isLogForUser
+    isLogForUser = isLogForUser,
   )
 }
 
 fun logwtf(
   throwable: Throwable? = null,
   isLogForUser: Boolean = true,
-  msgCreator: (() -> String?)? = null
+  msgCreator: (() -> String?)? = null,
 ) {
   SdkLogger.log(
     priority = Log.ASSERT,
     msgCreator = msgCreator,
     throwable = throwable,
-    isLogForUser = isLogForUser
+    isLogForUser = isLogForUser,
   )
 }
 
@@ -105,7 +105,7 @@ internal abstract class LogHandler {
     priority: Int,
     msgCreator: (() -> String?)? = null,
     th: Throwable?,
-    isLogForUser: Boolean = true
+    isLogForUser: Boolean = true,
   )
 }
 
@@ -114,7 +114,7 @@ internal class SdkInsideLogHandler(private val tag: String) : LogHandler() {
     priority: Int,
     msgCreator: (() -> String?)?,
     th: Throwable?,
-    isLogForUser: Boolean
+    isLogForUser: Boolean,
   ) {
     if (!Log.isLoggable(tag, priority)) return
 
@@ -134,7 +134,7 @@ internal class UserLogHandler(private val tag: String) : LogHandler() {
     priority: Int,
     msgCreator: (() -> String?)?,
     th: Throwable?,
-    isLogForUser: Boolean
+    isLogForUser: Boolean,
   ) {
     if (!isLogForUser) return
 

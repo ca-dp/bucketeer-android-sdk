@@ -15,7 +15,7 @@ class MetricsEventAdapterFactory : JsonAdapter.Factory {
   override fun create(
     type: Type,
     annotations: MutableSet<out Annotation>,
-    moshi: Moshi
+    moshi: Moshi,
   ): JsonAdapter<*>? {
     if (!Types.getRawType(type).isAssignableFrom(EventData.MetricsEvent::class.java)) {
       return null
@@ -49,7 +49,7 @@ class MetricsEventAdapterFactory : JsonAdapter.Factory {
         return EventData.MetricsEvent(
           timestamp = (jsonObj["timestamp"] as Double).toLong(),
           event = adapter.fromJsonValue(jsonObj["event"]) as MetricsEventData,
-          type = eventType
+          type = eventType,
         )
       }
 
@@ -73,25 +73,25 @@ class MetricsEventAdapterFactory : JsonAdapter.Factory {
           MetricsEventType.GET_EVALUATION_LATENCY -> {
             getEvaluationLatencyAdapter.toJson(
               writer,
-              value.event as MetricsEventData.GetEvaluationLatencyMetricsEvent
+              value.event as MetricsEventData.GetEvaluationLatencyMetricsEvent,
             )
           }
           MetricsEventType.GET_EVALUATION_SIZE -> {
             getEvaluationSizeAdapter.toJson(
               writer,
-              value.event as MetricsEventData.GetEvaluationSizeMetricsEvent
+              value.event as MetricsEventData.GetEvaluationSizeMetricsEvent,
             )
           }
           MetricsEventType.TIMEOUT_ERROR_COUNT -> {
             timeoutErrorCountAdapter.toJson(
               writer,
-              value.event as MetricsEventData.TimeoutErrorCountMetricsEvent
+              value.event as MetricsEventData.TimeoutErrorCountMetricsEvent,
             )
           }
           MetricsEventType.INTERNAL_ERROR_COUNT -> {
             internalErrorCountAdapter.toJson(
               writer,
-              value.event as MetricsEventData.InternalErrorCountMetricsEvent
+              value.event as MetricsEventData.InternalErrorCountMetricsEvent,
             )
           }
         }

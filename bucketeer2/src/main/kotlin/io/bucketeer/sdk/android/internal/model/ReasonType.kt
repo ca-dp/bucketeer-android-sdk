@@ -7,6 +7,7 @@ enum class ReasonType(val value: Int) {
   CLIENT(4),
   OFF_VARIATION(5),
   PREREQUISITE(6),
+
   ;
 
   companion object {

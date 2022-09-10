@@ -15,7 +15,7 @@ data class BKTConfig internal constructor(
   val eventsMaxBatchQueueCount: Int,
   val pollingInterval: Long,
   val backgroundPollingInterval: Long,
-  val logger: BKTLogger?
+  val logger: BKTLogger?,
 ) {
 
   companion object {
@@ -85,7 +85,7 @@ data class BKTConfig internal constructor(
         eventsMaxBatchQueueCount = this.eventsMaxQueueSize,
         pollingInterval = this.pollingInterval,
         backgroundPollingInterval = this.backgroundPollingInterval,
-        logger = this.logger
+        logger = this.logger,
       )
     }
   }

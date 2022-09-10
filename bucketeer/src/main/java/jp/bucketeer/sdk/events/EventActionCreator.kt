@@ -13,12 +13,12 @@ internal class EventActionCreator(
   private val api: Api,
   private val dispatcher: Dispatcher,
   private val eventDao: EventDao,
-  private val featureTag: String
+  private val featureTag: String,
 ) {
   fun pushEvaluationEvent(
     timestamp: Long,
     evaluation: EvaluationOuterClass.Evaluation,
-    user: UserOuterClass.User
+    user: UserOuterClass.User,
   ) {
     val event = generateEvaluationEvent(featureTag, timestamp, evaluation, user)
     eventDao.addEvent(event)
@@ -29,7 +29,7 @@ internal class EventActionCreator(
   fun pushDefaultEvaluationEvent(
     timestamp: Long,
     user: UserOuterClass.User,
-    featureId: String
+    featureId: String,
   ) {
     val event = generateDefaultEvaluationEvent(featureTag, timestamp, user, featureId)
     eventDao.addEvent(event)
@@ -44,7 +44,7 @@ internal class EventActionCreator(
     goalId: String,
     value: Double,
     user: UserOuterClass.User,
-    evaluations: List<EvaluationOuterClass.Evaluation>
+    evaluations: List<EvaluationOuterClass.Evaluation>,
   ) {
     val event = generateGoalEvent(featureTag, timestamp, goalId, value, user, evaluations)
     eventDao.addEvent(event)
@@ -54,7 +54,7 @@ internal class EventActionCreator(
 
   fun pushGetEvaluationLatencyMetricsEvent(
     latencyMills: Long,
-    labels: Map<String, String>
+    labels: Map<String, String>,
   ) {
     val event = generateGetEvaluationLatencyMetricsEvent(latencyMills, labels)
     eventDao.addEvent(event)
@@ -64,7 +64,7 @@ internal class EventActionCreator(
 
   fun pushGetEvaluationSizeMetricsEvent(
     sizeByte: Int,
-    labels: Map<String, String>
+    labels: Map<String, String>,
   ) {
     val event = generateGetEvaluationSizeMetricsEvent(sizeByte, labels)
     eventDao.addEvent(event)
@@ -88,7 +88,7 @@ internal class EventActionCreator(
 
   fun send(
     events: List<EventOuterClass.Event>,
-    logSendingMaxBatchQueueCount: Int
+    logSendingMaxBatchQueueCount: Int,
   ) {
     if (events.isEmpty()) return
     val sendingEvents = events.take(logSendingMaxBatchQueueCount).toList()

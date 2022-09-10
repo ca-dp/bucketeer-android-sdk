@@ -37,13 +37,13 @@ internal class ApiClientImplTest {
   @Suppress("unused")
   enum class ErrorTestCase(
     val code: Int,
-    val expected: Class<*>
+    val expected: Class<*>,
   ) {
     BAD_REQUEST(400, BKTException.BadRequestException::class.java),
     UNAUTHORIZED(401, BKTException.UnauthorizedException::class.java),
     NOT_FOUND(404, BKTException.FeatureNotFoundException::class.java),
     METHOD_NOT_ALLOWED(405, BKTException.InvalidHttpMethodException::class.java),
-    INTERNAL_SERVER_ERROR(500, BKTException.ApiServerException::class.java)
+    INTERNAL_SERVER_ERROR(500, BKTException.ApiServerException::class.java),
   }
 
   @Before
@@ -63,28 +63,28 @@ internal class ApiClientImplTest {
     val expected = GetEvaluationsResponse(
       data = GetEvaluationsDataResponse(
         evaluations = user1Evaluations,
-        user_evaluations_id = "user_evaluation_id"
-      )
+        user_evaluations_id = "user_evaluation_id",
+      ),
     )
     server.enqueue(
       MockResponse()
         .setBodyDelay(1, TimeUnit.SECONDS)
         .setBody(
-          moshi.adapter(GetEvaluationsResponse::class.java).toJson(expected)
+          moshi.adapter(GetEvaluationsResponse::class.java).toJson(expected),
         )
-        .setResponseCode(200)
+        .setResponseCode(200),
     )
 
     client = ApiClientImpl(
       endpoint = endpoint,
       apiKey = "api_key_value",
       featureTag = "feature_tag_value",
-      moshi = moshi
+      moshi = moshi,
     )
 
     val result = client.getEvaluations(
       user = user1,
-      userEvaluationsId = "user_evaluation_id"
+      userEvaluationsId = "user_evaluation_id",
     )
 
     // assert request
@@ -94,14 +94,14 @@ internal class ApiClientImplTest {
     assertThat(request.path).isEqualTo("/v1/gateway/evaluations")
     assertThat(
       moshi.adapter(GetEvaluationsRequest::class.java)
-        .fromJson(request.body.readString(Charsets.UTF_8))
+        .fromJson(request.body.readString(Charsets.UTF_8)),
     ).isEqualTo(
       GetEvaluationsRequest(
         tag = "feature_tag_value",
         user = user1,
         user_evaluations_id = "user_evaluation_id",
-        source_id = SourceID.ANDROID
-      )
+        source_id = SourceID.ANDROID,
+      ),
     )
 
     // assert response
@@ -120,13 +120,13 @@ internal class ApiClientImplTest {
       apiKey = "api_key_value",
       featureTag = "feature_tag_value",
       moshi = moshi,
-      defaultRequestTimeoutMillis = 1_000
+      defaultRequestTimeoutMillis = 1_000,
     )
 
     val (millis, result) = measureTimeMillisWithResult {
       client.getEvaluations(
         user = user1,
-        userEvaluationsId = "user_evaluation_id"
+        userEvaluationsId = "user_evaluation_id",
       )
     }
 
@@ -146,14 +146,14 @@ internal class ApiClientImplTest {
       endpoint = endpoint,
       apiKey = "api_key_value",
       featureTag = "feature_tag_value",
-      moshi = moshi
+      moshi = moshi,
     )
 
     val (millis, result) = measureTimeMillisWithResult {
       client.getEvaluations(
         user = user1,
         userEvaluationsId = "user_evaluation_id",
-        timeoutMillis = TimeUnit.SECONDS.toMillis(1)
+        timeoutMillis = TimeUnit.SECONDS.toMillis(1),
       )
     }
 
@@ -173,12 +173,12 @@ internal class ApiClientImplTest {
       endpoint = "https://thisdoesnotexist.bucketeer.io",
       apiKey = "api_key_value",
       featureTag = "feature_tag_value",
-      moshi = moshi
+      moshi = moshi,
     )
 
     val result = client.getEvaluations(
       user = user1,
-      userEvaluationsId = "user_evaluation_id"
+      userEvaluationsId = "user_evaluation_id",
     )
 
     assertThat(result).isInstanceOf(GetEvaluationsResult.Failure::class.java)
@@ -187,7 +187,6 @@ internal class ApiClientImplTest {
     assertThat(failure.error).isInstanceOf(BKTException.NetworkException::class.java)
     assertThat(failure.featureTag).isEqualTo("feature_tag_value")
   }
-
 
   @Test
   fun `getEvaluations - error with body`(@TestParameter case: ErrorTestCase) {
@@ -200,22 +199,22 @@ internal class ApiClientImplTest {
               ErrorResponse(
                 ErrorResponse.ErrorDetail(
                   code = case.code,
-                  message = "error: ${case.code}"
-                )
-              )
-            )
-        )
+                  message = "error: ${case.code}",
+                ),
+              ),
+            ),
+        ),
     )
     client = ApiClientImpl(
       endpoint = endpoint,
       apiKey = "api_key_value",
       featureTag = "feature_tag_value",
-      moshi = moshi
+      moshi = moshi,
     )
 
     val result = client.getEvaluations(
       user = user1,
-      userEvaluationsId = "user_evaluation_id"
+      userEvaluationsId = "user_evaluation_id",
     )
 
     assertThat(result).isInstanceOf(GetEvaluationsResult.Failure::class.java)
@@ -231,18 +230,18 @@ internal class ApiClientImplTest {
     server.enqueue(
       MockResponse()
         .setResponseCode(case.code)
-        .setBody("error: ${case.code}")
+        .setBody("error: ${case.code}"),
     )
     client = ApiClientImpl(
       endpoint = endpoint,
       apiKey = "api_key_value",
       featureTag = "feature_tag_value",
-      moshi = moshi
+      moshi = moshi,
     )
 
     val result = client.getEvaluations(
       user = user1,
-      userEvaluationsId = "user_evaluation_id"
+      userEvaluationsId = "user_evaluation_id",
     )
 
     assertThat(result).isInstanceOf(GetEvaluationsResult.Failure::class.java)
@@ -266,19 +265,19 @@ internal class ApiClientImplTest {
                   errors = mapOf(
                     evaluationEvent1.id to RegisterEventsErrorResponse(
                       retriable = true,
-                      message = "error"
-                    )
-                  )
-                )
-              )
-            )
-        )
+                      message = "error",
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ),
     )
     client = ApiClientImpl(
       endpoint = endpoint,
       apiKey = "api_key_value",
       featureTag = "feature_tag_value",
-      moshi = moshi
+      moshi = moshi,
     )
 
     val result = client.registerEvents(events = listOf(evaluationEvent1, metricsEvent1))
@@ -290,7 +289,7 @@ internal class ApiClientImplTest {
     assertThat(request.path).isEqualTo("/v1/gateway/events")
     assertThat(
       moshi.adapter(RegisterEventsRequest::class.java)
-        .fromJson(request.body.readString(Charsets.UTF_8))
+        .fromJson(request.body.readString(Charsets.UTF_8)),
     ).isEqualTo(RegisterEventsRequest(events = listOf(evaluationEvent1, metricsEvent1)))
 
     // assert response
@@ -302,11 +301,11 @@ internal class ApiClientImplTest {
           errors = mapOf(
             evaluationEvent1.id to RegisterEventsErrorResponse(
               retriable = true,
-              message = "error"
-            )
-          )
-        )
-      )
+              message = "error",
+            ),
+          ),
+        ),
+      ),
     )
   }
 
@@ -317,7 +316,7 @@ internal class ApiClientImplTest {
       apiKey = "api_key_value",
       featureTag = "feature_tag_value",
       moshi = moshi,
-      defaultRequestTimeoutMillis = 1_000
+      defaultRequestTimeoutMillis = 1_000,
     )
 
     val (millis, result) = measureTimeMillisWithResult {
@@ -339,7 +338,7 @@ internal class ApiClientImplTest {
       endpoint = "https://thisdoesnotexist.bucketeer.io",
       apiKey = "api_key_value",
       featureTag = "feature_tag_value",
-      moshi = moshi
+      moshi = moshi,
     )
 
     val result = client.registerEvents(events = listOf(evaluationEvent1, metricsEvent1))
@@ -361,17 +360,17 @@ internal class ApiClientImplTest {
               ErrorResponse(
                 ErrorResponse.ErrorDetail(
                   code = case.code,
-                  message = "error: ${case.code}"
-                )
-              )
-            )
-        )
+                  message = "error: ${case.code}",
+                ),
+              ),
+            ),
+        ),
     )
     client = ApiClientImpl(
       endpoint = endpoint,
       apiKey = "api_key_value",
       featureTag = "feature_tag_value",
-      moshi = moshi
+      moshi = moshi,
     )
 
     val result = client.registerEvents(events = listOf(evaluationEvent1, metricsEvent1))
@@ -389,13 +388,13 @@ internal class ApiClientImplTest {
     server.enqueue(
       MockResponse()
         .setResponseCode(case.code)
-        .setBody("error: ${case.code}")
+        .setBody("error: ${case.code}"),
     )
     client = ApiClientImpl(
       endpoint = endpoint,
       apiKey = "api_key_value",
       featureTag = "feature_tag_value",
-      moshi = moshi
+      moshi = moshi,
     )
 
     val result = client.registerEvents(events = listOf(evaluationEvent1, metricsEvent1))

@@ -19,7 +19,7 @@ internal class ClientInteractor(
   private val latestEvaluationActionCreator: LatestEvaluationActionCreator,
   private val latestEvaluationStore: LatestEvaluationStore,
   private val currentStore: CurrentStore,
-  private val updatableUserHolder: UserHolder.UpdatableUserHolder = UserHolder.UpdatableUserHolder()
+  private val updatableUserHolder: UserHolder.UpdatableUserHolder = UserHolder.UpdatableUserHolder(),
 ) {
   val userHolder: UserHolder = updatableUserHolder
   private var fetchUserEvaluationsCallback: Bucketeer.FetchUserEvaluationsCallback? = null
@@ -43,13 +43,13 @@ internal class ClientInteractor(
   }
 
   fun setUser(
-    user: UserOuterClass.User
+    user: UserOuterClass.User,
   ) {
     updatableUserHolder.updateUser(user)
   }
 
   fun fetchUserEvaluations(
-    fetchUserEvaluationsCallback: Bucketeer.FetchUserEvaluationsCallback? = null
+    fetchUserEvaluationsCallback: Bucketeer.FetchUserEvaluationsCallback? = null,
   ) {
     this.fetchUserEvaluationsCallback = fetchUserEvaluationsCallback
     refreshManuallyFromApi()
@@ -72,7 +72,7 @@ internal class ClientInteractor(
   fun pushEvaluationEvent(
     user: UserOuterClass.User,
     evaluation: EvaluationOuterClass.Evaluation,
-    timestamp: Long = getTimestamp()
+    timestamp: Long = getTimestamp(),
   ) {
     eventActionCreator.pushEvaluationEvent(timestamp, evaluation, user)
   }
@@ -80,7 +80,7 @@ internal class ClientInteractor(
   fun pushDefaultEvaluationEvent(
     user: UserOuterClass.User,
     featureId: String,
-    timestamp: Long = getTimestamp()
+    timestamp: Long = getTimestamp(),
   ) {
     eventActionCreator.pushDefaultEvaluationEvent(timestamp, user, featureId)
   }
@@ -101,7 +101,7 @@ internal class ClientInteractor(
     goalId: String,
     user: UserOuterClass.User,
     value: Double,
-    currentEvaluations: List<EvaluationOuterClass.Evaluation>
+    currentEvaluations: List<EvaluationOuterClass.Evaluation>,
   ) {
     eventActionCreator.pushGoalEvent(timestamp, goalId, value, user, currentEvaluations)
   }

@@ -45,11 +45,11 @@ class LatestEvaluationActionCreatorTest {
         api,
         latestEvaluationDao,
         currentEvaluationActionCreator,
-        sharedPref
-      )
+        sharedPref,
+      ),
     )
     whenever(api.fetchEvaluation(user1, userEvaluationsId1)).doReturn(
-      Api.Result.Success(responseFull)
+      Api.Result.Success(responseFull),
     )
 
     verify(currentEvaluationActionCreator, never()).getEvaluations(any())
@@ -74,18 +74,18 @@ class LatestEvaluationActionCreatorTest {
         api,
         latestEvaluationDao,
         currentEvaluationActionCreator,
-        sharedPref
-      )
+        sharedPref,
+      ),
     )
     val dbEvaluations = listOf(evaluation1)
     doNothing().whenever(evaluationActionCreator).updateUserEvaluationId(any())
     doNothing().whenever(evaluationActionCreator).refreshLatestEvaluationFromDao(any())
     whenever(latestEvaluationDao.get(user1))
       .doReturn(
-        dbEvaluations
+        dbEvaluations,
       )
     whenever(api.fetchEvaluation(user1, userEvaluationsId2)).doReturn(
-      Api.Result.Success(responsePartial)
+      Api.Result.Success(responsePartial),
     )
 
     evaluationActionCreator.refreshLatestEvaluationFromApi(user1)
@@ -94,7 +94,7 @@ class LatestEvaluationActionCreatorTest {
     verify(evaluationActionCreator).refreshLatestEvaluationFromDao(any())
     verify(latestEvaluationDao, never()).deleteAllAndInsert(
       user1,
-      responsePartial.evaluations.evaluationsList
+      responsePartial.evaluations.evaluationsList,
     )
     verify(latestEvaluationDao).put(user1, responsePartial.evaluations.evaluationsList)
     verify(currentEvaluationActionCreator, never()).deleteNotIn(any(), any())
@@ -116,14 +116,14 @@ class LatestEvaluationActionCreatorTest {
         api,
         latestEvaluationDao,
         currentEvaluationActionCreator,
-        sharedPref
-      )
+        sharedPref,
+      ),
     )
     whenever(latestEvaluationDao.deleteAllAndInsert(any(), any())).thenReturn(true)
     doNothing().whenever(evaluationActionCreator).updateUserEvaluationId(any())
     doNothing().whenever(evaluationActionCreator).refreshLatestEvaluationFromDao(any())
     whenever(api.fetchEvaluation(user1, userEvaluationsId2)).doReturn(
-      Api.Result.Success(responseFull)
+      Api.Result.Success(responseFull),
     )
     whenever(currentEvaluationActionCreator.getEvaluations(user1.id))
       .doReturn(user1Evaluations.evaluationsList)
@@ -137,7 +137,7 @@ class LatestEvaluationActionCreatorTest {
       .deleteNotIn(user1.id, listOf("test-feature-1", "test-feature-2"))
     verify(currentEvaluationActionCreator).getEvaluations(user1.id)
     verify(dispatcher).send(
-      LatestEvaluationChangedAction(user1, responseFull.evaluations.evaluationsList)
+      LatestEvaluationChangedAction(user1, responseFull.evaluations.evaluationsList),
     )
     verify(dispatcher)
       .send(CurrentEvaluationListDataChangedAction("user id 1", user1Evaluations.evaluationsList))
@@ -158,12 +158,12 @@ class LatestEvaluationActionCreatorTest {
         api,
         latestEvaluationDao,
         currentEvaluationActionCreator,
-        sharedPref
-      )
+        sharedPref,
+      ),
     )
     whenever(latestEvaluationDao.deleteAllAndInsert(any(), any())).thenReturn(false)
     whenever(api.fetchEvaluation(user1, userEvaluationsId2)).doReturn(
-      Api.Result.Success(responseFull)
+      Api.Result.Success(responseFull),
     )
 
     verify(evaluationActionCreator, never()).updateUserEvaluationId(any())
@@ -188,12 +188,12 @@ class LatestEvaluationActionCreatorTest {
         api,
         latestEvaluationDao,
         currentEvaluationActionCreator,
-        sharedPref
-      )
+        sharedPref,
+      ),
     )
     doNothing().whenever(evaluationActionCreator).refreshLatestEvaluationFromDao(any())
     whenever(api.fetchEvaluation(user1, userEvaluationsId1)).doReturn(
-      Api.Result.Fail(RuntimeException().toBucketeerException())
+      Api.Result.Fail(RuntimeException().toBucketeerException()),
     )
 
     evaluationActionCreator.refreshLatestEvaluationFromApi(user1)

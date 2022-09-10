@@ -8,7 +8,7 @@ internal val MILLIS_PER_SECOND: Long = 1000
 @JsonClass(generateAdapter = true)
 data class Duration(
   val seconds: Long,
-  val nanos: Int
+  val nanos: Int,
 )
 
 internal fun Duration(millis: Long): Duration {

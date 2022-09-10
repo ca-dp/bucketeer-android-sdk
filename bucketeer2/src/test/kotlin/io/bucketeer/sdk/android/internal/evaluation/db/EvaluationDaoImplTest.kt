@@ -67,7 +67,7 @@ class EvaluationDaoImplTest {
     val updatedValue = "updated value"
     val updatedEvaluation = sourceEvaluation.copy(
       variation_value = updatedValue,
-      variation = sourceEvaluation.variation.copy(value = updatedValue)
+      variation = sourceEvaluation.variation.copy(value = updatedValue),
     )
 
     dao.put(user1.id, listOf(sourceEvaluation))
@@ -171,11 +171,11 @@ class EvaluationDaoImplTest {
     val columns = arrayOf(
       EvaluationEntity.COLUMN_FEATURE_ID,
       EvaluationEntity.COLUMN_USER_ID,
-      EvaluationEntity.COLUMN_EVALUATION
+      EvaluationEntity.COLUMN_EVALUATION,
     )
     return openHelper.readableDatabase.select(
       EvaluationEntity.TABLE_NAME,
-      columns
+      columns,
     )
   }
 }

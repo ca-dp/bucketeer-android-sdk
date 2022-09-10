@@ -42,7 +42,7 @@ class LatestEvaluationDaoImplTest {
     val projection = arrayOf(
       LatestEvaluationEntity.COLUMN_FEATURE_ID,
       LatestEvaluationEntity.COLUMN_USER_ID,
-      LatestEvaluationEntity.COLUMN_EVALUATION
+      LatestEvaluationEntity.COLUMN_EVALUATION,
     )
 
     val c = latestEvaluationDao.sqLiteOpenHelper.readableDatabase.query(
@@ -52,7 +52,7 @@ class LatestEvaluationDaoImplTest {
       null,
       null,
       null,
-      null
+      null,
     )
 
     c.use {
@@ -60,13 +60,13 @@ class LatestEvaluationDaoImplTest {
       assertEquals(
         evaluation1.featureId,
         c.getString(
-          LatestEvaluationEntity.COLUMN_FEATURE_ID
-        )
+          LatestEvaluationEntity.COLUMN_FEATURE_ID,
+        ),
       )
       val blob = c.getBlob(LatestEvaluationEntity.COLUMN_EVALUATION)
       assertEquals(
         evaluation1,
-        EvaluationOuterClass.Evaluation.newBuilder().mergeFrom(blob).build()
+        EvaluationOuterClass.Evaluation.newBuilder().mergeFrom(blob).build(),
       )
 
       assertEquals(c.moveToNext(), false)

@@ -12,7 +12,7 @@ import org.robolectric.ParameterizedRobolectricTestRunner
 class EvaluationExtTest(
   private val variationValue: String,
   private val defaultValue: Int,
-  private val expectedValue: Int
+  private val expectedValue: Int,
 ) {
   companion object {
     @ParameterizedRobolectricTestRunner.Parameters(name = "getVariation Int: {0} -> {1}")
@@ -23,7 +23,7 @@ class EvaluationExtTest(
         arrayOf("-1", 0, -1),
         arrayOf("1.0", 0, 0),
         arrayOf("1.0a", 0, 0),
-        arrayOf("not int", 0, 0)
+        arrayOf("not int", 0, 0),
       ).toList()
     }
   }
@@ -31,14 +31,14 @@ class EvaluationExtTest(
   @Test
   fun getVariation_Int() {
     buildEvaluation(variationValue).getVariationValue(
-      defaultValue
+      defaultValue,
     ) shouldBeEqualTo expectedValue
   }
 
   @Test
   fun getVariation_Long() {
     buildEvaluation(variationValue).getVariationValue(
-      defaultValue.toLong()
+      defaultValue.toLong(),
     ) shouldBeEqualTo expectedValue.toLong()
   }
 }
@@ -47,7 +47,7 @@ class EvaluationExtTest(
 class BucketeerVariationFloatTest(
   private val variationValue: String,
   private val defaultValue: Float,
-  private val expectedValue: Float
+  private val expectedValue: Float,
 ) {
   companion object {
     @ParameterizedRobolectricTestRunner.Parameters(name = "getVariation Float: {0} -> {1}")
@@ -57,7 +57,7 @@ class BucketeerVariationFloatTest(
         arrayOf("1", 0f, 1f),
         arrayOf("-1", 0f, -1f),
         arrayOf("1.0", 0f, 1.0f),
-        arrayOf("not float", 0f, 0f)
+        arrayOf("not float", 0f, 0f),
       ).toList()
     }
   }
@@ -65,14 +65,14 @@ class BucketeerVariationFloatTest(
   @Test
   fun getVariation_Float() {
     buildEvaluation(variationValue).getVariationValue(
-      defaultValue
+      defaultValue,
     ) shouldBeEqualTo expectedValue
   }
 
   @Test
   fun getVariation_Double() {
     buildEvaluation(variationValue).getVariationValue(
-      defaultValue.toDouble()
+      defaultValue.toDouble(),
     ) shouldBeEqualTo expectedValue.toDouble()
   }
 }
@@ -81,7 +81,7 @@ class BucketeerVariationFloatTest(
 class BucketeerVariationStringTest(
   private val variationValue: String,
   private val defaultValue: String,
-  private val expectedValue: String
+  private val expectedValue: String,
 ) {
   companion object {
     @ParameterizedRobolectricTestRunner.Parameters(name = "getVariation String: {0} -> {1}")
@@ -94,7 +94,7 @@ class BucketeerVariationStringTest(
         arrayOf("string", "", "string"),
         arrayOf("true", "", "true"),
         arrayOf("false", "", "false"),
-        arrayOf("""{}""", "", "{}")
+        arrayOf("""{}""", "", "{}"),
       ).toList()
     }
   }
@@ -102,7 +102,7 @@ class BucketeerVariationStringTest(
   @Test
   fun getVariation_String() {
     buildEvaluation(variationValue).getVariationValue(
-      defaultValue
+      defaultValue,
     ) shouldBeEqualTo expectedValue
   }
 }
@@ -111,11 +111,11 @@ class BucketeerVariationStringTest(
 class BucketeerVariationBoolTest(
   private val variationValue: String,
   private val defaultValue: Boolean,
-  private val expectedValue: Boolean
+  private val expectedValue: Boolean,
 ) {
   companion object {
     @ParameterizedRobolectricTestRunner.Parameters(
-      name = """getVariation Boolean: ("{0}", {1}) -> {2}"""
+      name = """getVariation Boolean: ("{0}", {1}) -> {2}""",
     )
     @JvmStatic
     fun getTestData(): Collection<*> {
@@ -129,7 +129,7 @@ class BucketeerVariationBoolTest(
         arrayOf("not bool", true, true),
         arrayOf("1", false, false),
         arrayOf("1.0", false, false),
-        arrayOf("{}", false, false)
+        arrayOf("{}", false, false),
       ).toList()
     }
   }
@@ -137,7 +137,7 @@ class BucketeerVariationBoolTest(
   @Test
   fun getVariation_Bool() {
     buildEvaluation(variationValue).getVariationValue(
-      defaultValue
+      defaultValue,
     ) shouldBeEqualTo expectedValue
   }
 }
@@ -146,13 +146,13 @@ class BucketeerVariationBoolTest(
 class BucketeerVariationJsonTest(
   private val variationValue: String,
   private val defaultValue: String,
-  private val expectedValue: String
+  private val expectedValue: String,
 ) {
   companion object {
     private const val JSON1 = """{ "key": "value"}"""
 
     @ParameterizedRobolectricTestRunner.Parameters(
-      name = """getVariation Json: ("{0}", {1}) -> {2}"""
+      name = """getVariation Json: ("{0}", {1}) -> {2}""",
     )
     @JvmStatic
     fun getTestData(): Collection<*> {
@@ -163,7 +163,7 @@ class BucketeerVariationJsonTest(
         arrayOf("not bool", "{}", "{}"),
         arrayOf("1", "{}", "{}"),
         arrayOf("1.0", "{}", "{}"),
-        arrayOf("{}", "{}", "{}")
+        arrayOf("{}", "{}", "{}"),
       ).toList()
     }
   }
@@ -172,7 +172,7 @@ class BucketeerVariationJsonTest(
   fun getJsonVariation_JsonString() {
     val expected = JSONObject(expectedValue)
     val actual = buildEvaluation(variationValue).getVariationValue(
-      JSONObject(defaultValue)
+      JSONObject(defaultValue),
     )
     actual.keys().asSequence().toList() shouldBeEqualTo expected.keys().asSequence().toList()
     actual.keys().asSequence().toList().map {

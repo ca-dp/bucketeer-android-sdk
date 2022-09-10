@@ -13,7 +13,7 @@ class BucketeerConfigTest {
       .build() shouldBeEqualTo BucketeerConfig(
       logSendingIntervalMillis = 1,
       logSendingMaxBatchQueueCount = 2,
-      pollingEvaluationIntervalMillis = 3
+      pollingEvaluationIntervalMillis = 3,
     )
   }
 

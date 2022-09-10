@@ -10,5 +10,5 @@ data class Evaluation(
   val userId: String,
   val variationId: String,
   val variationValue: String,
-  val reason: Int
+  val reason: Int,
 )

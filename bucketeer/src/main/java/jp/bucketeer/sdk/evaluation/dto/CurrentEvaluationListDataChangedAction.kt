@@ -4,5 +4,5 @@ import bucketeer.feature.EvaluationOuterClass
 
 internal data class CurrentEvaluationListDataChangedAction(
   val userId: String,
-  val evaluations: List<EvaluationOuterClass.Evaluation>
+  val evaluations: List<EvaluationOuterClass.Evaluation>,
 )

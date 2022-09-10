@@ -27,7 +27,7 @@ internal class DatabaseOpenHelper(context: Context, fileName: String? = FILE_NAM
       |     ${CurrentEvaluationEntity.COLUMN_FEATURE_ID}
       |   )
       |)
-      """.trimMargin()
+      """.trimMargin(),
     )
 
     db.execSQL(
@@ -41,7 +41,7 @@ internal class DatabaseOpenHelper(context: Context, fileName: String? = FILE_NAM
       |     ${LatestEvaluationEntity.COLUMN_FEATURE_ID}
       |   )
       |)
-      """.trimMargin()
+      """.trimMargin(),
     )
 
     db.execSQL(
@@ -50,7 +50,7 @@ internal class DatabaseOpenHelper(context: Context, fileName: String? = FILE_NAM
       |   ${EventEntity.COLUMN_ID} TEXT PRIMARY KEY,
       |   ${EventEntity.COLUMN_EVENT} BLOB
       |)
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 

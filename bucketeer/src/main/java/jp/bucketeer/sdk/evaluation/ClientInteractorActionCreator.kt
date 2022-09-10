@@ -9,7 +9,7 @@ import jp.bucketeer.sdk.evaluation.dto.CurrentEvaluationListDataChangedAction
 internal class ClientInteractorActionCreator(
   private val dispatcher: Dispatcher,
   val api: Api,
-  private val currentEvaluationDao: CurrentEvaluationDao
+  private val currentEvaluationDao: CurrentEvaluationDao,
 ) {
 
   fun saveCurrentEvaluation(currentUserId: String, evaluation: EvaluationOuterClass.Evaluation) {

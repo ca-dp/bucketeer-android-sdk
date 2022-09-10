@@ -20,7 +20,7 @@ internal open class DataModule(
   application: Application,
   apiKey: String,
   endpoint: String,
-  featureTag: String
+  featureTag: String,
 ) {
   @VisibleForTesting
   internal open val api: Api = ApiClient(apiKey, endpoint, featureTag)

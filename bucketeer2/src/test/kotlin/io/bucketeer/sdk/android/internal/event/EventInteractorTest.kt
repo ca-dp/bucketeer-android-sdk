@@ -65,9 +65,9 @@ class EventInteractorTest {
           .featureTag("feature_tag_value")
           .eventsMaxQueueSize(3)
           .build(),
-        defaultRequestTimeoutMillis = TimeUnit.SECONDS.toMillis(1)
+        defaultRequestTimeoutMillis = TimeUnit.SECONDS.toMillis(1),
       ),
-      interactorModule = InteractorModule()
+      interactorModule = InteractorModule(),
     )
 
     interactor = component.eventInteractor
@@ -111,9 +111,9 @@ class EventInteractorTest {
           user = user1,
           reason = evaluation1.reason,
           tag = "feature_tag_value",
-          source_id = SourceID.ANDROID
-        )
-      )
+          source_id = SourceID.ANDROID,
+        ),
+      ),
     )
   }
 
@@ -144,9 +144,9 @@ class EventInteractorTest {
           user = user1,
           reason = Reason(ReasonType.CLIENT),
           tag = "feature_tag_value",
-          source_id = SourceID.ANDROID
-        )
-      )
+          source_id = SourceID.ANDROID,
+        ),
+      ),
     )
   }
 
@@ -177,9 +177,9 @@ class EventInteractorTest {
           value = 0.5,
           user = user1,
           tag = "feature_tag_value",
-          source_id = SourceID.ANDROID
-        )
-      )
+          source_id = SourceID.ANDROID,
+        ),
+      ),
     )
   }
 
@@ -208,12 +208,12 @@ class EventInteractorTest {
           type = MetricsEventType.GET_EVALUATION_LATENCY,
           event = MetricsEventData.GetEvaluationLatencyMetricsEvent(
             labels = mapOf(
-              "tag" to "feature_tag_value"
+              "tag" to "feature_tag_value",
             ),
-            duration = Duration(millis = 1000)
-          )
-        )
-      )
+            duration = Duration(millis = 1000),
+          ),
+        ),
+      ),
     )
 
     val sizeEvent = listener.calls[0][1]
@@ -227,12 +227,12 @@ class EventInteractorTest {
           type = MetricsEventType.GET_EVALUATION_SIZE,
           event = MetricsEventData.GetEvaluationSizeMetricsEvent(
             labels = mapOf(
-              "tag" to "feature_tag_value"
+              "tag" to "feature_tag_value",
             ),
-            size_byte = 723
-          )
-        )
-      )
+            size_byte = 723,
+          ),
+        ),
+      ),
     )
   }
 
@@ -244,7 +244,7 @@ class EventInteractorTest {
 
     interactor.trackFetchEvaluationsFailure(
       "feature_tag_value",
-      BKTException.TimeoutException("timeout", SocketTimeoutException())
+      BKTException.TimeoutException("timeout", SocketTimeoutException()),
     )
 
     assertThat(listener.calls).hasSize(1)
@@ -263,10 +263,10 @@ class EventInteractorTest {
           timestamp = clock.currentTimeSecondsCalls[0],
           type = MetricsEventType.TIMEOUT_ERROR_COUNT,
           event = MetricsEventData.TimeoutErrorCountMetricsEvent(
-            tag = "feature_tag_value"
-          )
-        )
-      )
+            tag = "feature_tag_value",
+          ),
+        ),
+      ),
     )
   }
 
@@ -278,7 +278,7 @@ class EventInteractorTest {
 
     interactor.trackFetchEvaluationsFailure(
       "feature_tag_value",
-      BKTException.BadRequestException("bad request")
+      BKTException.BadRequestException("bad request"),
     )
 
     assertThat(listener.calls).hasSize(1)
@@ -297,10 +297,10 @@ class EventInteractorTest {
           timestamp = clock.currentTimeSecondsCalls[0],
           type = MetricsEventType.INTERNAL_ERROR_COUNT,
           event = MetricsEventData.InternalErrorCountMetricsEvent(
-            tag = "feature_tag_value"
-          )
-        )
-      )
+            tag = "feature_tag_value",
+          ),
+        ),
+      ),
     )
   }
 
@@ -311,9 +311,9 @@ class EventInteractorTest {
         .setResponseCode(200)
         .setBody(
           moshi.adapter(RegisterEventsResponse::class.java).toJson(
-            RegisterEventsResponse(RegisterEventsDataResponse(errors = emptyMap()))
-          )
-        )
+            RegisterEventsResponse(RegisterEventsDataResponse(errors = emptyMap())),
+          ),
+        ),
     )
 
     interactor.trackFetchEvaluationsSuccess("feature_tag_value", 1000, 723)
@@ -342,11 +342,11 @@ class EventInteractorTest {
               type = MetricsEventType.GET_EVALUATION_LATENCY,
               event = MetricsEventData.GetEvaluationLatencyMetricsEvent(
                 labels = mapOf(
-                  "tag" to "feature_tag_value"
+                  "tag" to "feature_tag_value",
                 ),
-                duration = Duration(millis = 1000)
-              )
-            )
+                duration = Duration(millis = 1000),
+              ),
+            ),
           ),
           Event(
             id = idGenerator.calls[1],
@@ -356,11 +356,11 @@ class EventInteractorTest {
               type = MetricsEventType.GET_EVALUATION_SIZE,
               event = MetricsEventData.GetEvaluationSizeMetricsEvent(
                 labels = mapOf(
-                  "tag" to "feature_tag_value"
+                  "tag" to "feature_tag_value",
                 ),
-                size_byte = 723
-              )
-            )
+                size_byte = 723,
+              ),
+            ),
           ),
           Event(
             id = idGenerator.calls[2],
@@ -372,11 +372,11 @@ class EventInteractorTest {
               value = 0.5,
               user = user1,
               tag = "feature_tag_value",
-              source_id = SourceID.ANDROID
-            )
-          )
-        )
-      )
+              source_id = SourceID.ANDROID,
+            ),
+          ),
+        ),
+      ),
     )
 
     assertThat(interactor.events.get()).hasSize(1)
@@ -394,9 +394,9 @@ class EventInteractorTest {
         .setResponseCode(400)
         .setBody(
           moshi.adapter(ErrorResponse::class.java).toJson(
-            ErrorResponse(ErrorResponse.ErrorDetail(400, "400 error"))
-          )
-        )
+            ErrorResponse(ErrorResponse.ErrorDetail(400, "400 error")),
+          ),
+        ),
     )
 
     interactor.trackFetchEvaluationsSuccess("feature_tag_value", 1000, 723)
@@ -420,9 +420,9 @@ class EventInteractorTest {
         .setResponseCode(200)
         .setBody(
           moshi.adapter(RegisterEventsResponse::class.java).toJson(
-            RegisterEventsResponse(RegisterEventsDataResponse(errors = emptyMap()))
-          )
-        )
+            RegisterEventsResponse(RegisterEventsDataResponse(errors = emptyMap())),
+          ),
+        ),
     )
 
     assertThat(interactor.events.get()).isEmpty()
@@ -441,9 +441,9 @@ class EventInteractorTest {
         .setResponseCode(200)
         .setBody(
           moshi.adapter(RegisterEventsResponse::class.java).toJson(
-            RegisterEventsResponse(RegisterEventsDataResponse(errors = emptyMap()))
-          )
-        )
+            RegisterEventsResponse(RegisterEventsDataResponse(errors = emptyMap())),
+          ),
+        ),
     )
 
     interactor.trackFetchEvaluationsSuccess("feature_tag_value", 1000, 723)
@@ -464,9 +464,9 @@ class EventInteractorTest {
         .setResponseCode(200)
         .setBody(
           moshi.adapter(RegisterEventsResponse::class.java).toJson(
-            RegisterEventsResponse(RegisterEventsDataResponse(errors = emptyMap()))
-          )
-        )
+            RegisterEventsResponse(RegisterEventsDataResponse(errors = emptyMap())),
+          ),
+        ),
     )
 
     interactor.trackFetchEvaluationsSuccess("feature_tag_value", 1000, 723)
@@ -490,11 +490,11 @@ class EventInteractorTest {
               type = MetricsEventType.GET_EVALUATION_LATENCY,
               event = MetricsEventData.GetEvaluationLatencyMetricsEvent(
                 labels = mapOf(
-                  "tag" to "feature_tag_value"
+                  "tag" to "feature_tag_value",
                 ),
-                duration = Duration(millis = 1000)
-              )
-            )
+                duration = Duration(millis = 1000),
+              ),
+            ),
           ),
           Event(
             id = idGenerator.calls[1],
@@ -504,14 +504,14 @@ class EventInteractorTest {
               type = MetricsEventType.GET_EVALUATION_SIZE,
               event = MetricsEventData.GetEvaluationSizeMetricsEvent(
                 labels = mapOf(
-                  "tag" to "feature_tag_value"
+                  "tag" to "feature_tag_value",
                 ),
-                size_byte = 723
-              )
-            )
-          )
-        )
-      )
+                size_byte = 723,
+              ),
+            ),
+          ),
+        ),
+      ),
     )
 
     assertThat(interactor.events.get()).isEmpty()
@@ -533,12 +533,12 @@ class EventInteractorTest {
               RegisterEventsDataResponse(
                 errors = mapOf(
                   idGenerator.calls[0] to RegisterEventsErrorResponse(retriable = true, "error"),
-                  idGenerator.calls[1] to RegisterEventsErrorResponse(retriable = false, "error")
-                )
-              )
-            )
-          )
-        )
+                  idGenerator.calls[1] to RegisterEventsErrorResponse(retriable = false, "error"),
+                ),
+              ),
+            ),
+          ),
+        ),
     )
 
     assertThat(interactor.events.get()).hasSize(4)
@@ -563,11 +563,11 @@ class EventInteractorTest {
               type = MetricsEventType.GET_EVALUATION_LATENCY,
               event = MetricsEventData.GetEvaluationLatencyMetricsEvent(
                 labels = mapOf(
-                  "tag" to "feature_tag_value"
+                  "tag" to "feature_tag_value",
                 ),
-                duration = Duration(millis = 1000)
-              )
-            )
+                duration = Duration(millis = 1000),
+              ),
+            ),
           ),
           Event(
             id = idGenerator.calls[1],
@@ -577,11 +577,11 @@ class EventInteractorTest {
               type = MetricsEventType.GET_EVALUATION_SIZE,
               event = MetricsEventData.GetEvaluationSizeMetricsEvent(
                 labels = mapOf(
-                  "tag" to "feature_tag_value"
+                  "tag" to "feature_tag_value",
                 ),
-                size_byte = 723
-              )
-            )
+                size_byte = 723,
+              ),
+            ),
           ),
           Event(
             id = idGenerator.calls[2],
@@ -593,11 +593,11 @@ class EventInteractorTest {
               value = 0.5,
               user = user1,
               tag = "feature_tag_value",
-              source_id = SourceID.ANDROID
-            )
-          )
-        )
-      )
+              source_id = SourceID.ANDROID,
+            ),
+          ),
+        ),
+      ),
     )
 
     assertThat(interactor.events.get()).hasSize(2)
@@ -614,11 +614,11 @@ class EventInteractorTest {
             type = MetricsEventType.GET_EVALUATION_LATENCY,
             event = MetricsEventData.GetEvaluationLatencyMetricsEvent(
               labels = mapOf(
-                "tag" to "feature_tag_value"
+                "tag" to "feature_tag_value",
               ),
-              duration = Duration(millis = 1000)
-            )
-          )
+              duration = Duration(millis = 1000),
+            ),
+          ),
         ),
         Event(
           id = idGenerator.calls[3],
@@ -630,10 +630,10 @@ class EventInteractorTest {
             value = 0.4,
             user = user1,
             tag = "feature_tag_value",
-            source_id = SourceID.ANDROID
-          )
-        )
-      )
+            source_id = SourceID.ANDROID,
+          ),
+        ),
+      ),
     )
   }
 
@@ -649,11 +649,11 @@ class EventInteractorTest {
             type = MetricsEventType.GET_EVALUATION_LATENCY,
             event = MetricsEventData.GetEvaluationLatencyMetricsEvent(
               labels = mapOf(
-                "tag" to "feature_tag_value"
+                "tag" to "feature_tag_value",
               ),
-              duration = Duration(millis = 1000)
-            )
-          )
+              duration = Duration(millis = 1000),
+            ),
+          ),
         ),
         Event(
           id = idGenerator.newId(),
@@ -665,10 +665,10 @@ class EventInteractorTest {
             value = 0.4,
             user = user1,
             tag = "feature_tag_value",
-            source_id = SourceID.ANDROID
-          )
-        )
-      )
+            source_id = SourceID.ANDROID,
+          ),
+        ),
+      ),
     )
 
     assertThat(interactor.events.get()).isEmpty()
@@ -721,7 +721,7 @@ private class FakeClock : Clock {
 private class TestDataModule(
   application: Application,
   config: BKTConfig,
-  defaultRequestTimeoutMillis: Long
+  defaultRequestTimeoutMillis: Long,
 ) : DataModule(application, config) {
 
   override val clock: Clock by lazy { FakeClock() }
@@ -734,7 +734,7 @@ private class TestDataModule(
       apiKey = config.apiKey,
       featureTag = config.featureTag,
       moshi = moshi,
-      defaultRequestTimeoutMillis = defaultRequestTimeoutMillis
+      defaultRequestTimeoutMillis = defaultRequestTimeoutMillis,
     )
   }
 }

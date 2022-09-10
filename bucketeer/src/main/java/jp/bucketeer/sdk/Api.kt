@@ -7,11 +7,11 @@ import bucketeer.user.UserOuterClass
 interface Api {
   fun fetchEvaluation(
     user: UserOuterClass.User,
-    userEvaluationsId: String
+    userEvaluationsId: String,
   ): Result<Service.GetEvaluationsResponse>
 
   fun registerEvent(
-    events: List<EventOuterClass.Event>
+    events: List<EventOuterClass.Event>,
   ): Result<Service.RegisterEventsResponse>
 
   fun setFetchEvaluationApiCallback(f: FetchEvaluationsApiCallback)

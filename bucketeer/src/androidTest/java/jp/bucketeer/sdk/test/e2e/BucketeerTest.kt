@@ -41,7 +41,7 @@ class BucketeerTest {
   private val sql_tables = listOf(
     CurrentEvaluationEntity.TABLE_NAME,
     LatestEvaluationEntity.TABLE_NAME,
-    EventEntity.TABLE_NAME
+    EventEntity.TABLE_NAME,
   )
 
   @Before
@@ -52,12 +52,12 @@ class BucketeerTest {
       sqLiteOpenHelper.writableDatabase.delete(
         table,
         null,
-        null
+        null,
       )
     }
     context.getSharedPreferences(
       Constants.PREFERENCES_NAME,
-      Context.MODE_PRIVATE
+      Context.MODE_PRIVATE,
     ).edit().clear().commit()
   }
 
@@ -136,15 +136,17 @@ class BucketeerTest {
     val bucketeer = createBucketeer()
     bucketeer.setUser(USER_ID_1)
     val callbackCountDown = CountDownLatch(1)
-    bucketeer.fetchUserEvaluations(object : Bucketeer.FetchUserEvaluationsCallback {
-      override fun onSuccess() {
-        callbackCountDown.countDown()
-      }
+    bucketeer.fetchUserEvaluations(
+      object : Bucketeer.FetchUserEvaluationsCallback {
+        override fun onSuccess() {
+          callbackCountDown.countDown()
+        }
 
-      override fun onError(exception: BucketeerException) {
-        fail(exception.message)
-      }
-    })
+        override fun onError(exception: BucketeerException) {
+          fail(exception.message)
+        }
+      },
+    )
     Assert.assertTrue(callbackCountDown.await(10, TimeUnit.SECONDS))
     bucketeer.getVariation(FEATURE_FLAG_ID_1, "default") shouldBeEqualTo FEATURE_FLAG_1_VARIATION
   }
@@ -154,15 +156,17 @@ class BucketeerTest {
     val bucketeer = createBucketeer()
     bucketeer.setUser(USER_ID_1)
     val callbackCountDown = CountDownLatch(1)
-    bucketeer.fetchUserEvaluations(object : Bucketeer.FetchUserEvaluationsCallback {
-      override fun onSuccess() {
-        callbackCountDown.countDown()
-      }
+    bucketeer.fetchUserEvaluations(
+      object : Bucketeer.FetchUserEvaluationsCallback {
+        override fun onSuccess() {
+          callbackCountDown.countDown()
+        }
 
-      override fun onError(exception: BucketeerException) {
-        fail(exception.message)
-      }
-    })
+        override fun onError(exception: BucketeerException) {
+          fail(exception.message)
+        }
+      },
+    )
     Assert.assertTrue(callbackCountDown.await(10, TimeUnit.SECONDS))
     bucketeer.getEvaluation(FEATURE_FLAG_ID_1)!!.run {
       featureId shouldBeEqualTo FEATURE_FLAG_ID_1

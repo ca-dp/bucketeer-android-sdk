@@ -15,7 +15,7 @@ class EventAdapterFactory : JsonAdapter.Factory {
   override fun create(
     type: Type,
     annotations: MutableSet<out Annotation>,
-    moshi: Moshi
+    moshi: Moshi,
   ): JsonAdapter<Event>? {
     if (!Types.getRawType(type).isAssignableFrom(Event::class.java)) {
       return null
@@ -43,7 +43,7 @@ class EventAdapterFactory : JsonAdapter.Factory {
         return Event(
           id = jsonObj["id"] as String,
           event = adapter.fromJsonValue(jsonObj["event"]) as EventData,
-          type = eventType
+          type = eventType,
         )
       }
 

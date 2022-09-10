@@ -21,7 +21,7 @@ internal class Component(
       apiClient = dataModule.apiClient,
       eventDao = dataModule.eventDao,
       clock = dataModule.clock,
-      idGenerator = dataModule.idGenerator
+      idGenerator = dataModule.idGenerator,
     )
   }
 }

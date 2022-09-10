@@ -21,7 +21,7 @@ class App : Application(), LifecycleObserver {
   private val sharedPref by lazy {
     getSharedPreferences(
       Constants.PREFERENCE_FILE_KEY,
-      Context.MODE_PRIVATE
+      Context.MODE_PRIVATE,
     )
   }
 
@@ -33,7 +33,7 @@ class App : Application(), LifecycleObserver {
 
   private fun initBucketeer() {
     val config = BucketeerConfig.Builder().logSendingIntervalMillis(
-      20000
+      20000,
     )
       .logSendingMaxBatchQueueCount(10)
       .pollingEvaluationIntervalMillis(20000)
@@ -56,29 +56,31 @@ class App : Application(), LifecycleObserver {
 
   private fun fetchEvaluations(bucketeer: Bucketeer) {
     bucketeer.setUser(getUserId())
-    bucketeer.fetchUserEvaluations(object : FetchUserEvaluationsCallbackAdapter() {
-      override fun onSuccess() {
-        Toast.makeText(this@App, "User Evaluations has been updated", Toast.LENGTH_LONG).show()
-      }
+    bucketeer.fetchUserEvaluations(
+      object : FetchUserEvaluationsCallbackAdapter() {
+        override fun onSuccess() {
+          Toast.makeText(this@App, "User Evaluations has been updated", Toast.LENGTH_LONG).show()
+        }
 
-      override fun onError(exception: BucketeerException) {
-        Toast.makeText(this@App, "onError: $exception", Toast.LENGTH_LONG).show()
-        exception.printStackTrace()
-      }
-    })
+        override fun onError(exception: BucketeerException) {
+          Toast.makeText(this@App, "onError: $exception", Toast.LENGTH_LONG).show()
+          exception.printStackTrace()
+        }
+      },
+    )
   }
 
   private fun getTag(): String {
     return sharedPref.getString(
       Constants.PREFERENCE_KEY_TAG,
-      Constants.DEFAULT_TAG
+      Constants.DEFAULT_TAG,
     ) ?: Constants.DEFAULT_TAG
   }
 
   private fun getUserId(): String {
     return sharedPref.getString(
       Constants.PREFERENCE_KEY_USER_ID,
-      Constants.DEFAULT_USER_ID
+      Constants.DEFAULT_USER_ID,
     ) ?: Constants.DEFAULT_USER_ID
   }
 
@@ -88,7 +90,7 @@ class App : Application(), LifecycleObserver {
 }
 
 internal class AppLifecycleObserver(
-  private val bucketeer: Bucketeer
+  private val bucketeer: Bucketeer,
 ) : DefaultLifecycleObserver {
 
   override fun onResume(owner: LifecycleOwner) {

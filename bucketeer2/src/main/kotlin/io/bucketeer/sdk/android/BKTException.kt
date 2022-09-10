@@ -2,10 +2,10 @@ package io.bucketeer.sdk.android
 
 sealed class BKTException(
   message: String,
-  cause: Throwable? = null
+  cause: Throwable? = null,
 ) : Exception(
   message,
-  cause
+  cause,
 ) {
   // server errors
   class BadRequestException(message: String) : BKTException(message)

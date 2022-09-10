@@ -16,7 +16,7 @@ import io.bucketeer.sdk.android.internal.model.Event
 
 internal class EventDaoImpl(
   private val sqLiteOpenHelper: SupportSQLiteOpenHelper,
-  moshi: Moshi
+  moshi: Moshi,
 ) : EventDao {
 
   private val eventAdapter = moshi.adapter(Event::class.java)
@@ -35,7 +35,7 @@ internal class EventDaoImpl(
 
   override fun getEvents(): List<Event> {
     val c = sqLiteOpenHelper.readableDatabase.select(
-      table = TABLE_NAME
+      table = TABLE_NAME,
     )
 
     return c.use {
@@ -53,7 +53,7 @@ internal class EventDaoImpl(
     sqLiteOpenHelper.writableDatabase.delete(
       TABLE_NAME,
       "$COLUMN_ID IN ($valuesIn)",
-      whereArgs
+      whereArgs,
     )
   }
 
@@ -66,7 +66,7 @@ internal class EventDaoImpl(
     writableDatabase.insert(
       TABLE_NAME,
       SQLiteDatabase.CONFLICT_REPLACE,
-      contentValues
+      contentValues,
     )
   }
 }

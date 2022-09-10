@@ -16,7 +16,6 @@ class OpenHelperCallback : SupportSQLiteOpenHelper.Callback(VERSION) {
   }
 
   override fun onCreate(db: SupportSQLiteDatabase) {
-
     db.execSQL(
       """
       |CREATE TABLE ${EvaluationEntity.TABLE_NAME} (
@@ -28,7 +27,7 @@ class OpenHelperCallback : SupportSQLiteOpenHelper.Callback(VERSION) {
       |     ${EvaluationEntity.COLUMN_FEATURE_ID}
       |   )
       |)
-      """.trimMargin()
+      """.trimMargin(),
     )
 
     db.execSQL(
@@ -37,7 +36,7 @@ class OpenHelperCallback : SupportSQLiteOpenHelper.Callback(VERSION) {
       |   ${EventEntity.COLUMN_ID} TEXT PRIMARY KEY,
       |   ${EventEntity.COLUMN_EVENT} TEXT
       |)
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 
@@ -50,7 +49,7 @@ class OpenHelperCallback : SupportSQLiteOpenHelper.Callback(VERSION) {
 
 fun createDatabase(
   context: Context,
-  fileName: String? = OpenHelperCallback.FILE_NAME
+  fileName: String? = OpenHelperCallback.FILE_NAME,
 ): SupportSQLiteOpenHelper {
   val config = SupportSQLiteOpenHelper.Configuration.builder(context)
     .name(fileName)

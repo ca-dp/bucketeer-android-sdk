@@ -12,7 +12,7 @@ internal class EventSender(
   private val logSendingMaxBatchQueueCount: Int,
   private val eventActionCreator: EventActionCreator,
   private val eventStore: EventStore,
-  private val scheduledExecutorService: ScheduledExecutorService
+  private val scheduledExecutorService: ScheduledExecutorService,
 ) : ScheduledTask {
   override var isStarted: Boolean = false
   private var scheduledFuture: ScheduledFuture<*>? = null
@@ -36,7 +36,7 @@ internal class EventSender(
       { sendEvent() },
       logSendingIntervalMillis,
       logSendingIntervalMillis,
-      TimeUnit.MILLISECONDS
+      TimeUnit.MILLISECONDS,
     )
   }
 

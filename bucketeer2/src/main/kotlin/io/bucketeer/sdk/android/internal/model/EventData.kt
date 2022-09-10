@@ -14,7 +14,7 @@ sealed class EventData {
     val value: Double,
     val user: User,
     val tag: String,
-    val source_id: SourceID
+    val source_id: SourceID,
   ) : EventData()
 
   @JsonClass(generateAdapter = true)
@@ -27,7 +27,7 @@ sealed class EventData {
     val user: User,
     val reason: Reason,
     val tag: String,
-    val source_id: SourceID
+    val source_id: SourceID,
   ) : EventData()
 
   // we can't use codegen here
@@ -35,6 +35,6 @@ sealed class EventData {
   data class MetricsEvent(
     val timestamp: Long,
     val event: MetricsEventData,
-    val type: MetricsEventType
+    val type: MetricsEventType,
   ) : EventData()
 }

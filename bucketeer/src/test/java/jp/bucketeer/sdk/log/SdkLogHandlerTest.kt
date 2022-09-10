@@ -9,16 +9,18 @@ class SdkLogHandlerTest {
 
   @Before
   fun setUp() {
-    SdkLogger.addLogger(object : LogHandler() {
-      override fun log(
-        priority: Int,
-        msgCreator: (() -> String?)?,
-        th: Throwable?,
-        isLogForUser: Boolean
-      ) {
-        logHistory += "$priority ${msgCreator?.invoke()} ${th?.javaClass?.simpleName}"
-      }
-    })
+    SdkLogger.addLogger(
+      object : LogHandler() {
+        override fun log(
+          priority: Int,
+          msgCreator: (() -> String?)?,
+          th: Throwable?,
+          isLogForUser: Boolean,
+        ) {
+          logHistory += "$priority ${msgCreator?.invoke()} ${th?.javaClass?.simpleName}"
+        }
+      },
+    )
   }
 
   @Test
@@ -48,7 +50,7 @@ class SdkLogHandlerTest {
       "6 ERROR null",
       "6 ERROR Exception",
       "7 ASSERT null",
-      "7 ASSERT Exception"
+      "7 ASSERT Exception",
     )
   }
 }

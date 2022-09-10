@@ -41,11 +41,11 @@ class MetricsEventAdapterFactoryTest {
         event = MetricsEventData.GetEvaluationLatencyMetricsEvent(
           labels = mapOf(
             "key1" to "value1",
-            "key2" to "value2"
+            "key2" to "value2",
           ),
-          duration = Duration(5, 32000000)
-        )
-      )
+          duration = Duration(5, 32000000),
+        ),
+      ),
     ),
     GetEvaluationSize(
       json = """
@@ -67,11 +67,11 @@ class MetricsEventAdapterFactoryTest {
         event = MetricsEventData.GetEvaluationSizeMetricsEvent(
           labels = mapOf(
             "key1" to "value1",
-            "key2" to "value2"
+            "key2" to "value2",
           ),
-          size_byte = 1234
-        )
-      )
+          size_byte = 1234,
+        ),
+      ),
     ),
     TimeoutErrorCount(
       json = """
@@ -87,9 +87,9 @@ class MetricsEventAdapterFactoryTest {
         timestamp = 1660210923777,
         type = MetricsEventType.TIMEOUT_ERROR_COUNT,
         event = MetricsEventData.TimeoutErrorCountMetricsEvent(
-          tag = "tag_value"
-        )
-      )
+          tag = "tag_value",
+        ),
+      ),
     ),
     InternalErrorCount(
       json = """
@@ -105,10 +105,10 @@ class MetricsEventAdapterFactoryTest {
         timestamp = 1660210923777,
         type = MetricsEventType.INTERNAL_ERROR_COUNT,
         event = MetricsEventData.InternalErrorCountMetricsEvent(
-          tag = "tag_value"
-        )
-      )
-    )
+          tag = "tag_value",
+        ),
+      ),
+    ),
   }
 
   lateinit var adapter: JsonAdapter<EventData.MetricsEvent>

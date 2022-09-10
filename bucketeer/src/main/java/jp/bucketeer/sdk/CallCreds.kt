@@ -10,7 +10,7 @@ internal class CallCreds(private val token: String) : CallCredentials() {
   override fun applyRequestMetadata(
     request: RequestInfo,
     executor: Executor,
-    applier: MetadataApplier
+    applier: MetadataApplier,
   ) {
     executor.execute {
       val headers = Metadata()

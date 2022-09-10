@@ -94,7 +94,7 @@ class EventDaoImplTest {
       metricsEvent5.pack(),
       metricsEvent6.pack(),
       metricsEvent7.pack(),
-      metricsEvent8.pack()
+      metricsEvent8.pack(),
     )
     val actual = eventDao.getEvents().map { it.event }
     expected.forEach {

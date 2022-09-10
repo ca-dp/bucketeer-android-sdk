@@ -20,7 +20,7 @@ class Migration1to2 : Migration {
       |     feature_id
       |   )
       |)
-      """.trimMargin()
+      """.trimMargin(),
     )
 
     db.execSQL(
@@ -29,7 +29,7 @@ class Migration1to2 : Migration {
       |   id TEXT PRIMARY KEY,
       |   event TEXT
       |)
-      """.trimMargin()
+      """.trimMargin(),
     )
   }
 }

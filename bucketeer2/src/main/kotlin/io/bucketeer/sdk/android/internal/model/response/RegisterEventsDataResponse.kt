@@ -4,5 +4,5 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class RegisterEventsDataResponse(
-  val errors: Map<String, RegisterEventsErrorResponse> = emptyMap()
+  val errors: Map<String, RegisterEventsErrorResponse> = emptyMap(),
 )

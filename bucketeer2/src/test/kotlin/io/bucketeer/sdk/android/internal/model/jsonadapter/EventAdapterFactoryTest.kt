@@ -60,13 +60,13 @@ class EventAdapterFactoryTest {
             id = "user_id_value",
             data = mapOf(
               "gender" to "male",
-              "age" to "40"
-            )
+              "age" to "40",
+            ),
           ),
           tag = "tag_value",
-          source_id = SourceID.ANDROID
+          source_id = SourceID.ANDROID,
         ),
-      )
+      ),
     ),
     Evaluation(
       json = """
@@ -108,17 +108,17 @@ class EventAdapterFactoryTest {
             id = "user_id_value",
             data = mapOf(
               "gender" to "male",
-              "age" to "40"
-            )
+              "age" to "40",
+            ),
           ),
           reason = Reason(
             type = ReasonType.CLIENT,
-            rule_id = "rule_id_value"
+            rule_id = "rule_id_value",
           ),
           tag = "tag_value",
-          source_id = SourceID.ANDROID
-        )
-      )
+          source_id = SourceID.ANDROID,
+        ),
+      ),
     ),
     Metrics(
       json = """
@@ -150,13 +150,13 @@ class EventAdapterFactoryTest {
           event = MetricsEventData.GetEvaluationLatencyMetricsEvent(
             labels = mapOf(
               "key1" to "value1",
-              "key2" to "value2"
+              "key2" to "value2",
             ),
-            duration = Duration(5, 32000000)
-          )
-        )
-      )
-    )
+            duration = Duration(5, 32000000),
+          ),
+        ),
+      ),
+    ),
   }
 
   lateinit var adapter: JsonAdapter<Event>

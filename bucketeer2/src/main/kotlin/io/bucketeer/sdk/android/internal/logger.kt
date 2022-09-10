@@ -1,3 +1,5 @@
+@file:Suppress("ktlint:filename")
+
 package io.bucketeer.sdk.android.internal
 
 import android.util.Log
@@ -13,7 +15,7 @@ internal object LoggerHolder {
   fun log(
     priority: Int,
     messageCreator: (() -> String?)? = null,
-    throwable: Throwable? = null
+    throwable: Throwable? = null,
   ) {
     logHandlers.forEach {
       it.log(priority, messageCreator, throwable)
@@ -24,7 +26,7 @@ internal object LoggerHolder {
 // TODO: Add msgCreator log methods
 internal fun logd(
   throwable: Throwable? = null,
-  messageCreator: (() -> String?)? = null
+  messageCreator: (() -> String?)? = null,
 ) {
   LoggerHolder.log(
     Log.DEBUG,
@@ -35,7 +37,7 @@ internal fun logd(
 
 internal fun loge(
   throwable: Throwable? = null,
-  messageCreator: (() -> String?)? = null
+  messageCreator: (() -> String?)? = null,
 ) {
   LoggerHolder.log(
     priority = Log.ERROR,
@@ -46,7 +48,7 @@ internal fun loge(
 
 internal fun logi(
   throwable: Throwable? = null,
-  messageCreator: (() -> String?)? = null
+  messageCreator: (() -> String?)? = null,
 ) {
   LoggerHolder.log(
     priority = Log.INFO,
@@ -57,7 +59,7 @@ internal fun logi(
 
 internal fun logv(
   throwable: Throwable? = null,
-  messageCreator: (() -> String?)? = null
+  messageCreator: (() -> String?)? = null,
 ) {
   LoggerHolder.log(
     priority = Log.VERBOSE,
@@ -68,7 +70,7 @@ internal fun logv(
 
 internal fun logw(
   throwable: Throwable? = null,
-  messageCreator: (() -> String?)? = null
+  messageCreator: (() -> String?)? = null,
 ) {
   LoggerHolder.log(
     priority = Log.WARN,
@@ -79,7 +81,7 @@ internal fun logw(
 
 internal fun logwtf(
   throwable: Throwable? = null,
-  messageCreator: (() -> String?)? = null
+  messageCreator: (() -> String?)? = null,
 ) {
   LoggerHolder.log(
     priority = Log.ASSERT,
@@ -87,4 +89,3 @@ internal fun logwtf(
     throwable = throwable,
   )
 }
-

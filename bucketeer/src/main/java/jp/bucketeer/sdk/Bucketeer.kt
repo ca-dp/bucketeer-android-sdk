@@ -15,7 +15,7 @@ interface Bucketeer {
 
   fun fetchUserEvaluations()
   fun fetchUserEvaluations(
-    fetchUserEvaluationsCallback: FetchUserEvaluationsCallback? = null
+    fetchUserEvaluationsCallback: FetchUserEvaluationsCallback? = null,
   )
 
   fun getEvaluation(featureId: String): Evaluation?
@@ -91,26 +91,26 @@ interface Bucketeer {
         SdkLogger.addLogger(UserLogHandler(TAG))
       }
       val apiKey = apiKey ?: throw BucketeerException.IllegalArgumentException(
-        "api key is required. Please add builder.apiKey()"
+        "api key is required. Please add builder.apiKey()",
       )
       val endpoint = endpoint ?: throw BucketeerException.IllegalArgumentException(
-        "endpoint is required. Please add builder.endpoint()"
+        "endpoint is required. Please add builder.endpoint()",
       )
       val m: Matcher = Patterns.WEB_URL.matcher(endpoint)
       if (!m.matches()) {
         throw BucketeerException.IllegalArgumentException(
-          "endpoint is invalid"
+          "endpoint is invalid",
         )
       }
       val featureTag = featureTag ?: throw BucketeerException.IllegalArgumentException(
-        "feature tag is required. Please add builder.featureTag()"
+        "feature tag is required. Please add builder.featureTag()",
       )
       return BucketeerImpl(
         context,
         apiKey,
         endpoint,
         featureTag,
-        config ?: BucketeerConfig.DEFAULT
+        config ?: BucketeerConfig.DEFAULT,
       )
     }
   }

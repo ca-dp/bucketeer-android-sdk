@@ -30,14 +30,14 @@ class ClientInteractorTest {
   private val eventActionCreator: EventActionCreator = mock()
   private val latestEvaluationActionCreator: LatestEvaluationActionCreator = mock()
   private val firstRefreshState = ObservableField<RefreshManuallyStateChangedAction.State>(
-    RefreshManuallyStateChangedAction.State.Loading
+    RefreshManuallyStateChangedAction.State.Loading,
   )
   private val latestEvaluationStore: LatestEvaluationStore = mock<LatestEvaluationStore>().also {
     whenever(it.refreshManuallyState).thenReturn(firstRefreshState)
   }
   private val currentStore: CurrentStore = mock()
   private val userHolder: UserHolder.UpdatableUserHolder = spy(
-    UserHolder.UpdatableUserHolder().apply { updateUser(user1) }
+    UserHolder.UpdatableUserHolder().apply { updateUser(user1) },
   )
 
   private lateinit var clientInteractor: ClientInteractor
@@ -50,7 +50,7 @@ class ClientInteractorTest {
       latestEvaluationActionCreator,
       latestEvaluationStore,
       currentStore,
-      userHolder
+      userHolder,
     )
   }
 
@@ -96,14 +96,14 @@ class ClientInteractorTestGetEvaluation {
   private val eventActionCreator: EventActionCreator = mock()
   private val latestEvaluationActionCreator: LatestEvaluationActionCreator = mock()
   private val firstRefreshState = ObservableField<RefreshManuallyStateChangedAction.State>(
-    RefreshManuallyStateChangedAction.State.Loading
+    RefreshManuallyStateChangedAction.State.Loading,
   )
   private val latestEvaluationStore: LatestEvaluationStore = mock<LatestEvaluationStore>().also {
     whenever(it.refreshManuallyState).thenReturn(firstRefreshState)
   }
   private val currentStore: CurrentStore = mock()
   private val userHolder: UserHolder.UpdatableUserHolder = spy(
-    UserHolder.UpdatableUserHolder().apply { updateUser(user1) }
+    UserHolder.UpdatableUserHolder().apply { updateUser(user1) },
   )
 
   private lateinit var clientInteractor: ClientInteractor
@@ -117,8 +117,8 @@ class ClientInteractorTestGetEvaluation {
         latestEvaluationActionCreator,
         latestEvaluationStore,
         currentStore,
-        userHolder
-      )
+        userHolder,
+      ),
     )
   }
 
@@ -161,14 +161,14 @@ class ClientInteractorTestTrack {
   private val eventActionCreator: EventActionCreator = mock()
   private val latestEvaluationActionCreator: LatestEvaluationActionCreator = mock()
   private val firstRefreshState = ObservableField<RefreshManuallyStateChangedAction.State>(
-    RefreshManuallyStateChangedAction.State.Loading
+    RefreshManuallyStateChangedAction.State.Loading,
   )
   private val latestEvaluationStore: LatestEvaluationStore = mock<LatestEvaluationStore>().also {
     whenever(it.refreshManuallyState).thenReturn(firstRefreshState)
   }
   private val currentStore: CurrentStore = mock()
   private val userHolder: UserHolder.UpdatableUserHolder = spy(
-    UserHolder.UpdatableUserHolder().apply { updateUser(user1) }
+    UserHolder.UpdatableUserHolder().apply { updateUser(user1) },
   )
 
   private lateinit var clientInteractor: ClientInteractor
@@ -182,8 +182,8 @@ class ClientInteractorTestTrack {
         latestEvaluationActionCreator,
         latestEvaluationStore,
         currentStore,
-        userHolder
-      )
+        userHolder,
+      ),
     )
   }
 

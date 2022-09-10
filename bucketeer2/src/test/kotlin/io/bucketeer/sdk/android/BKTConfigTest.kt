@@ -22,8 +22,8 @@ class BKTConfigTest {
         eventsMaxBatchQueueCount = DEFAULT_MAX_QUEUE_SIZE,
         pollingInterval = DEFAULT_POLLING_INTERVAL_MILLIS,
         backgroundPollingInterval = DEFAULT_BACKGROUND_POLLING_INTERVAL_MILLIS,
-        logger = DefaultLogger("Bucketeer")
-      )
+        logger = DefaultLogger("Bucketeer"),
+      ),
     )
   }
 
@@ -120,8 +120,8 @@ class BKTConfigTest {
         eventsMaxBatchQueueCount = DEFAULT_MAX_QUEUE_SIZE,
         pollingInterval = DEFAULT_POLLING_INTERVAL_MILLIS,
         backgroundPollingInterval = DEFAULT_BACKGROUND_POLLING_INTERVAL_MILLIS,
-        logger = null
-      )
+        logger = null,
+      ),
     )
   }
 }

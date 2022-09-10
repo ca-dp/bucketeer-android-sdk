@@ -6,7 +6,7 @@ import androidx.sqlite.db.SupportSQLiteQueryBuilder
 
 inline fun <T> SupportSQLiteDatabase.transaction(
   exclusive: Boolean = true,
-  block: SupportSQLiteDatabase.() -> T
+  block: SupportSQLiteDatabase.() -> T,
 ): T {
   if (exclusive) {
     beginTransaction()
@@ -30,7 +30,7 @@ fun SupportSQLiteDatabase.select(
   groupBy: String? = null,
   having: String? = null,
   orderBy: String? = null,
-  limit: String? = null
+  limit: String? = null,
 ): Cursor {
   val builder = SupportSQLiteQueryBuilder.builder(table)
     .columns(columns)

@@ -43,7 +43,7 @@ class EventActionCreatorTest {
     variationId = evaluation1.variationId
     user = user1
     reason = ReasonOuterClass.Reason.newBuilder().setType(
-      ReasonOuterClass.Reason.Type.DEFAULT
+      ReasonOuterClass.Reason.Type.DEFAULT,
     ).build()
   }.build()
 
@@ -65,10 +65,10 @@ class EventActionCreatorTest {
         .setDuration(
           Duration.newBuilder()
             .setSeconds(1)
-            .setNanos(123456789)
+            .setNanos(123456789),
         )
         .putAllLabels(mapOf("tag" to "android", "state" to "FULL"))
-        .build().pack()
+        .build().pack(),
     )
     .build()
 
@@ -80,7 +80,7 @@ class EventActionCreatorTest {
         .newBuilder()
         .setSizeByte(10000)
         .putAllLabels(mapOf("tag" to "android", "state" to "FULL"))
-        .build().pack()
+        .build().pack(),
     )
     .build()
 
@@ -91,7 +91,7 @@ class EventActionCreatorTest {
       EventOuterClass.InternalErrorCountMetricsEvent
         .newBuilder()
         .setTag("tag")
-        .build().pack()
+        .build().pack(),
     )
     .build()
 
@@ -102,7 +102,7 @@ class EventActionCreatorTest {
       EventOuterClass.TimeoutErrorCountMetricsEvent
         .newBuilder()
         .setTag("tag")
-        .build().pack()
+        .build().pack(),
     )
     .build()
 
@@ -112,22 +112,24 @@ class EventActionCreatorTest {
       listOf(
         EventOuterClass.Event.newBuilder()
           .setEvent(evaluationEvent1.pack())
-          .build()
-      )
+          .build(),
+      ),
     )
 
-    val mockObserver = spy(object : Observer {
-      override fun update(o: Observable?, arg: kotlin.Any?) {
-        when (arg) {
-          is EventListDataChangedAction -> arg.events.run {
-            this.size shouldBeEqualTo 1
-            val event = this.first().event.unpackToEvaluationEvent()
-            event::class shouldBeEqualTo EventOuterClass.EvaluationEvent::class
+    val mockObserver = spy(
+      object : Observer {
+        override fun update(o: Observable?, arg: kotlin.Any?) {
+          when (arg) {
+            is EventListDataChangedAction -> arg.events.run {
+              this.size shouldBeEqualTo 1
+              val event = this.first().event.unpackToEvaluationEvent()
+              event::class shouldBeEqualTo EventOuterClass.EvaluationEvent::class
+            }
+            else -> Assert.fail()
           }
-          else -> Assert.fail()
         }
-      }
-    })
+      },
+    )
     dispatcher.addObserver(mockObserver)
 
     eventActionCreator.pushEvaluationEvent(1234, evaluation1, user1)
@@ -161,24 +163,26 @@ class EventActionCreatorTest {
       listOf(
         EventOuterClass.Event.newBuilder()
           .setEvent(goalEvent1.pack())
-          .build()
-      )
+          .build(),
+      ),
     )
 
-    val mockObserver = spy(object : Observer {
-      override fun update(o: Observable?, arg: kotlin.Any?) {
-        when (arg) {
-          is EventListDataChangedAction -> {
-            arg.events.run {
-              this.size shouldBeEqualTo 1
-              val event = this.first().event.unpackToGoalEvent()
-              event::class shouldBeEqualTo EventOuterClass.GoalEvent::class
+    val mockObserver = spy(
+      object : Observer {
+        override fun update(o: Observable?, arg: kotlin.Any?) {
+          when (arg) {
+            is EventListDataChangedAction -> {
+              arg.events.run {
+                this.size shouldBeEqualTo 1
+                val event = this.first().event.unpackToGoalEvent()
+                event::class shouldBeEqualTo EventOuterClass.GoalEvent::class
+              }
             }
+            else -> Assert.fail()
           }
-          else -> Assert.fail()
         }
-      }
-    })
+      },
+    )
     dispatcher.addObserver(mockObserver)
 
     eventActionCreator.pushGoalEvent(1234, "goalId", 100.0, user1, listOf(evaluation1))
@@ -201,29 +205,31 @@ class EventActionCreatorTest {
       listOf(
         EventOuterClass.Event.newBuilder()
           .setEvent(metricsEvent1.pack())
-          .build()
-      )
+          .build(),
+      ),
     )
 
-    val mockObserver = spy(object : Observer {
-      override fun update(o: Observable?, arg: kotlin.Any?) {
-        when (arg) {
-          is EventListDataChangedAction -> {
-            arg.events.run {
-              this.size shouldBeEqualTo 1
-              val event = this.first().event.unpackToMetricsEvent()
-              event::class shouldBeEqualTo EventOuterClass.MetricsEvent::class
+    val mockObserver = spy(
+      object : Observer {
+        override fun update(o: Observable?, arg: kotlin.Any?) {
+          when (arg) {
+            is EventListDataChangedAction -> {
+              arg.events.run {
+                this.size shouldBeEqualTo 1
+                val event = this.first().event.unpackToMetricsEvent()
+                event::class shouldBeEqualTo EventOuterClass.MetricsEvent::class
+              }
             }
+            else -> Assert.fail()
           }
-          else -> Assert.fail()
         }
-      }
-    })
+      },
+    )
     dispatcher.addObserver(mockObserver)
 
     eventActionCreator.pushGetEvaluationLatencyMetricsEvent(
       1234,
-      mapOf("tag" to "android", "state" to "FULL")
+      mapOf("tag" to "android", "state" to "FULL"),
     )
     verify(mockObserver).update(any(), any())
   }
@@ -235,7 +241,7 @@ class EventActionCreatorTest {
 
     eventActionCreator.pushGetEvaluationLatencyMetricsEvent(
       1234,
-      mapOf("tag" to "android", "state" to "FULL")
+      mapOf("tag" to "android", "state" to "FULL"),
     )
     verify(eventDao).addEvent(any<EventOuterClass.MetricsEvent>())
     verify(mockObserver).update(any(), any())
@@ -247,29 +253,31 @@ class EventActionCreatorTest {
       listOf(
         EventOuterClass.Event.newBuilder()
           .setEvent(metricsEvent2.pack())
-          .build()
-      )
+          .build(),
+      ),
     )
 
-    val mockObserver = spy(object : Observer {
-      override fun update(o: Observable?, arg: kotlin.Any?) {
-        when (arg) {
-          is EventListDataChangedAction -> {
-            arg.events.run {
-              this.size shouldBeEqualTo 1
-              val event = this.first().event.unpackToMetricsEvent()
-              event::class shouldBeEqualTo EventOuterClass.MetricsEvent::class
+    val mockObserver = spy(
+      object : Observer {
+        override fun update(o: Observable?, arg: kotlin.Any?) {
+          when (arg) {
+            is EventListDataChangedAction -> {
+              arg.events.run {
+                this.size shouldBeEqualTo 1
+                val event = this.first().event.unpackToMetricsEvent()
+                event::class shouldBeEqualTo EventOuterClass.MetricsEvent::class
+              }
             }
+            else -> Assert.fail()
           }
-          else -> Assert.fail()
         }
-      }
-    })
+      },
+    )
     dispatcher.addObserver(mockObserver)
 
     eventActionCreator.pushGetEvaluationSizeMetricsEvent(
       10000,
-      mapOf("tag" to "android", "state" to "FULL")
+      mapOf("tag" to "android", "state" to "FULL"),
     )
     verify(mockObserver).update(any(), any())
   }
@@ -281,7 +289,7 @@ class EventActionCreatorTest {
 
     eventActionCreator.pushGetEvaluationSizeMetricsEvent(
       10000,
-      mapOf("tag" to "android", "state" to "FULL")
+      mapOf("tag" to "android", "state" to "FULL"),
     )
     verify(eventDao).addEvent(any<EventOuterClass.MetricsEvent>())
     verify(mockObserver).update(any(), any())
@@ -293,24 +301,26 @@ class EventActionCreatorTest {
       listOf(
         EventOuterClass.Event.newBuilder()
           .setEvent(metricsEvent3.pack())
-          .build()
-      )
+          .build(),
+      ),
     )
 
-    val mockObserver = spy(object : Observer {
-      override fun update(o: Observable?, arg: kotlin.Any?) {
-        when (arg) {
-          is EventListDataChangedAction -> {
-            arg.events.run {
-              this.size shouldBeEqualTo 1
-              val event = this.first().event.unpackToMetricsEvent()
-              event::class shouldBeEqualTo EventOuterClass.MetricsEvent::class
+    val mockObserver = spy(
+      object : Observer {
+        override fun update(o: Observable?, arg: kotlin.Any?) {
+          when (arg) {
+            is EventListDataChangedAction -> {
+              arg.events.run {
+                this.size shouldBeEqualTo 1
+                val event = this.first().event.unpackToMetricsEvent()
+                event::class shouldBeEqualTo EventOuterClass.MetricsEvent::class
+              }
             }
+            else -> Assert.fail()
           }
-          else -> Assert.fail()
         }
-      }
-    })
+      },
+    )
     dispatcher.addObserver(mockObserver)
 
     eventActionCreator.pushTimeoutErrorCountMetricsEvent("tag")
@@ -333,24 +343,26 @@ class EventActionCreatorTest {
       listOf(
         EventOuterClass.Event.newBuilder()
           .setEvent(metricsEvent4.pack())
-          .build()
-      )
+          .build(),
+      ),
     )
 
-    val mockObserver = spy(object : Observer {
-      override fun update(o: Observable?, arg: kotlin.Any?) {
-        when (arg) {
-          is EventListDataChangedAction -> {
-            arg.events.run {
-              this.size shouldBeEqualTo 1
-              val event = this.first().event.unpackToMetricsEvent()
-              event::class shouldBeEqualTo EventOuterClass.MetricsEvent::class
+    val mockObserver = spy(
+      object : Observer {
+        override fun update(o: Observable?, arg: kotlin.Any?) {
+          when (arg) {
+            is EventListDataChangedAction -> {
+              arg.events.run {
+                this.size shouldBeEqualTo 1
+                val event = this.first().event.unpackToMetricsEvent()
+                event::class shouldBeEqualTo EventOuterClass.MetricsEvent::class
+              }
             }
+            else -> Assert.fail()
           }
-          else -> Assert.fail()
         }
-      }
-    })
+      },
+    )
     dispatcher.addObserver(mockObserver)
 
     eventActionCreator.pushInternalErrorCountMetricsEvent("tag")
@@ -378,25 +390,27 @@ class EventActionCreatorTest {
         metricsEvent1.toEvent(),
         metricsEvent2.toEvent(),
         metricsEvent3.toEvent(),
-        metricsEvent4.toEvent()
-      )
+        metricsEvent4.toEvent(),
+      ),
     )
 
-    val spyObserver: Observer = spy(object : Observer {
-      override fun update(o: Observable?, arg: kotlin.Any?) {
-        when (arg) {
-          is EventListDataChangedAction -> {
-            arg.events.size shouldBeEqualTo 6
-            arg.events[0].event.unpackToEvaluationEvent()
-            arg.events[1].event.unpackToGoalEvent()
-            arg.events[2].event.unpackToMetricsEvent()
-            arg.events[3].event.unpackToMetricsEvent()
-            arg.events[4].event.unpackToMetricsEvent()
-            arg.events[5].event.unpackToMetricsEvent()
+    val spyObserver: Observer = spy(
+      object : Observer {
+        override fun update(o: Observable?, arg: kotlin.Any?) {
+          when (arg) {
+            is EventListDataChangedAction -> {
+              arg.events.size shouldBeEqualTo 6
+              arg.events[0].event.unpackToEvaluationEvent()
+              arg.events[1].event.unpackToGoalEvent()
+              arg.events[2].event.unpackToMetricsEvent()
+              arg.events[3].event.unpackToMetricsEvent()
+              arg.events[4].event.unpackToMetricsEvent()
+              arg.events[5].event.unpackToMetricsEvent()
+            }
           }
         }
-      }
-    })
+      },
+    )
     dispatcher.addObserver(spyObserver)
 
     eventActionCreator.pushGoalEvent(
@@ -404,7 +418,7 @@ class EventActionCreatorTest {
       goalId = goalEvent1.goalId,
       value = goalEvent1.value,
       user = user1,
-      evaluations = goalEvent1.evaluationsList
+      evaluations = goalEvent1.evaluationsList,
     )
 
     verify(spyObserver).update(any(), any())
@@ -434,7 +448,7 @@ class EventActionCreatorTest {
     val value = RegisterEventsResponse.newBuilder()
       .putErrors(
         events[0].id,
-        RegisterEventsResponse.Error.newBuilder().setRetriable(true).build()
+        RegisterEventsResponse.Error.newBuilder().setRetriable(true).build(),
       )
       .build()
 
@@ -451,7 +465,7 @@ class EventActionCreatorTest {
     val value = RegisterEventsResponse.newBuilder()
       .putErrors(
         events[0].id,
-        RegisterEventsResponse.Error.newBuilder().setRetriable(false).build()
+        RegisterEventsResponse.Error.newBuilder().setRetriable(false).build(),
       )
       .build()
     whenever(api.registerEvent(events)).thenReturn(Api.Result.Success(value))
@@ -465,7 +479,7 @@ class EventActionCreatorTest {
   fun send_notDeleteEvents_when_apiFailed() {
     val events = listOf(evaluationEvent1.toEvent(), goalEvent1.toEvent())
     whenever(api.registerEvent(events)).thenReturn(
-      Api.Result.Fail(Exception("exception").toBucketeerException())
+      Api.Result.Fail(Exception("exception").toBucketeerException()),
     )
 
     eventActionCreator.send(events, 50)

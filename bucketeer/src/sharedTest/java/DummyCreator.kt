@@ -21,8 +21,8 @@ val user: User by lazy {
     "user-id",
     mapOf(
       "gender" to "male",
-      "age" to "40"
-    )
+      "age" to "40",
+    ),
   )
 }
 
@@ -63,7 +63,7 @@ val evaluation: Evaluation by lazy {
     evaluation1.userId,
     evaluation1.variationId,
     evaluation1.variationValue,
-    evaluation1.reason.type.number
+    evaluation1.reason.type.number,
   )
 }
 
@@ -154,7 +154,7 @@ val getEvaluationLatencyMetricsEvent1 = EventOuterClass.GetEvaluationLatencyMetr
   .setDuration(
     Duration.newBuilder()
       .setSeconds(1)
-      .setNanos(123456789)
+      .setNanos(123456789),
   )
   .putAllLabels(mapOf("tag" to "android", "state" to "FULL"))
   .build()
@@ -164,7 +164,7 @@ val getEvaluationLatencyMetricsEvent2 = EventOuterClass.GetEvaluationLatencyMetr
   .setDuration(
     Duration.newBuilder()
       .setSeconds(2)
-      .setNanos(987654321)
+      .setNanos(987654321),
   )
   .putAllLabels(mapOf("tag" to "firetv", "state" to "PARTIAL"))
   .build()

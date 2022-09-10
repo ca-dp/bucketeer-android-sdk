@@ -8,6 +8,6 @@ internal interface LatestEvaluationDao {
   fun get(user: UserOuterClass.User): List<EvaluationOuterClass.Evaluation>
   fun deleteAllAndInsert(
     user: UserOuterClass.User,
-    list: List<EvaluationOuterClass.Evaluation>
+    list: List<EvaluationOuterClass.Evaluation>,
   ): Boolean
 }

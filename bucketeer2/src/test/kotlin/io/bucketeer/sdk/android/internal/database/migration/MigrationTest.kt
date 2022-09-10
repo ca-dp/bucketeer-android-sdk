@@ -13,7 +13,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 
-
 @RunWith(RobolectricTestRunner::class)
 class MigrationTest {
   private lateinit var openHelper: SupportSQLiteOpenHelper
@@ -45,7 +44,7 @@ class MigrationTest {
       SELECT name, sql FROM sqlite_master 
       WHERE type = 'table' 
       AND (name NOT LIKE 'sqlite_%' AND name NOT LIKE 'android_%')
-    """.trimIndent()
+      """.trimIndent(),
     )
 
     // Here we just compare table definition.
@@ -103,7 +102,7 @@ private fun v1Schema(db: SupportSQLiteDatabase) {
       |     feature_id
       |   )
       |)
-      """.trimMargin()
+    """.trimMargin(),
   )
 
   db.execSQL(
@@ -117,7 +116,7 @@ private fun v1Schema(db: SupportSQLiteDatabase) {
       |     feature_id
       |   )
       |)
-      """.trimMargin()
+    """.trimMargin(),
   )
 
   db.execSQL(
@@ -126,6 +125,6 @@ private fun v1Schema(db: SupportSQLiteDatabase) {
       |   id TEXT PRIMARY KEY,
       |   event BLOB
       |)
-      """.trimMargin()
+    """.trimMargin(),
   )
 }

@@ -42,7 +42,7 @@ class LatestEvaluationActionCreatorTest {
     action.currentUserEvaluationsId shouldBe userEvaluationsId1
     sharedPref.getString(
       Constants.PREFERENCE_KEY_USER_EVALUATION_ID,
-      ""
+      "",
     ) shouldBe userEvaluationsId1
   }
 
@@ -52,7 +52,7 @@ class LatestEvaluationActionCreatorTest {
       mock(),
       mock(),
       mock(),
-      sharedPref
+      sharedPref,
     )
   }
 }

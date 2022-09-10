@@ -26,7 +26,7 @@ internal class ApiClientImpl(
   private val apiKey: String,
   private val featureTag: String,
   private val moshi: Moshi,
-  defaultRequestTimeoutMillis: Long = DEFAULT_REQUEST_TIMEOUT_MILLIS
+  defaultRequestTimeoutMillis: Long = DEFAULT_REQUEST_TIMEOUT_MILLIS,
 ) : ApiClient {
 
   private val endpoint = endpoint.toHttpUrl()
@@ -42,19 +42,19 @@ internal class ApiClientImpl(
   override fun getEvaluations(
     user: User,
     userEvaluationsId: String,
-    timeoutMillis: Long?
+    timeoutMillis: Long?,
   ): GetEvaluationsResult {
     val body = GetEvaluationsRequest(
       tag = featureTag,
       user = user,
-      user_evaluations_id = userEvaluationsId
+      user_evaluations_id = userEvaluationsId,
     )
 
     val request = Request.Builder()
       .url(
         endpoint.newBuilder()
           .addPathSegments("v1/gateway/evaluations")
-          .build()
+          .build(),
       )
       .applyHeaders()
       .post(body = body.toJsonRequestBody())
@@ -98,7 +98,7 @@ internal class ApiClientImpl(
 
     return result.fold(
       onSuccess = { res -> res },
-      onFailure = { e -> GetEvaluationsResult.Failure(e.toBKTException(), featureTag) }
+      onFailure = { e -> GetEvaluationsResult.Failure(e.toBKTException(), featureTag) },
     )
   }
 
@@ -109,7 +109,7 @@ internal class ApiClientImpl(
       .url(
         endpoint.newBuilder()
           .addPathSegments("v1/gateway/events")
-          .build()
+          .build(),
       )
       .applyHeaders()
       .post(body = body.toJsonRequestBody())
@@ -135,7 +135,7 @@ internal class ApiClientImpl(
 
     return result.fold(
       onSuccess = { res -> res },
-      onFailure = { e -> RegisterEventsResult.Failure(e.toBKTException()) }
+      onFailure = { e -> RegisterEventsResult.Failure(e.toBKTException()) },
     )
   }
 

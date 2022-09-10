@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteDatabase
 
 inline fun <T> SQLiteDatabase.transaction(
   exclusive: Boolean = true,
-  block: SQLiteDatabase.() -> T
+  block: SQLiteDatabase.() -> T,
 ): T {
   if (exclusive) {
     beginTransaction()
@@ -29,7 +29,7 @@ fun SQLiteDatabase.select(
   groupBy: String? = null,
   having: String? = null,
   orderBy: String? = null,
-  limit: String? = null
+  limit: String? = null,
 ): Cursor {
   return query(table, columns, selection, selectionArgs, groupBy, having, orderBy, limit)
 }

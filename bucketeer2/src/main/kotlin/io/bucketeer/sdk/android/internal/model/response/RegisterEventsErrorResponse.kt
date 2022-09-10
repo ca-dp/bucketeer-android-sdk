@@ -5,5 +5,5 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class RegisterEventsErrorResponse(
   val retriable: Boolean,
-  val message: String
+  val message: String,
 )

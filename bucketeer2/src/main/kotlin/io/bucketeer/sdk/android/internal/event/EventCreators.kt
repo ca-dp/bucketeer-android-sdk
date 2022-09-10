@@ -19,7 +19,7 @@ internal fun newEvaluationEvent(
   idGenerator: IdGenerator,
   featureTag: String,
   user: User,
-  evaluation: Evaluation
+  evaluation: Evaluation,
 ): Event {
   return Event(
     id = idGenerator.newId(),
@@ -33,8 +33,8 @@ internal fun newEvaluationEvent(
       user = user,
       reason = evaluation.reason,
       tag = featureTag,
-      source_id = SourceID.ANDROID
-    )
+      source_id = SourceID.ANDROID,
+    ),
   )
 }
 
@@ -43,7 +43,7 @@ internal fun newDefaultEvaluationEvent(
   idGenerator: IdGenerator,
   featureTag: String,
   user: User,
-  featureId: String
+  featureId: String,
 ): Event {
   return Event(
     id = idGenerator.newId(),
@@ -58,7 +58,7 @@ internal fun newDefaultEvaluationEvent(
       ),
       tag = featureTag,
       source_id = SourceID.ANDROID,
-    )
+    ),
   )
 }
 
@@ -68,7 +68,7 @@ internal fun newGoalEvent(
   goalId: String,
   value: Double,
   featureTag: String,
-  user: User
+  user: User,
 ): Event {
   return Event(
     id = idGenerator.newId(),
@@ -80,7 +80,7 @@ internal fun newGoalEvent(
       value = value,
       user = user,
       tag = featureTag,
-      source_id = SourceID.ANDROID
+      source_id = SourceID.ANDROID,
     ),
   )
 }
@@ -101,8 +101,8 @@ internal fun newGetEvaluationLatencyMetricsEvent(
         labels = mapOf(
           "tag" to featureTag,
         ),
-        duration = Duration(millis = mills)
-      )
+        duration = Duration(millis = mills),
+      ),
     ),
   )
 }
@@ -123,8 +123,8 @@ internal fun newGetEvaluationSizeMetricsEvent(
         labels = mapOf(
           "tag" to featureTag,
         ),
-        size_byte = sizeByte
-      )
+        size_byte = sizeByte,
+      ),
     ),
   )
 }
@@ -132,7 +132,7 @@ internal fun newGetEvaluationSizeMetricsEvent(
 internal fun newTimeoutErrorCountMetricsEvent(
   clock: Clock,
   idGenerator: IdGenerator,
-  featureTag: String
+  featureTag: String,
 ): Event {
   return Event(
     id = idGenerator.newId(),
@@ -141,8 +141,8 @@ internal fun newTimeoutErrorCountMetricsEvent(
       timestamp = clock.currentTimeSeconds(),
       type = MetricsEventType.TIMEOUT_ERROR_COUNT,
       event = MetricsEventData.TimeoutErrorCountMetricsEvent(
-        tag = featureTag
-      )
+        tag = featureTag,
+      ),
     ),
   )
 }
@@ -150,7 +150,7 @@ internal fun newTimeoutErrorCountMetricsEvent(
 internal fun newInternalErrorCountMetricsEvent(
   clock: Clock,
   idGenerator: IdGenerator,
-  featureTag: String
+  featureTag: String,
 ): Event {
   return Event(
     id = idGenerator.newId(),
@@ -159,8 +159,8 @@ internal fun newInternalErrorCountMetricsEvent(
       timestamp = clock.currentTimeSeconds(),
       type = MetricsEventType.INTERNAL_ERROR_COUNT,
       event = MetricsEventData.InternalErrorCountMetricsEvent(
-        tag = featureTag
-      )
+        tag = featureTag,
+      ),
     ),
   )
 }

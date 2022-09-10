@@ -74,11 +74,11 @@ class EvaluationInteractorTest {
               GetEvaluationsResponse(
                 GetEvaluationsDataResponse(
                   evaluations = user1Evaluations,
-                  user_evaluations_id = "user_evaluations_id_value"
-                )
-              )
-            )
-        )
+                  user_evaluations_id = "user_evaluations_id_value",
+                ),
+              ),
+            ),
+        ),
     )
 
     assertThat(interactor.currentEvaluationsId).isEmpty()
@@ -117,16 +117,16 @@ class EvaluationInteractorTest {
               GetEvaluationsResponse(
                 GetEvaluationsDataResponse(
                   evaluations = user1Evaluations,
-                  user_evaluations_id = "user_evaluations_id_value"
-                )
-              )
-            )
-        )
+                  user_evaluations_id = "user_evaluations_id_value",
+                ),
+              ),
+            ),
+        ),
     )
     interactor.fetch(user1, null)
 
     val newEvaluation = evaluation1.copy(
-      variation_value = evaluation1.variation_value + "_updated"
+      variation_value = evaluation1.variation_value + "_updated",
     )
     // second response(test target)
     server.enqueue(
@@ -138,13 +138,13 @@ class EvaluationInteractorTest {
               GetEvaluationsResponse(
                 GetEvaluationsDataResponse(
                   evaluations = user1Evaluations.copy(
-                    evaluations = listOf(newEvaluation)
+                    evaluations = listOf(newEvaluation),
                   ),
-                  user_evaluations_id = "user_evaluations_id_value_updated"
-                )
-              )
-            )
-        )
+                  user_evaluations_id = "user_evaluations_id_value_updated",
+                ),
+              ),
+            ),
+        ),
     )
 
     val result = interactor.fetch(user1, null)
@@ -158,7 +158,6 @@ class EvaluationInteractorTest {
     assertThat(interactor.evaluations[user1.id]).isEqualTo(listOf(newEvaluation))
     val latestEvaluations = component.dataModule.evaluationDao.get(user1.id)
     assertThat(latestEvaluations).isEqualTo(listOf(newEvaluation))
-
   }
 
   @Test
@@ -173,11 +172,11 @@ class EvaluationInteractorTest {
               GetEvaluationsResponse(
                 GetEvaluationsDataResponse(
                   evaluations = user1Evaluations,
-                  user_evaluations_id = "user_evaluations_id_value"
-                )
-              )
-            )
-        )
+                  user_evaluations_id = "user_evaluations_id_value",
+                ),
+              ),
+            ),
+        ),
     )
     interactor.fetch(user1, null)
 
@@ -191,11 +190,11 @@ class EvaluationInteractorTest {
               GetEvaluationsResponse(
                 GetEvaluationsDataResponse(
                   evaluations = user1Evaluations,
-                  user_evaluations_id = "user_evaluations_id_value"
-                )
-              )
-            )
-        )
+                  user_evaluations_id = "user_evaluations_id_value",
+                ),
+              ),
+            ),
+        ),
     )
 
     val result = interactor.fetch(user1, null)
@@ -221,7 +220,7 @@ class EvaluationInteractorTest {
     interactor.refreshCache(user1.id)
 
     assertThat(interactor.evaluations).containsExactlyEntriesIn(
-      mapOf(user1.id to listOf(evaluation1, evaluation2))
+      mapOf(user1.id to listOf(evaluation1, evaluation2)),
     )
   }
 

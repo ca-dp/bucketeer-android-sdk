@@ -59,7 +59,7 @@ class BucketeerTest {
   private val sql_tables = listOf(
     CurrentEvaluationEntity.TABLE_NAME,
     LatestEvaluationEntity.TABLE_NAME,
-    EventEntity.TABLE_NAME
+    EventEntity.TABLE_NAME,
   )
 
   @Before
@@ -70,12 +70,12 @@ class BucketeerTest {
       sqLiteOpenHelper.writableDatabase.delete(
         table,
         null,
-        null
+        null,
       )
     }
     context.getSharedPreferences(
       Constants.PREFERENCES_NAME,
-      Context.MODE_PRIVATE
+      Context.MODE_PRIVATE,
     ).edit().clear().commit()
   }
 
@@ -84,7 +84,7 @@ class BucketeerTest {
     val bucketeer = createBucketeer()
     bucketeer.setUser(
       user.id,
-      user.data
+      user.data,
     )
     bucketeer.getUser()?.run {
       id shouldBeEqualTo user.id
@@ -115,7 +115,7 @@ class BucketeerTest {
         reason shouldBeEqualTo evaluation.reason
       } ?: fail("Evaluation is null.")
       callbackCountDown.countDown()
-    }, 300)
+    }, 300,)
     Assert.assertTrue(callbackCountDown.await(5, TimeUnit.SECONDS))
   }
 
@@ -133,10 +133,10 @@ class BucketeerTest {
     handler.postDelayed({
       bucketeer.getVariation(
         "test",
-        "default"
+        "default",
       ) shouldBeEqualTo "default"
       callbackCountDown.countDown()
-    }, 300)
+    }, 300,)
     Assert.assertTrue(callbackCountDown.await(5, TimeUnit.SECONDS))
   }
 
@@ -148,10 +148,10 @@ class BucketeerTest {
     handler.postDelayed({
       bucketeer.getVariation(
         evaluation1.featureId,
-        "default"
+        "default",
       ) shouldBeEqualTo evaluation1.variationValue
       callbackCountDown.countDown()
-    }, 300)
+    }, 300,)
     Assert.assertTrue(callbackCountDown.await(5, TimeUnit.SECONDS))
   }
 
@@ -162,14 +162,14 @@ class BucketeerTest {
       .doReturn(Api.Result.Success(Service.RegisterEventsResponse.getDefaultInstance()))
     val bucketeer = initBucketeer(
       user = user1,
-      api = api
+      api = api,
     )
     val callbackCountDown = CountDownLatch(1)
     val handler = Handler(Looper.getMainLooper())
     val defaultValue = "default"
     bucketeer.getVariation(
       evaluation1.featureId,
-      defaultValue
+      defaultValue,
     ) shouldBeEqualTo defaultValue
     handler.postDelayed({
       argumentCaptor<List<EventOuterClass.Event>>().apply {
@@ -192,7 +192,7 @@ class BucketeerTest {
         event.sourceId shouldBe EventOuterClass.SourceId.ANDROID
         callbackCountDown.countDown()
       }
-    }, 300)
+    }, 300,)
     Assert.assertTrue(callbackCountDown.await(5, TimeUnit.SECONDS))
   }
 
@@ -203,14 +203,14 @@ class BucketeerTest {
       .doReturn(Api.Result.Success(Service.RegisterEventsResponse.getDefaultInstance()))
     val bucketeer = initBucketeer(
       user = user1,
-      api = api
+      api = api,
     )
     val callbackCountDown = CountDownLatch(1)
     val handler = Handler(Looper.getMainLooper())
     handler.postDelayed({
       bucketeer.getVariation(
         evaluation1.featureId,
-        "default"
+        "default",
       ) shouldBeEqualTo evaluation1.variationValue
 
       handler.postDelayed({
@@ -234,8 +234,8 @@ class BucketeerTest {
           event.sourceId shouldBe EventOuterClass.SourceId.ANDROID
           callbackCountDown.countDown()
         }
-      }, 300)
-    }, 300)
+      }, 300,)
+    }, 300,)
     Assert.assertTrue(callbackCountDown.await(5, TimeUnit.SECONDS))
   }
 
@@ -246,7 +246,7 @@ class BucketeerTest {
       .doReturn(Api.Result.Success(Service.RegisterEventsResponse.getDefaultInstance()))
     val bucketeer = initBucketeer(
       user = user1,
-      api = api
+      api = api,
     )
 
     val callbackCountDown = CountDownLatch(1)
@@ -254,14 +254,14 @@ class BucketeerTest {
     handler.postDelayed({
       bucketeer.getVariation(
         evaluation1.featureId,
-        "default"
+        "default",
       ) shouldBeEqualTo evaluation1.variationValue
 
       val value = 1.0
       val goalId = "goal"
       bucketeer.track(
         goalId,
-        value
+        value,
       )
       handler.postDelayed({
         argumentCaptor<List<EventOuterClass.Event>>().apply {
@@ -284,8 +284,8 @@ class BucketeerTest {
           goalEvent.evaluationsList[0].variationId shouldBeEqualTo evaluation1.variationId
           callbackCountDown.countDown()
         }
-      }, 300)
-    }, 300)
+      }, 300,)
+    }, 300,)
     Assert.assertTrue(callbackCountDown.await(5, TimeUnit.SECONDS))
   }
 
@@ -297,7 +297,7 @@ class BucketeerTest {
     val response2 = createEvaluationsResponse(evaluation3, userEvaluationsId2)
     val bucketeer = initBucketeer(
       user = user1,
-      api = api
+      api = api,
     )
 
     val callbackCountDown = CountDownLatch(1)
@@ -305,7 +305,7 @@ class BucketeerTest {
     handler.postDelayed({
       bucketeer.getVariation(
         evaluation1.featureId,
-        "default"
+        "default",
       ) shouldBeEqualTo evaluation1.variationValue
 
       val user = userOf(user2.id, mapOf())
@@ -315,7 +315,7 @@ class BucketeerTest {
         verify(api, atLeastOnce()).fetchEvaluation(user, userEvaluationsId1)
         bucketeer.getVariation(
           evaluation3.featureId,
-          "default"
+          "default",
         ) shouldBeEqualTo evaluation3.variationValue
 
         handler.postDelayed({
@@ -337,20 +337,20 @@ class BucketeerTest {
             evaluationEvent2.userId shouldBeEqualTo user2.id
           }
           callbackCountDown.countDown()
-        }, 300)
-      }, 300)
-    }, 300)
+        }, 300,)
+      }, 300,)
+    }, 300,)
     Assert.assertTrue(callbackCountDown.await(5, TimeUnit.SECONDS))
   }
 
   private fun createEvaluationsResponse(
     evaluation: EvaluationOuterClass.Evaluation = evaluation1,
-    userEvaluationsId: String = userEvaluationsId1
+    userEvaluationsId: String = userEvaluationsId1,
   ): Service.GetEvaluationsResponse {
     return Service.GetEvaluationsResponse.newBuilder()
       .setEvaluations(
         EvaluationOuterClass.UserEvaluations.newBuilder()
-          .addAllEvaluations(listOf(evaluation))
+          .addAllEvaluations(listOf(evaluation)),
       )
       .setState(EvaluationOuterClass.UserEvaluations.State.FULL)
       .setUserEvaluationsId(userEvaluationsId)
@@ -360,7 +360,7 @@ class BucketeerTest {
   private fun initBucketeer(
     response: Service.GetEvaluationsResponse = createEvaluationsResponse(),
     user: UserOuterClass.User,
-    api: Api = mock()
+    api: Api = mock(),
   ): Bucketeer {
     whenever(api.fetchEvaluation(any(), any())).doReturn(Api.Result.Success(response))
     val context = getInstrumentation().targetContext.applicationContext
@@ -373,8 +373,8 @@ class BucketeerTest {
         context as Application,
         "",
         "api.local.bucketeer.jp",
-        "android"
-      )
+        "android",
+      ),
     )
     whenever(dataModule.api).doReturn(api)
 
@@ -384,7 +384,7 @@ class BucketeerTest {
       endpoint = "",
       featureTag = "android",
       config = config,
-      dataModule = dataModule
+      dataModule = dataModule,
     )
     bucketeer.setUser(user.id, user.dataMap)
 

@@ -1,3 +1,5 @@
+@file:Suppress("ktlint:filename")
+
 package io.bucketeer.sdk.android.mocks
 
 import io.bucketeer.sdk.android.internal.model.Duration
@@ -21,8 +23,8 @@ val evaluationEvent1: Event by lazy {
       user = user1,
       reason = Reason(type = ReasonType.DEFAULT),
       tag = "",
-      source_id = SourceID.ANDROID
-    )
+      source_id = SourceID.ANDROID,
+    ),
   )
 }
 
@@ -37,8 +39,8 @@ val evaluationEvent2: Event by lazy {
       user = user1,
       reason = Reason(type = ReasonType.DEFAULT),
       tag = "",
-      source_id = SourceID.ANDROID
-    )
+      source_id = SourceID.ANDROID,
+    ),
   )
 }
 
@@ -53,8 +55,8 @@ val goalEvent1: Event by lazy {
       user = user1,
       value = 0.0,
       tag = "",
-      source_id = SourceID.ANDROID
-    )
+      source_id = SourceID.ANDROID,
+    ),
   )
 }
 
@@ -69,8 +71,8 @@ val goalEvent2: Event by lazy {
       user = user1,
       value = 0.0,
       tag = "",
-      source_id = SourceID.ANDROID
-    )
+      source_id = SourceID.ANDROID,
+    ),
   )
 }
 
@@ -79,10 +81,10 @@ val metricsEvent1: Event by lazy {
     id = "e1c03cae-367d-4be4-a613-759441a37801",
     type = EventType.METRICS,
     event = EventData.MetricsEvent(
-      timestamp = 1661823274,// 2022-08-30 01:34:34
+      timestamp = 1661823274, // 2022-08-30 01:34:34
       event = getEvaluationLatencyMetricsEvent1,
-      type = MetricsEventType.GET_EVALUATION_LATENCY
-    )
+      type = MetricsEventType.GET_EVALUATION_LATENCY,
+    ),
   )
 }
 
@@ -90,6 +92,6 @@ val getEvaluationLatencyMetricsEvent1 = MetricsEventData.GetEvaluationLatencyMet
   labels = mapOf("tag" to "android", "state" to "FULL"),
   duration = Duration(
     seconds = 2,
-    nanos = 123456789
-  )
+    nanos = 123456789,
+  ),
 )

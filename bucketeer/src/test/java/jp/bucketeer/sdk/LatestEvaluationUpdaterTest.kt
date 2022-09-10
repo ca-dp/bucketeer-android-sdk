@@ -33,13 +33,13 @@ class LatestEvaluationUpdaterTest {
   }
 
   private fun createLatestEvaluationUpdaterWithSendingInterval(
-    logSendingIntervalMillis: Long
+    logSendingIntervalMillis: Long,
   ): LatestEvaluationUpdater {
     return LatestEvaluationUpdater(
       logSendingIntervalMillis,
       evaluationActionCreator,
       userHolder,
-      Executors.newSingleThreadScheduledExecutor()
+      Executors.newSingleThreadScheduledExecutor(),
     )
   }
 }

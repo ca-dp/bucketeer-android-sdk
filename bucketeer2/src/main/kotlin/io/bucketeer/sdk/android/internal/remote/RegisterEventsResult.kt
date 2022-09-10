@@ -4,10 +4,10 @@ import io.bucketeer.sdk.android.internal.model.response.RegisterEventsResponse
 
 sealed class RegisterEventsResult {
   data class Success(
-    val value: RegisterEventsResponse
+    val value: RegisterEventsResponse,
   ) : RegisterEventsResult()
 
   data class Failure(
-    val error: Throwable
+    val error: Throwable,
   ) : RegisterEventsResult()
 }

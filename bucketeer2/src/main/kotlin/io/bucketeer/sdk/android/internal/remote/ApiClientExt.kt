@@ -10,7 +10,6 @@ import java.net.UnknownHostException
 import kotlin.contracts.ExperimentalContracts
 
 fun Response.toBKTException(adapter: JsonAdapter<ErrorResponse>): BKTException {
-
   val bodyString = body?.string() ?: ""
   val errorBody: ErrorResponse? = kotlin.runCatching {
     adapter.fromJson(bodyString)
@@ -28,7 +27,7 @@ fun Response.toBKTException(adapter: JsonAdapter<ErrorResponse>): BKTException {
       // - gateway: missing events
       // - gateway: body is required
       BKTException.BadRequestException(
-        message = errorBody?.error?.message ?: "BadRequest error"
+        message = errorBody?.error?.message ?: "BadRequest error",
       )
     }
     401 -> {
@@ -38,28 +37,28 @@ fun Response.toBKTException(adapter: JsonAdapter<ErrorResponse>): BKTException {
       // - gateway: bad role
       // - gateway: disabled APIKey
       BKTException.UnauthorizedException(
-        message = errorBody?.error?.message ?: "Unauthorized error"
+        message = errorBody?.error?.message ?: "Unauthorized error",
       )
     }
     404 -> {
       // NotFound
       // - feature not found
       BKTException.FeatureNotFoundException(
-        message = errorBody?.error?.message ?: "NotFound error"
+        message = errorBody?.error?.message ?: "NotFound error",
       )
     }
     405 -> {
       // MethodNotAllowed
       // - gateway: invalid http method
       BKTException.InvalidHttpMethodException(
-        message = errorBody?.error?.message ?: "MethodNotAllowed error"
+        message = errorBody?.error?.message ?: "MethodNotAllowed error",
       )
     }
     500 -> {
       // InternalServerError
       // - gateway: internal
       BKTException.ApiServerException(
-        message = errorBody?.error?.message ?: "InternalServer error"
+        message = errorBody?.error?.message ?: "InternalServer error",
       )
     }
     else -> BKTException.UnknownException("Unknown error: '$errorBody'")
@@ -70,7 +69,8 @@ internal fun Throwable.toBKTException(): BKTException {
   return when (this) {
     is BKTException -> this
     is SocketTimeoutException,
-    is InterruptedIOException ->
+    is InterruptedIOException,
+    ->
       BKTException.TimeoutException("Request timeout error: ${this.message}", this)
     is UnknownHostException ->
       BKTException.NetworkException("Network connection error: ${this.message}", this)
@@ -87,4 +87,3 @@ inline fun <T> measureTimeMillisWithResult(block: () -> T): Pair<Long, T> {
   val result = block()
   return (System.currentTimeMillis() - start) to result
 }
-

@@ -38,7 +38,7 @@ class CurrentEvaluationDaoImplTest {
 
     val projection = arrayOf(
       CurrentEvaluationEntity.COLUMN_USER_ID,
-      CurrentEvaluationEntity.COLUMN_EVALUATION
+      CurrentEvaluationEntity.COLUMN_EVALUATION,
     )
 
     val c = currentEvaluationDao.sqLiteOpenHelper.readableDatabase.query(
@@ -48,7 +48,7 @@ class CurrentEvaluationDaoImplTest {
       null,
       null,
       null,
-      null
+      null,
     )
 
     c.use {

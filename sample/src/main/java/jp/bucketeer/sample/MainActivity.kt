@@ -18,7 +18,7 @@ class MainActivity : Activity() {
   private val sharedPref by lazy {
     getSharedPreferences(
       Constants.PREFERENCE_FILE_KEY,
-      Context.MODE_PRIVATE
+      Context.MODE_PRIVATE,
     )
   }
 
@@ -38,8 +38,8 @@ class MainActivity : Activity() {
     inputGetVariation.editText?.setText(
       sharedPref.getString(
         Constants.PREFERENCE_KEY_FEATURE_FLAG_ID,
-        Constants.DEFAULT_FEATURE_FLAG_ID
-      )
+        Constants.DEFAULT_FEATURE_FLAG_ID,
+      ),
     )
     findViewById<View>(R.id.btn_get_variation).setOnClickListener {
       val featureId = inputGetVariation.editText?.text.toString().trim()
@@ -60,7 +60,7 @@ class MainActivity : Activity() {
   private fun setGoalId() {
     val inputGoalId = findViewById<TextInputLayout>(R.id.goal_id)
     inputGoalId.editText?.setText(
-      sharedPref.getString(Constants.PREFERENCE_KEY_GOAL_ID, Constants.DEFAULT_GOAL_ID)
+      sharedPref.getString(Constants.PREFERENCE_KEY_GOAL_ID, Constants.DEFAULT_GOAL_ID),
     )
     findViewById<View>(R.id.btn_send_goal).setOnClickListener {
       val goalId = inputGoalId.editText?.text.toString().trim()
@@ -83,7 +83,7 @@ class MainActivity : Activity() {
   private fun setSwitchUser() {
     val inputSwitchUserId = findViewById<TextInputLayout>(R.id.switch_user_id)
     inputSwitchUserId.editText?.setText(
-      sharedPref.getString(Constants.PREFERENCE_KEY_USER_ID, Constants.DEFAULT_USER_ID)
+      sharedPref.getString(Constants.PREFERENCE_KEY_USER_ID, Constants.DEFAULT_USER_ID),
     )
     findViewById<View>(R.id.btn_switch_user).setOnClickListener {
       val userId = inputSwitchUserId.editText?.text.toString().trim()
@@ -94,19 +94,21 @@ class MainActivity : Activity() {
       inputSwitchUserId.error = null
       bucketeer?.run {
         setUser(userId)
-        fetchUserEvaluations(object : FetchUserEvaluationsCallback {
-          override fun onSuccess() {
-            with(sharedPref.edit()) {
-              putString(Constants.PREFERENCE_KEY_USER_ID, userId)
-              commit()
+        fetchUserEvaluations(
+          object : FetchUserEvaluationsCallback {
+            override fun onSuccess() {
+              with(sharedPref.edit()) {
+                putString(Constants.PREFERENCE_KEY_USER_ID, userId)
+                commit()
+              }
+              showDialog(getString(R.string.dialog_evaluations_updated))
             }
-            showDialog(getString(R.string.dialog_evaluations_updated))
-          }
 
-          override fun onError(exception: BucketeerException) {
-            showDialog("onError: $exception")
-          }
-        })
+            override fun onError(exception: BucketeerException) {
+              showDialog("onError: $exception")
+            }
+          },
+        )
       }
     }
   }
@@ -114,7 +116,7 @@ class MainActivity : Activity() {
   private fun setTag() {
     val inputTag = findViewById<TextInputLayout>(R.id.tag)
     inputTag.editText?.setText(
-      sharedPref.getString(Constants.PREFERENCE_KEY_TAG, Constants.DEFAULT_TAG)
+      sharedPref.getString(Constants.PREFERENCE_KEY_TAG, Constants.DEFAULT_TAG),
     )
     findViewById<View>(R.id.btn_switch_tag).setOnClickListener {
       val tag = inputTag.editText?.text.toString().trim()

@@ -13,7 +13,7 @@ import jp.bucketeer.sdk.log.loge
 internal class ApiClient(
   apiKey: String,
   endpoint: String,
-  private val featureTag: String
+  private val featureTag: String,
 ) : Api {
   var fetchEvaluationsApiCallback: FetchEvaluationsApiCallback? = null
   private val client: GatewayGrpc.GatewayBlockingStub
@@ -38,7 +38,7 @@ internal class ApiClient(
 
   override fun fetchEvaluation(
     user: UserOuterClass.User,
-    userEvaluationsId: String
+    userEvaluationsId: String,
   ): Api.Result<Service.GetEvaluationsResponse> {
     return try {
       val request = Service.GetEvaluationsRequest.newBuilder()
@@ -58,7 +58,7 @@ internal class ApiClient(
         endTime - startTime,
         response.getSerializedSize(),
         featureTag,
-        response.state.name
+        response.state.name,
       )
       Api.Result.Success(response)
     } catch (e: StatusRuntimeException) {
@@ -69,7 +69,7 @@ internal class ApiClient(
   }
 
   override fun registerEvent(
-    events: List<EventOuterClass.Event>
+    events: List<EventOuterClass.Event>,
   ): Api.Result<Service.RegisterEventsResponse> {
     return try {
       val registerRequestBuilder = Service.RegisterEventsRequest.newBuilder()

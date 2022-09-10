@@ -22,7 +22,7 @@ class CurrentStoreTest {
     currentStore.currentEvaluations.addObserver(observer)
 
     dispatcher.send(
-      CurrentEvaluationListDataChangedAction(user1.id, user1Evaluations.evaluationsList)
+      CurrentEvaluationListDataChangedAction(user1.id, user1Evaluations.evaluationsList),
     )
 
     verify(observer).invoke(mapOf("user id 1" to user1Evaluations.evaluationsList))

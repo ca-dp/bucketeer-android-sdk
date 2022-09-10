@@ -12,6 +12,6 @@ sealed class GetEvaluationsResult {
 
   data class Failure(
     val error: Throwable,
-    val featureTag: String
+    val featureTag: String,
   ) : GetEvaluationsResult()
 }

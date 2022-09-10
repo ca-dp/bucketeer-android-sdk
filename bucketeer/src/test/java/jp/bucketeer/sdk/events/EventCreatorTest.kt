@@ -30,7 +30,7 @@ class EventCreatorTest {
       variationId shouldBeEqualTo "test-feature-1-variation-A"
       user shouldBeEqualTo user1
       reason shouldBeEqualTo ReasonOuterClass.Reason.newBuilder().setType(
-        ReasonOuterClass.Reason.Type.DEFAULT
+        ReasonOuterClass.Reason.Type.DEFAULT,
       ).build()
     }
   }
@@ -49,7 +49,7 @@ class EventCreatorTest {
       userId shouldBeEqualTo "user id 1"
       user shouldBeEqualTo user1
       reason shouldBeEqualTo ReasonOuterClass.Reason.newBuilder().setType(
-        ReasonOuterClass.Reason.Type.CLIENT
+        ReasonOuterClass.Reason.Type.CLIENT,
       ).build()
     }
   }
@@ -76,7 +76,7 @@ class EventCreatorTest {
     val time = System.currentTimeMillis() / 1000
     val event = generateGetEvaluationLatencyMetricsEvent(
       1234,
-      mapOf("tag" to "android", "state" to "FULL")
+      mapOf("tag" to "android", "state" to "FULL"),
     )
 
     event.run {
@@ -99,7 +99,7 @@ class EventCreatorTest {
     val time = System.currentTimeMillis() / 1000
     val event = generateGetEvaluationSizeMetricsEvent(
       1234,
-      mapOf("tag" to "android", "state" to "FULL")
+      mapOf("tag" to "android", "state" to "FULL"),
     )
 
     event.run {

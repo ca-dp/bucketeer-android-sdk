@@ -84,14 +84,14 @@ internal fun EventOuterClass.TimeoutErrorCountMetricsEvent.pack() =
   pack("bucketeer.event.client.TimeoutErrorCountMetricsEvent")
 
 private fun MessageLite.pack(
-  descriptor: String
+  descriptor: String,
 ): Any {
   return Any.newBuilder()
     .setTypeUrl(
       getTypeUrl(
         "type.googleapis.com",
-        descriptor
-      )
+        descriptor,
+      ),
     )
     .setValue(toByteString())
     .build()
@@ -99,7 +99,7 @@ private fun MessageLite.pack(
 
 private fun getTypeUrl(
   typeUrlPrefix: String,
-  descriptor: String
+  descriptor: String,
 ): String {
   return if (typeUrlPrefix.endsWith("/")) {
     "$typeUrlPrefix$descriptor"

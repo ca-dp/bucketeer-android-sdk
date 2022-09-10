@@ -1,3 +1,5 @@
+@file:Suppress("ktlint:filename")
+
 package jp.bucketeer.sdk.util
 
 import bucketeer.user.UserOuterClass

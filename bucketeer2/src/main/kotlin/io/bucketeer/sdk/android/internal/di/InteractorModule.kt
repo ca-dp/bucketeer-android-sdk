@@ -27,14 +27,14 @@ internal class InteractorModule {
     apiClient: ApiClient,
     eventDao: EventDao,
     clock: Clock,
-    idGenerator: IdGenerator
+    idGenerator: IdGenerator,
   ): EventInteractor {
     return EventInteractor(
       eventsMaxBatchQueueCount = eventsMaxBatchQueueCount,
       apiClient = apiClient,
       eventDao = eventDao,
       clock = clock,
-      idGenerator = idGenerator
+      idGenerator = idGenerator,
     )
   }
 }

@@ -32,7 +32,7 @@ internal class EventInteractor(
 
   fun trackEvaluationEvent(featureTag: String, user: User, evaluation: Evaluation) {
     eventDao.addEvent(
-      newEvaluationEvent(clock, idGenerator, featureTag, user, evaluation)
+      newEvaluationEvent(clock, idGenerator, featureTag, user, evaluation),
     )
 
     updateEventsAndNotify()
@@ -40,7 +40,7 @@ internal class EventInteractor(
 
   fun trackDefaultEvaluationEvent(featureTag: String, user: User, featureId: String) {
     eventDao.addEvent(
-      newDefaultEvaluationEvent(clock, idGenerator, featureTag, user, featureId)
+      newDefaultEvaluationEvent(clock, idGenerator, featureTag, user, featureId),
     )
 
     updateEventsAndNotify()
@@ -48,7 +48,7 @@ internal class EventInteractor(
 
   fun trackGoalEvent(featureTag: String, user: User, goalId: String, value: Double) {
     eventDao.addEvent(
-      newGoalEvent(clock, idGenerator, goalId, value, featureTag, user)
+      newGoalEvent(clock, idGenerator, goalId, value, featureTag, user),
     )
 
     updateEventsAndNotify()
@@ -62,8 +62,8 @@ internal class EventInteractor(
     eventDao.addEvents(
       listOf(
         newGetEvaluationLatencyMetricsEvent(clock, idGenerator, mills, featureTag),
-        newGetEvaluationSizeMetricsEvent(clock, idGenerator, sizeByte, featureTag)
-      )
+        newGetEvaluationSizeMetricsEvent(clock, idGenerator, sizeByte, featureTag),
+      ),
     )
 
     updateEventsAndNotify()
@@ -71,14 +71,15 @@ internal class EventInteractor(
 
   fun trackFetchEvaluationsFailure(
     featureTag: String,
-    error: BKTException
+    error: BKTException,
   ) {
     val event = when (error) {
       is BKTException.NetworkException,
-      is BKTException.TimeoutException -> newTimeoutErrorCountMetricsEvent(
+      is BKTException.TimeoutException,
+      -> newTimeoutErrorCountMetricsEvent(
         clock,
         idGenerator,
-        featureTag
+        featureTag,
       )
       else -> newInternalErrorCountMetricsEvent(clock, idGenerator, featureTag)
     }

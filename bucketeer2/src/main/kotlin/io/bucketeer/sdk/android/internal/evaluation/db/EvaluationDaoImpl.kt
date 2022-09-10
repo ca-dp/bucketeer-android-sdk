@@ -17,7 +17,7 @@ import io.bucketeer.sdk.android.internal.model.Evaluation
 
 internal class EvaluationDaoImpl(
   private val sqLiteOpenHelper: SupportSQLiteOpenHelper,
-  moshi: Moshi
+  moshi: Moshi,
 ) : EvaluationDao {
 
   private val adapter = moshi.adapter(Evaluation::class.java)
@@ -36,7 +36,7 @@ internal class EvaluationDaoImpl(
   private fun insert(
     database: SupportSQLiteDatabase,
     userId: String,
-    evaluation: Evaluation
+    evaluation: Evaluation,
   ): Long {
     val contentValue = ContentValues().apply {
       put(COLUMN_USER_ID, userId)
@@ -49,7 +49,7 @@ internal class EvaluationDaoImpl(
   private fun update(
     database: SupportSQLiteDatabase,
     userId: String,
-    evaluation: Evaluation
+    evaluation: Evaluation,
   ): Int {
     val contentValues = ContentValues().apply {
       put(COLUMN_EVALUATION, adapter.toJson(evaluation))
@@ -59,7 +59,7 @@ internal class EvaluationDaoImpl(
       SQLiteDatabase.CONFLICT_REPLACE,
       contentValues,
       "$COLUMN_USER_ID=? AND $COLUMN_FEATURE_ID=?",
-      arrayOf(userId, evaluation.feature_id)
+      arrayOf(userId, evaluation.feature_id),
     )
   }
 
@@ -69,7 +69,7 @@ internal class EvaluationDaoImpl(
       table = TABLE_NAME,
       columns = projection,
       selection = "$COLUMN_USER_ID=?",
-      selectionArgs = arrayOf(userId)
+      selectionArgs = arrayOf(userId),
     )
 
     return c.use {
@@ -81,18 +81,18 @@ internal class EvaluationDaoImpl(
 
   private fun deleteAll(
     database: SupportSQLiteDatabase,
-    userId: String
+    userId: String,
   ) {
     database.delete(
       TABLE_NAME,
       "$COLUMN_USER_ID=?",
-      arrayOf(userId)
+      arrayOf(userId),
     )
   }
 
   override fun deleteAllAndInsert(
     userId: String,
-    list: List<Evaluation>
+    list: List<Evaluation>,
   ): Boolean {
     sqLiteOpenHelper.writableDatabase.transaction {
       deleteAll(this, userId)

@@ -61,7 +61,7 @@ class EventSenderTest {
       { callbackCountDown.countDown() },
       500,
       500,
-      TimeUnit.MILLISECONDS
+      TimeUnit.MILLISECONDS,
     )
 
     callbackCountDown.await(5, TimeUnit.SECONDS)
@@ -86,7 +86,7 @@ class EventSenderTest {
       { callbackCountDown.countDown() },
       500,
       500,
-      TimeUnit.MILLISECONDS
+      TimeUnit.MILLISECONDS,
     )
 
     callbackCountDown.await(5, TimeUnit.SECONDS)
@@ -109,7 +109,7 @@ class EventSenderTest {
       { callbackCountDown.countDown() },
       500,
       500,
-      TimeUnit.MILLISECONDS
+      TimeUnit.MILLISECONDS,
     )
 
     callbackCountDown.await(5, TimeUnit.SECONDS)
@@ -134,7 +134,7 @@ class EventSenderTest {
       { callbackCountDown.countDown() },
       500,
       500,
-      TimeUnit.MILLISECONDS
+      TimeUnit.MILLISECONDS,
     )
 
     callbackCountDown.await(5, TimeUnit.SECONDS)
@@ -159,7 +159,7 @@ class EventSenderTest {
       { callbackCountDown.countDown() },
       500,
       500,
-      TimeUnit.MILLISECONDS
+      TimeUnit.MILLISECONDS,
     )
 
     callbackCountDown.await(5, TimeUnit.SECONDS)
@@ -169,7 +169,7 @@ class EventSenderTest {
   }
 
   private fun createEventSenderWithInterval(
-    logSendingIntervalMillis: Long
+    logSendingIntervalMillis: Long,
   ): EventSender {
     eventObservableField.value = listOf()
     return EventSender(
@@ -177,7 +177,7 @@ class EventSenderTest {
       QUEUE_COUNT,
       eventActionCreator,
       eventStore,
-      Executors.newSingleThreadScheduledExecutor()
+      Executors.newSingleThreadScheduledExecutor(),
     )
   }
 

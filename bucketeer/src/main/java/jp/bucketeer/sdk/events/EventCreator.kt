@@ -15,7 +15,7 @@ internal fun generateGoalEvent(
   goalId: String,
   value: Double,
   user: UserOuterClass.User,
-  evaluations: List<EvaluationOuterClass.Evaluation>
+  evaluations: List<EvaluationOuterClass.Evaluation>,
 ): EventOuterClass.GoalEvent {
   return EventOuterClass.GoalEvent.newBuilder().apply {
     this.sourceId = EventOuterClass.SourceId.ANDROID
@@ -33,7 +33,7 @@ internal fun generateEvaluationEvent(
   tag: String,
   timestamp: Long,
   evaluation: EvaluationOuterClass.Evaluation,
-  user: UserOuterClass.User
+  user: UserOuterClass.User,
 ): EventOuterClass.EvaluationEvent {
   return EventOuterClass.EvaluationEvent.newBuilder().apply {
     this.sourceId = EventOuterClass.SourceId.ANDROID
@@ -52,7 +52,7 @@ internal fun generateDefaultEvaluationEvent(
   tag: String,
   timestamp: Long,
   user: UserOuterClass.User,
-  featureId: String
+  featureId: String,
 ): EventOuterClass.EvaluationEvent {
   val reason = ReasonOuterClass.Reason.newBuilder()
     .setType(ReasonOuterClass.Reason.Type.CLIENT)
@@ -70,7 +70,7 @@ internal fun generateDefaultEvaluationEvent(
 
 internal fun generateGetEvaluationLatencyMetricsEvent(
   latencyMillis: Long,
-  labels: Map<String, String>
+  labels: Map<String, String>,
 ): EventOuterClass.MetricsEvent {
   return EventOuterClass.GetEvaluationLatencyMetricsEvent.newBuilder().apply {
     this.duration = Duration.newBuilder()
@@ -83,7 +83,7 @@ internal fun generateGetEvaluationLatencyMetricsEvent(
 
 internal fun generateGetEvaluationSizeMetricsEvent(
   sizeByte: Int,
-  labels: Map<String, String>
+  labels: Map<String, String>,
 ): EventOuterClass.MetricsEvent {
   return EventOuterClass.GetEvaluationSizeMetricsEvent.newBuilder().apply {
     this.sizeByte = sizeByte

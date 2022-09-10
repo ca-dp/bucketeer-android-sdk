@@ -29,6 +29,7 @@ internal class EvaluationInteractor(
   @VisibleForTesting
   internal var currentEvaluationsId: String
     get() = sharedPrefs.getString(Constants.PREFERENCE_KEY_USER_EVALUATION_ID, "") ?: ""
+
     @SuppressLint("ApplySharedPref")
     set(value) {
       sharedPrefs.edit()

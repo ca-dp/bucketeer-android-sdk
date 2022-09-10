@@ -5,6 +5,6 @@ package io.bucketeer.sdk.android.internal.model
 data class Event(
   val id: String,
   val event: EventData,
-  val type: EventType
+  val type: EventType,
   // note: environment_namespace is not used in client SDK
 )

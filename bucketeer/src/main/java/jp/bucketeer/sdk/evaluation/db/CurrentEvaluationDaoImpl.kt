@@ -14,7 +14,7 @@ import jp.bucketeer.sdk.ext.select
 import jp.bucketeer.sdk.ext.transaction
 
 internal class CurrentEvaluationDaoImpl(
-  internal val sqLiteOpenHelper: SQLiteOpenHelper
+  internal val sqLiteOpenHelper: SQLiteOpenHelper,
 ) : CurrentEvaluationDao {
   override fun upsertEvaluation(evaluation: EvaluationOuterClass.Evaluation) {
     val contentValues = ContentValues().apply {
@@ -27,7 +27,7 @@ internal class CurrentEvaluationDaoImpl(
       TABLE_NAME,
       null,
       contentValues,
-      SQLiteDatabase.CONFLICT_REPLACE
+      SQLiteDatabase.CONFLICT_REPLACE,
     )
   }
 
@@ -41,7 +41,7 @@ internal class CurrentEvaluationDaoImpl(
       delete(
         TABLE_NAME,
         whereClause,
-        whereArgs
+        whereArgs,
       )
     }
   }
@@ -52,7 +52,7 @@ internal class CurrentEvaluationDaoImpl(
     val c = sqLiteOpenHelper.readableDatabase.select(
       table = TABLE_NAME,
       selection = selection,
-      selectionArgs = selectionArgs
+      selectionArgs = selectionArgs,
     )
 
     return c.use {

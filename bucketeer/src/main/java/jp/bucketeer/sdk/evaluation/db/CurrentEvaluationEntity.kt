@@ -4,7 +4,7 @@ import java.util.Arrays
 
 internal data class CurrentEvaluationEntity(
   val featureId: String,
-  val evaluation: ByteArray
+  val evaluation: ByteArray,
 ) {
   companion object {
     const val TABLE_NAME = "current_evaluation"

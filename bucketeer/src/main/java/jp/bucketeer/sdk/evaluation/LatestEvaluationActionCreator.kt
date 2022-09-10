@@ -20,18 +20,18 @@ internal class LatestEvaluationActionCreator(
   val api: Api,
   private val latestEvaluationDao: LatestEvaluationDao,
   private val currentEvaluationDao: CurrentEvaluationDao,
-  private val sharePref: SharedPreferences
+  private val sharePref: SharedPreferences,
 ) {
 
   @VisibleForTesting
   var currentUserEvaluationsId: String = sharePref.getString(
     Constants.PREFERENCE_KEY_USER_EVALUATION_ID,
-    ""
+    "",
   ) ?: ""
 
   fun refreshLatestEvaluationManuallyFromApi(user: UserOuterClass.User) {
     dispatcher.send(
-      RefreshManuallyStateChangedAction(RefreshManuallyStateChangedAction.State.Loading)
+      RefreshManuallyStateChangedAction(RefreshManuallyStateChangedAction.State.Loading),
     )
     val result = refreshLatestEvaluationFromApi(user)
     val state = when (result) {
@@ -76,7 +76,8 @@ internal class LatestEvaluationActionCreator(
             }
             EvaluationOuterClass.UserEvaluations.State.QUEUED,
             EvaluationOuterClass.UserEvaluations.State.UNRECOGNIZED,
-            null -> {
+            null,
+            -> {
               // do nothing
             }
             else -> {
@@ -97,7 +98,7 @@ internal class LatestEvaluationActionCreator(
     currentUserEvaluationsId = userEvaluationsId
     sharePref.edit().putString(
       Constants.PREFERENCE_KEY_USER_EVALUATION_ID,
-      userEvaluationsId
+      userEvaluationsId,
     ).commit()
   }
 

@@ -19,6 +19,6 @@ internal class EventStore(val dispatcher: Dispatcher) {
             events.value = arg.events
           }
       }
-    })
+    },)
   }
 }

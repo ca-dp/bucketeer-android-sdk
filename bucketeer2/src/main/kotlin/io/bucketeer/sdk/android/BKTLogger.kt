@@ -6,12 +6,12 @@ interface BKTLogger {
   fun log(
     priority: Int,
     messageCreator: (() -> String?)?,
-    throwable: Throwable?
+    throwable: Throwable?,
   )
 }
 
 internal class DefaultLogger(
-  private val tag: String = "Bucketeer"
+  private val tag: String = "Bucketeer",
 ) : BKTLogger {
   override fun log(
     priority: Int,

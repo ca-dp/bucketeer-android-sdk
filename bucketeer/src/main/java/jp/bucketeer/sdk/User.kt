@@ -5,5 +5,5 @@ package jp.bucketeer.sdk
  */
 data class User(
   val id: String,
-  val data: Map<String, String>
+  val data: Map<String, String>,
 )

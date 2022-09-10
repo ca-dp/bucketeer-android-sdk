@@ -10,7 +10,7 @@ internal class LatestEvaluationUpdater(
   private val logSendingIntervalMillis: Long,
   private val latestEvaluationActionCreator: LatestEvaluationActionCreator,
   private val userHolder: UserHolder,
-  private val scheduledExecutorService: ScheduledExecutorService
+  private val scheduledExecutorService: ScheduledExecutorService,
 ) : ScheduledTask {
   override var isStarted: Boolean = false
   private var scheduledFuture: ScheduledFuture<*>? = null
@@ -26,7 +26,7 @@ internal class LatestEvaluationUpdater(
       { refreshFromApi() },
       logSendingIntervalMillis,
       logSendingIntervalMillis,
-      TimeUnit.MILLISECONDS
+      TimeUnit.MILLISECONDS,
     )
   }
 
