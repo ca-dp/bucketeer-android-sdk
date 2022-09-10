@@ -28,7 +28,7 @@ import io.bucketeer.sdk.android.internal.remote.ApiClientImpl
 
 internal open class DataModule(
   application: Application,
-  val config: BKTConfig
+  val config: BKTConfig,
 ) {
 
   open val clock: Clock by lazy { ClockImpl() }
@@ -37,12 +37,12 @@ internal open class DataModule(
 
   val moshi: Moshi by lazy { createMoshi() }
 
-  val apiClient: ApiClient by lazy {
+  open val apiClient: ApiClient by lazy {
     ApiClientImpl(
       endpoint = config.endpoint,
       apiKey = config.apiKey,
       featureTag = config.featureTag,
-      moshi = moshi
+      moshi = moshi,
     )
   }
 

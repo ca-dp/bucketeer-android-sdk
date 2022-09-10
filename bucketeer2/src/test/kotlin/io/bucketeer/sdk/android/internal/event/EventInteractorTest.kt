@@ -5,6 +5,7 @@ import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
 import com.squareup.moshi.Moshi
 import io.bucketeer.sdk.android.BKTConfig
+import io.bucketeer.sdk.android.BKTException
 import io.bucketeer.sdk.android.internal.Clock
 import io.bucketeer.sdk.android.internal.ClockImpl
 import io.bucketeer.sdk.android.internal.IdGenerator
@@ -12,21 +13,33 @@ import io.bucketeer.sdk.android.internal.IdGeneratorImpl
 import io.bucketeer.sdk.android.internal.di.Component
 import io.bucketeer.sdk.android.internal.di.DataModule
 import io.bucketeer.sdk.android.internal.di.InteractorModule
+import io.bucketeer.sdk.android.internal.model.Duration
 import io.bucketeer.sdk.android.internal.model.Event
 import io.bucketeer.sdk.android.internal.model.EventData
 import io.bucketeer.sdk.android.internal.model.EventType
+import io.bucketeer.sdk.android.internal.model.MetricsEventData
+import io.bucketeer.sdk.android.internal.model.MetricsEventType
 import io.bucketeer.sdk.android.internal.model.Reason
 import io.bucketeer.sdk.android.internal.model.ReasonType
 import io.bucketeer.sdk.android.internal.model.SourceID
+import io.bucketeer.sdk.android.internal.model.request.RegisterEventsRequest
+import io.bucketeer.sdk.android.internal.model.response.ErrorResponse
+import io.bucketeer.sdk.android.internal.model.response.RegisterEventsDataResponse
+import io.bucketeer.sdk.android.internal.model.response.RegisterEventsErrorResponse
+import io.bucketeer.sdk.android.internal.model.response.RegisterEventsResponse
+import io.bucketeer.sdk.android.internal.remote.ApiClient
+import io.bucketeer.sdk.android.internal.remote.ApiClientImpl
 import io.bucketeer.sdk.android.mocks.evaluation1
 import io.bucketeer.sdk.android.mocks.user1
+import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import java.net.SocketTimeoutException
+import java.util.concurrent.TimeUnit
 
 @RunWith(RobolectricTestRunner::class)
 class EventInteractorTest {
@@ -50,9 +63,11 @@ class EventInteractorTest {
           .endpoint(server.url("").toString())
           .apiKey("api_key_value")
           .featureTag("feature_tag_value")
+          .eventsMaxQueueSize(3)
           .build(),
+        defaultRequestTimeoutMillis = TimeUnit.SECONDS.toMillis(1)
       ),
-      interactorModule = InteractorModule(),
+      interactorModule = InteractorModule()
     )
 
     interactor = component.eventInteractor
@@ -101,7 +116,7 @@ class EventInteractorTest {
       )
     )
   }
-  
+
   @Test
   fun trackDefaultEvaluationEvent() {
     val listener = FakeEventUpdateListener()
@@ -135,52 +150,532 @@ class EventInteractorTest {
     )
   }
 
-  @Ignore
   @Test
   fun trackGoalEvent() {
+    val listener = FakeEventUpdateListener()
 
+    interactor.setEventUpdateListener(listener)
+
+    interactor.trackGoalEvent("feature_tag_value", user1, "goal_id_value", 0.5)
+
+    assertThat(listener.calls).hasSize(1)
+    assertThat(listener.calls[0]).hasSize(1)
+
+    assertThat(idGenerator.calls).hasSize(1)
+    assertThat(clock.currentTimeSecondsCalls).hasSize(1)
+
+    val event = listener.calls[0][0]
+
+    assertThat(event).isEqualTo(
+      Event(
+        id = idGenerator.calls[0],
+        type = EventType.GOAL,
+        event = EventData.GoalEvent(
+          timestamp = clock.currentTimeSecondsCalls[0],
+          goal_id = "goal_id_value",
+          user_id = user1.id,
+          value = 0.5,
+          user = user1,
+          tag = "feature_tag_value",
+          source_id = SourceID.ANDROID
+        )
+      )
+    )
   }
 
-  @Ignore
   @Test
   fun trackFetchEvaluationsSuccess() {
+    val listener = FakeEventUpdateListener()
 
+    interactor.setEventUpdateListener(listener)
+
+    interactor.trackFetchEvaluationsSuccess("feature_tag_value", 1000, 723)
+
+    assertThat(listener.calls).hasSize(1)
+    assertThat(listener.calls[0]).hasSize(2)
+
+    assertThat(idGenerator.calls).hasSize(2)
+    assertThat(clock.currentTimeSecondsCalls).hasSize(2)
+
+    val latencyEvent = listener.calls[0][0]
+
+    assertThat(latencyEvent).isEqualTo(
+      Event(
+        id = idGenerator.calls[0],
+        type = EventType.METRICS,
+        event = EventData.MetricsEvent(
+          timestamp = clock.currentTimeSecondsCalls[0],
+          type = MetricsEventType.GET_EVALUATION_LATENCY,
+          event = MetricsEventData.GetEvaluationLatencyMetricsEvent(
+            labels = mapOf(
+              "tag" to "feature_tag_value"
+            ),
+            duration = Duration(millis = 1000)
+          )
+        )
+      )
+    )
+
+    val sizeEvent = listener.calls[0][1]
+
+    assertThat(sizeEvent).isEqualTo(
+      Event(
+        id = idGenerator.calls[1],
+        type = EventType.METRICS,
+        event = EventData.MetricsEvent(
+          timestamp = clock.currentTimeSecondsCalls[1],
+          type = MetricsEventType.GET_EVALUATION_SIZE,
+          event = MetricsEventData.GetEvaluationSizeMetricsEvent(
+            labels = mapOf(
+              "tag" to "feature_tag_value"
+            ),
+            size_byte = 723
+          )
+        )
+      )
+    )
   }
 
-  @Ignore
   @Test
-  fun trackFetchEvaluationsFailure() {
+  fun `trackFetchEvaluationsFailure - timeout error`() {
+    val listener = FakeEventUpdateListener()
 
+    interactor.setEventUpdateListener(listener)
+
+    interactor.trackFetchEvaluationsFailure(
+      "feature_tag_value",
+      BKTException.TimeoutException("timeout", SocketTimeoutException())
+    )
+
+    assertThat(listener.calls).hasSize(1)
+    assertThat(listener.calls[0]).hasSize(1)
+
+    assertThat(idGenerator.calls).hasSize(1)
+    assertThat(clock.currentTimeSecondsCalls).hasSize(1)
+
+    val event = listener.calls[0][0]
+
+    assertThat(event).isEqualTo(
+      Event(
+        id = idGenerator.calls[0],
+        type = EventType.METRICS,
+        event = EventData.MetricsEvent(
+          timestamp = clock.currentTimeSecondsCalls[0],
+          type = MetricsEventType.TIMEOUT_ERROR_COUNT,
+          event = MetricsEventData.TimeoutErrorCountMetricsEvent(
+            tag = "feature_tag_value"
+          )
+        )
+      )
+    )
   }
 
-  @Ignore
+  @Test
+  fun `trackFetchEvaluationsFailure - other error`() {
+    val listener = FakeEventUpdateListener()
+
+    interactor.setEventUpdateListener(listener)
+
+    interactor.trackFetchEvaluationsFailure(
+      "feature_tag_value",
+      BKTException.BadRequestException("bad request")
+    )
+
+    assertThat(listener.calls).hasSize(1)
+    assertThat(listener.calls[0]).hasSize(1)
+
+    assertThat(idGenerator.calls).hasSize(1)
+    assertThat(clock.currentTimeSecondsCalls).hasSize(1)
+
+    val event = listener.calls[0][0]
+
+    assertThat(event).isEqualTo(
+      Event(
+        id = idGenerator.calls[0],
+        type = EventType.METRICS,
+        event = EventData.MetricsEvent(
+          timestamp = clock.currentTimeSecondsCalls[0],
+          type = MetricsEventType.INTERNAL_ERROR_COUNT,
+          event = MetricsEventData.InternalErrorCountMetricsEvent(
+            tag = "feature_tag_value"
+          )
+        )
+      )
+    )
+  }
+
   @Test
   fun `sendEvents - success`() {
+    server.enqueue(
+      MockResponse()
+        .setResponseCode(200)
+        .setBody(
+          moshi.adapter(RegisterEventsResponse::class.java).toJson(
+            RegisterEventsResponse(RegisterEventsDataResponse(errors = emptyMap()))
+          )
+        )
+    )
 
+    interactor.trackFetchEvaluationsSuccess("feature_tag_value", 1000, 723)
+    interactor.trackGoalEvent("feature_tag_value", user1, "goal_id_value", 0.5)
+    interactor.trackGoalEvent("feature_tag_value", user1, "goal_id_value2", 0.4)
+
+    assertThat(interactor.events.get()).hasSize(4)
+
+    interactor.sendEvents(force = false)
+
+    assertThat(server.requestCount).isEqualTo(1)
+
+    val request = server.takeRequest()
+    val requestBody = moshi.adapter(RegisterEventsRequest::class.java)
+      .fromJson(request.body.readString(Charsets.UTF_8))
+
+    // eventsMaxBatchQueueCount is 3, so should send 3 events
+    assertThat(requestBody).isEqualTo(
+      RegisterEventsRequest(
+        events = listOf(
+          Event(
+            id = idGenerator.calls[0],
+            type = EventType.METRICS,
+            event = EventData.MetricsEvent(
+              timestamp = clock.currentTimeSecondsCalls[0],
+              type = MetricsEventType.GET_EVALUATION_LATENCY,
+              event = MetricsEventData.GetEvaluationLatencyMetricsEvent(
+                labels = mapOf(
+                  "tag" to "feature_tag_value"
+                ),
+                duration = Duration(millis = 1000)
+              )
+            )
+          ),
+          Event(
+            id = idGenerator.calls[1],
+            type = EventType.METRICS,
+            event = EventData.MetricsEvent(
+              timestamp = clock.currentTimeSecondsCalls[1],
+              type = MetricsEventType.GET_EVALUATION_SIZE,
+              event = MetricsEventData.GetEvaluationSizeMetricsEvent(
+                labels = mapOf(
+                  "tag" to "feature_tag_value"
+                ),
+                size_byte = 723
+              )
+            )
+          ),
+          Event(
+            id = idGenerator.calls[2],
+            type = EventType.GOAL,
+            event = EventData.GoalEvent(
+              timestamp = clock.currentTimeSecondsCalls[2],
+              goal_id = "goal_id_value",
+              user_id = user1.id,
+              value = 0.5,
+              user = user1,
+              tag = "feature_tag_value",
+              source_id = SourceID.ANDROID
+            )
+          )
+        )
+      )
+    )
+
+    assertThat(interactor.events.get()).hasSize(1)
+    assertThat(component.dataModule.eventDao.getEvents()).hasSize(1)
+
+    val eventData = interactor.events.get().first().event as EventData.GoalEvent
+    assertThat(eventData.goal_id).isEqualTo("goal_id_value2")
+    assertThat(eventData.value).isEqualTo(0.4)
   }
 
-  @Ignore
   @Test
   fun `sendEvents - failure`() {
+    server.enqueue(
+      MockResponse()
+        .setResponseCode(400)
+        .setBody(
+          moshi.adapter(ErrorResponse::class.java).toJson(
+            ErrorResponse(ErrorResponse.ErrorDetail(400, "400 error"))
+          )
+        )
+    )
 
+    interactor.trackFetchEvaluationsSuccess("feature_tag_value", 1000, 723)
+    interactor.trackGoalEvent("feature_tag_value", user1, "goal_id_value", 0.5)
+
+    assertThat(interactor.events.get()).hasSize(3)
+    assertThat(component.dataModule.eventDao.getEvents()).hasSize(3)
+
+    interactor.sendEvents(force = false)
+
+    assertThat(server.requestCount).isEqualTo(1)
+
+    assertThat(interactor.events.get()).hasSize(3)
+    assertThat(component.dataModule.eventDao.getEvents()).hasSize(3)
   }
 
-  @Ignore
   @Test
   fun `sendEvents - current is empty`() {
+    server.enqueue(
+      MockResponse()
+        .setResponseCode(200)
+        .setBody(
+          moshi.adapter(RegisterEventsResponse::class.java).toJson(
+            RegisterEventsResponse(RegisterEventsDataResponse(errors = emptyMap()))
+          )
+        )
+    )
 
+    assertThat(interactor.events.get()).isEmpty()
+
+    interactor.sendEvents(force = false)
+
+    assertThat(server.requestCount).isEqualTo(0)
+
+    assertThat(interactor.events.get()).isEmpty()
   }
 
-  @Ignore
   @Test
   fun `sendEvents - current cache is less than threshold`() {
+    server.enqueue(
+      MockResponse()
+        .setResponseCode(200)
+        .setBody(
+          moshi.adapter(RegisterEventsResponse::class.java).toJson(
+            RegisterEventsResponse(RegisterEventsDataResponse(errors = emptyMap()))
+          )
+        )
+    )
 
+    interactor.trackFetchEvaluationsSuccess("feature_tag_value", 1000, 723)
+
+    assertThat(interactor.events.get()).hasSize(2)
+
+    interactor.sendEvents(force = false)
+
+    assertThat(server.requestCount).isEqualTo(0)
+
+    assertThat(interactor.events.get()).hasSize(2)
   }
 
-  @Ignore
+  @Test
+  fun `sendEvents - force`() {
+    server.enqueue(
+      MockResponse()
+        .setResponseCode(200)
+        .setBody(
+          moshi.adapter(RegisterEventsResponse::class.java).toJson(
+            RegisterEventsResponse(RegisterEventsDataResponse(errors = emptyMap()))
+          )
+        )
+    )
+
+    interactor.trackFetchEvaluationsSuccess("feature_tag_value", 1000, 723)
+
+    interactor.sendEvents(force = true)
+
+    assertThat(server.requestCount).isEqualTo(1)
+
+    val request = server.takeRequest()
+    val requestBody = moshi.adapter(RegisterEventsRequest::class.java)
+      .fromJson(request.body.readString(Charsets.UTF_8))
+
+    assertThat(requestBody).isEqualTo(
+      RegisterEventsRequest(
+        events = listOf(
+          Event(
+            id = idGenerator.calls[0],
+            type = EventType.METRICS,
+            event = EventData.MetricsEvent(
+              timestamp = clock.currentTimeSecondsCalls[0],
+              type = MetricsEventType.GET_EVALUATION_LATENCY,
+              event = MetricsEventData.GetEvaluationLatencyMetricsEvent(
+                labels = mapOf(
+                  "tag" to "feature_tag_value"
+                ),
+                duration = Duration(millis = 1000)
+              )
+            )
+          ),
+          Event(
+            id = idGenerator.calls[1],
+            type = EventType.METRICS,
+            event = EventData.MetricsEvent(
+              timestamp = clock.currentTimeSecondsCalls[1],
+              type = MetricsEventType.GET_EVALUATION_SIZE,
+              event = MetricsEventData.GetEvaluationSizeMetricsEvent(
+                labels = mapOf(
+                  "tag" to "feature_tag_value"
+                ),
+                size_byte = 723
+              )
+            )
+          )
+        )
+      )
+    )
+
+    assertThat(interactor.events.get()).isEmpty()
+    assertThat(component.dataModule.eventDao.getEvents()).isEmpty()
+  }
+
+  @Test
+  fun `sendEvents - retriable error`() {
+    interactor.trackFetchEvaluationsSuccess("feature_tag_value", 1000, 723)
+    interactor.trackGoalEvent("feature_tag_value", user1, "goal_id_value", 0.5)
+    interactor.trackGoalEvent("feature_tag_value", user1, "goal_id_value2", 0.4)
+
+    server.enqueue(
+      MockResponse()
+        .setResponseCode(200)
+        .setBody(
+          moshi.adapter(RegisterEventsResponse::class.java).toJson(
+            RegisterEventsResponse(
+              RegisterEventsDataResponse(
+                errors = mapOf(
+                  idGenerator.calls[0] to RegisterEventsErrorResponse(retriable = true, "error"),
+                  idGenerator.calls[1] to RegisterEventsErrorResponse(retriable = false, "error")
+                )
+              )
+            )
+          )
+        )
+    )
+
+    assertThat(interactor.events.get()).hasSize(4)
+
+    interactor.sendEvents(force = false)
+
+    assertThat(server.requestCount).isEqualTo(1)
+
+    val request = server.takeRequest()
+    val requestBody = moshi.adapter(RegisterEventsRequest::class.java)
+      .fromJson(request.body.readString(Charsets.UTF_8))
+
+    // eventsMaxBatchQueueCount is 3, so should send 3 events
+    assertThat(requestBody).isEqualTo(
+      RegisterEventsRequest(
+        events = listOf(
+          Event(
+            id = idGenerator.calls[0],
+            type = EventType.METRICS,
+            event = EventData.MetricsEvent(
+              timestamp = clock.currentTimeSecondsCalls[0],
+              type = MetricsEventType.GET_EVALUATION_LATENCY,
+              event = MetricsEventData.GetEvaluationLatencyMetricsEvent(
+                labels = mapOf(
+                  "tag" to "feature_tag_value"
+                ),
+                duration = Duration(millis = 1000)
+              )
+            )
+          ),
+          Event(
+            id = idGenerator.calls[1],
+            type = EventType.METRICS,
+            event = EventData.MetricsEvent(
+              timestamp = clock.currentTimeSecondsCalls[1],
+              type = MetricsEventType.GET_EVALUATION_SIZE,
+              event = MetricsEventData.GetEvaluationSizeMetricsEvent(
+                labels = mapOf(
+                  "tag" to "feature_tag_value"
+                ),
+                size_byte = 723
+              )
+            )
+          ),
+          Event(
+            id = idGenerator.calls[2],
+            type = EventType.GOAL,
+            event = EventData.GoalEvent(
+              timestamp = clock.currentTimeSecondsCalls[2],
+              goal_id = "goal_id_value",
+              user_id = user1.id,
+              value = 0.5,
+              user = user1,
+              tag = "feature_tag_value",
+              source_id = SourceID.ANDROID
+            )
+          )
+        )
+      )
+    )
+
+    assertThat(interactor.events.get()).hasSize(2)
+    assertThat(component.dataModule.eventDao.getEvents()).hasSize(2)
+
+    // retriable evaluation shouldn't be deleted
+    assertThat(interactor.events.get()).isEqualTo(
+      listOf(
+        Event(
+          id = idGenerator.calls[0],
+          type = EventType.METRICS,
+          event = EventData.MetricsEvent(
+            timestamp = clock.currentTimeSecondsCalls[0],
+            type = MetricsEventType.GET_EVALUATION_LATENCY,
+            event = MetricsEventData.GetEvaluationLatencyMetricsEvent(
+              labels = mapOf(
+                "tag" to "feature_tag_value"
+              ),
+              duration = Duration(millis = 1000)
+            )
+          )
+        ),
+        Event(
+          id = idGenerator.calls[3],
+          type = EventType.GOAL,
+          event = EventData.GoalEvent(
+            timestamp = clock.currentTimeSecondsCalls[3],
+            goal_id = "goal_id_value2",
+            user_id = user1.id,
+            value = 0.4,
+            user = user1,
+            tag = "feature_tag_value",
+            source_id = SourceID.ANDROID
+          )
+        )
+      )
+    )
+  }
+
   @Test
   fun refreshCache() {
+    component.dataModule.eventDao.addEvents(
+      listOf(
+        Event(
+          id = idGenerator.newId(),
+          type = EventType.METRICS,
+          event = EventData.MetricsEvent(
+            timestamp = clock.currentTimeSeconds(),
+            type = MetricsEventType.GET_EVALUATION_LATENCY,
+            event = MetricsEventData.GetEvaluationLatencyMetricsEvent(
+              labels = mapOf(
+                "tag" to "feature_tag_value"
+              ),
+              duration = Duration(millis = 1000)
+            )
+          )
+        ),
+        Event(
+          id = idGenerator.newId(),
+          type = EventType.GOAL,
+          event = EventData.GoalEvent(
+            timestamp = clock.currentTimeSeconds(),
+            goal_id = "goal_id_value2",
+            user_id = user1.id,
+            value = 0.4,
+            user = user1,
+            tag = "feature_tag_value",
+            source_id = SourceID.ANDROID
+          )
+        )
+      )
+    )
 
+    assertThat(interactor.events.get()).isEmpty()
+
+    interactor.refreshCache()
+
+    assertThat(interactor.events.get()).hasSize(2)
   }
 }
 
@@ -225,10 +720,21 @@ private class FakeClock : Clock {
 
 private class TestDataModule(
   application: Application,
-  config: BKTConfig
+  config: BKTConfig,
+  defaultRequestTimeoutMillis: Long
 ) : DataModule(application, config) {
 
   override val clock: Clock by lazy { FakeClock() }
 
   override val idGenerator: IdGenerator by lazy { FakeIdGenerator() }
+
+  override val apiClient: ApiClient by lazy {
+    ApiClientImpl(
+      endpoint = config.endpoint,
+      apiKey = config.apiKey,
+      featureTag = config.featureTag,
+      moshi = moshi,
+      defaultRequestTimeoutMillis = defaultRequestTimeoutMillis
+    )
+  }
 }

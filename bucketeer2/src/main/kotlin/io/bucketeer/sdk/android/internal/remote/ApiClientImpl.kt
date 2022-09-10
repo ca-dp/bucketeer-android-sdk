@@ -19,12 +19,14 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import java.util.concurrent.TimeUnit
 
+internal const val DEFAULT_REQUEST_TIMEOUT_MILLIS: Long = 30_000
+
 internal class ApiClientImpl(
   endpoint: String,
   private val apiKey: String,
   private val featureTag: String,
   private val moshi: Moshi,
-  defaultRequestTimeoutMillis: Long = 30_000
+  defaultRequestTimeoutMillis: Long = DEFAULT_REQUEST_TIMEOUT_MILLIS
 ) : ApiClient {
 
   private val endpoint = endpoint.toHttpUrl()

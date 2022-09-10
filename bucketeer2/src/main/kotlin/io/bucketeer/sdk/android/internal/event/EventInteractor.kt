@@ -1,6 +1,7 @@
 package io.bucketeer.sdk.android.internal.event
 
 import androidx.annotation.VisibleForTesting
+import io.bucketeer.sdk.android.BKTException
 import io.bucketeer.sdk.android.internal.Clock
 import io.bucketeer.sdk.android.internal.IdGenerator
 import io.bucketeer.sdk.android.internal.event.db.EventDao
@@ -10,8 +11,6 @@ import io.bucketeer.sdk.android.internal.model.Event
 import io.bucketeer.sdk.android.internal.model.User
 import io.bucketeer.sdk.android.internal.remote.ApiClient
 import io.bucketeer.sdk.android.internal.remote.RegisterEventsResult
-import java.io.InterruptedIOException
-import java.net.SocketTimeoutException
 import java.util.concurrent.atomic.AtomicReference
 
 internal class EventInteractor(
@@ -72,12 +71,15 @@ internal class EventInteractor(
 
   fun trackFetchEvaluationsFailure(
     featureTag: String,
-    error: Throwable
+    error: BKTException
   ) {
-    // TODO: BKTException
     val event = when (error) {
-      is SocketTimeoutException,
-      is InterruptedIOException -> newTimeoutErrorCountMetricsEvent(clock, idGenerator, featureTag)
+      is BKTException.NetworkException,
+      is BKTException.TimeoutException -> newTimeoutErrorCountMetricsEvent(
+        clock,
+        idGenerator,
+        featureTag
+      )
       else -> newInternalErrorCountMetricsEvent(clock, idGenerator, featureTag)
     }
 
