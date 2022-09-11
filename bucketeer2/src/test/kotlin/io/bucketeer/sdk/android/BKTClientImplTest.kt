@@ -4,6 +4,7 @@ import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
 import com.squareup.moshi.Moshi
 import io.bucketeer.sdk.android.internal.di.DataModule
+import io.bucketeer.sdk.android.internal.model.Evaluation
 import io.bucketeer.sdk.android.internal.model.Event
 import io.bucketeer.sdk.android.internal.model.EventData
 import io.bucketeer.sdk.android.internal.model.EventType
@@ -17,6 +18,7 @@ import io.bucketeer.sdk.android.mocks.user1Evaluations
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
+import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -52,7 +54,7 @@ class BKTClientImplTest {
   }
 
   @Test
-  fun `initialize - first call`() {
+  fun `initialize - first call - success`() {
     server.enqueue(
       MockResponse()
         .setResponseCode(200)
@@ -111,6 +113,62 @@ class BKTClientImplTest {
   }
 
   @Test
+  fun `initialize - first call - timeout`() {
+    server.enqueue(
+      MockResponse()
+        .setResponseCode(200)
+        .setBodyDelay(2, TimeUnit.SECONDS)
+        .setBody(
+          moshi.adapter(GetEvaluationsResponse::class.java)
+            .toJson(
+              GetEvaluationsResponse(
+                GetEvaluationsDataResponse(
+                  evaluations = user1Evaluations,
+                  user_evaluations_id = "user_evaluations_id_value",
+                ),
+              ),
+            ),
+        ),
+    )
+
+    val future = BKTClient.initialize(
+      ApplicationProvider.getApplicationContext(),
+      config,
+      user1.toBKTUser(),
+      1000,
+    )
+
+    val result = future.get()
+
+    // failure
+    assertThat(result).isInstanceOf(BKTException.TimeoutException::class.java)
+
+    assertThat(server.requestCount).isEqualTo(1)
+
+    val client = BKTClient.getInstance() as BKTClientImpl
+
+    assertThat(client.component.evaluationInteractor.evaluations)
+      .isEqualTo(mapOf(user1.id to emptyList<Evaluation>()))
+    assertThat(client.component.dataModule.evaluationDao.get(user1.id)).isEmpty()
+
+    Thread.sleep(100)
+
+    // timeout event should be saved
+    val memoryEvents = client.component.eventInteractor.events.get()
+    assertTimeoutErrorCountMetricsEvent(
+      memoryEvents[0],
+      MetricsEventData.TimeoutErrorCountMetricsEvent(config.featureTag),
+    )
+
+    val dbEvents = client.component.dataModule.eventDao.getEvents()
+    assertThat(dbEvents).hasSize(1)
+    assertTimeoutErrorCountMetricsEvent(
+      dbEvents[0],
+      MetricsEventData.TimeoutErrorCountMetricsEvent(config.featureTag),
+    )
+  }
+
+  @Test
   fun `initialize - second call`() {
     server.enqueue(
       MockResponse()
@@ -147,13 +205,49 @@ class BKTClientImplTest {
     // future1 has not finished yet
     assertThat(future1.isDone).isFalse()
 
+    // second call should finish immediately
     assertThat(future2.isDone).isTrue()
     assertThat(future2.get()).isNull()
 
     assertThat(future1.get()).isNull()
   }
+
+  @Test
+  fun destroy() {
+    server.enqueue(
+      MockResponse()
+        .setResponseCode(200)
+        .setBody(
+          moshi.adapter(GetEvaluationsResponse::class.java)
+            .toJson(
+              GetEvaluationsResponse(
+                GetEvaluationsDataResponse(
+                  evaluations = user1Evaluations,
+                  user_evaluations_id = "user_evaluations_id_value",
+                ),
+              ),
+            ),
+        ),
+    )
+
+    BKTClient.initialize(
+      ApplicationProvider.getApplicationContext(),
+      config,
+      user1.toBKTUser(),
+      1000,
+    )
+
+    assertThat(BKTClient.getInstance()).isInstanceOf(BKTClient::class.java)
+
+    BKTClient.destroy()
+
+    assertThrows(BKTException.IllegalArgumentException::class.java) {
+      BKTClient.getInstance()
+    }
+  }
 }
 
+// these assertion methods do not check full-equality, but that should be covered in other tests
 fun assertGetEvaluationLatencyMetricsEvent(actual: Event, expectedLabels: Map<String, String>) {
   assertThat(actual.id).isNotEmpty() // id is not assertable here
   assertThat(actual.type).isEqualTo(EventType.METRICS)
@@ -191,4 +285,14 @@ fun assertGetEvaluationSizeMetricsEvent(
   val actualSizeEvent = actualMetricsEvent.event as MetricsEventData.GetEvaluationSizeMetricsEvent
 
   assertThat(actualSizeEvent).isEqualTo(expectedSizeEvent)
+}
+
+fun assertTimeoutErrorCountMetricsEvent(
+  actual: Event,
+  expectedMetricsEvent: MetricsEventData.TimeoutErrorCountMetricsEvent,
+) {
+  assertThat(actual.type).isEqualTo(EventType.METRICS)
+  val actualMetricsEvent = actual.event as EventData.MetricsEvent
+  assertThat(actualMetricsEvent.type).isEqualTo(MetricsEventType.TIMEOUT_ERROR_COUNT)
+  assertThat(actualMetricsEvent.event).isEqualTo(expectedMetricsEvent)
 }
