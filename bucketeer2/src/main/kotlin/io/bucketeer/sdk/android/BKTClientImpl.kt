@@ -69,7 +69,7 @@ internal class BKTClientImpl(
   }
 
   override fun setUserAttributes(attributes: Map<String, String>) {
-    userHolder.update { it.copy(data = attributes) }
+    userHolder.updateAttributes { attributes }
   }
 
   private fun fetchEvaluationsSync(timeoutMillis: Long?): BKTException? {

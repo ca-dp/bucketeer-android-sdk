@@ -10,12 +10,10 @@ class UserHolder(
 
   fun get(): User = user
 
-  fun update(user: User) {
-    this.user = user
-  }
-
-  fun update(updater: (user: User) -> User) {
-    this.user = updater(user)
+  fun updateAttributes(updater: (previous: Map<String, String>) -> Map<String, String>) {
+    this.user = user.copy(
+      data = updater(user.data),
+    )
   }
 }
 
