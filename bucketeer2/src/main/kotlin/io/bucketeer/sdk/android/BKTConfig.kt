@@ -1,5 +1,6 @@
 package io.bucketeer.sdk.android
 
+import io.bucketeer.sdk.android.internal.util.require
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
 internal const val DEFAULT_FLUSH_INTERVAL_MILLIS: Long = 30_000 // 30 seconds

@@ -10,6 +10,7 @@ import io.bucketeer.sdk.android.internal.model.request.RegisterEventsRequest
 import io.bucketeer.sdk.android.internal.model.response.ErrorResponse
 import io.bucketeer.sdk.android.internal.model.response.GetEvaluationsResponse
 import io.bucketeer.sdk.android.internal.model.response.RegisterEventsResponse
+import io.bucketeer.sdk.android.internal.util.requireNotNull
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
@@ -78,7 +79,8 @@ internal class ApiClientImpl(
           throw rawResponse.toBKTException(errorResponseJsonAdapter)
         }
 
-        val response = requireNotNull(rawResponse.fromJson<GetEvaluationsResponse>())
+        val response =
+          requireNotNull(rawResponse.fromJson<GetEvaluationsResponse>()) { "failed to parse GetEvaluationsResponse" }
 
         response to (rawResponse.body?.contentLength() ?: -1).toInt()
       }
@@ -125,7 +127,8 @@ internal class ApiClientImpl(
         throw e
       }
 
-      val result = requireNotNull(response.fromJson<RegisterEventsResponse>())
+      val result =
+        requireNotNull(response.fromJson<RegisterEventsResponse>()) { "failed to parse RegisterEventsResponse" }
 
       logd { "--> END Register events" }
       logd { "<-- Register events\n$result\n<-- END Register events" }

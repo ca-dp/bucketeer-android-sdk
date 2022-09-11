@@ -3,6 +3,7 @@ package io.bucketeer.sdk.android
 import android.content.Context
 import io.bucketeer.sdk.android.internal.logw
 import io.bucketeer.sdk.android.internal.util.Futures
+import io.bucketeer.sdk.android.internal.util.requireNotNull
 import org.json.JSONObject
 import java.util.concurrent.Future
 
