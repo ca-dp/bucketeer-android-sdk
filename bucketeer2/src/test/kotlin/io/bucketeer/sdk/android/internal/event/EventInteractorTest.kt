@@ -322,7 +322,7 @@ class EventInteractorTest {
 
     assertThat(interactor.events.get()).hasSize(4)
 
-    interactor.sendEvents(force = false)
+    val result = interactor.sendEvents(force = false)
 
     assertThat(server.requestCount).isEqualTo(1)
 
@@ -379,6 +379,9 @@ class EventInteractorTest {
       ),
     )
 
+    require(result is SendEventsResult.Success)
+    assertThat(result.sent).isTrue()
+
     assertThat(interactor.events.get()).hasSize(1)
     assertThat(component.dataModule.eventDao.getEvents()).hasSize(1)
 
@@ -405,9 +408,12 @@ class EventInteractorTest {
     assertThat(interactor.events.get()).hasSize(3)
     assertThat(component.dataModule.eventDao.getEvents()).hasSize(3)
 
-    interactor.sendEvents(force = false)
+    val result = interactor.sendEvents(force = false)
 
     assertThat(server.requestCount).isEqualTo(1)
+
+    require(result is SendEventsResult.Failure)
+    assertThat(result.error).isInstanceOf(BKTException.BadRequestException::class.java)
 
     assertThat(interactor.events.get()).hasSize(3)
     assertThat(component.dataModule.eventDao.getEvents()).hasSize(3)
@@ -427,7 +433,10 @@ class EventInteractorTest {
 
     assertThat(interactor.events.get()).isEmpty()
 
-    interactor.sendEvents(force = false)
+    val result = interactor.sendEvents(force = false)
+
+    require(result is SendEventsResult.Success)
+    assertThat(result.sent).isFalse()
 
     assertThat(server.requestCount).isEqualTo(0)
 
@@ -450,7 +459,10 @@ class EventInteractorTest {
 
     assertThat(interactor.events.get()).hasSize(2)
 
-    interactor.sendEvents(force = false)
+    val result = interactor.sendEvents(force = false)
+
+    require(result is SendEventsResult.Success)
+    assertThat(result.sent).isFalse()
 
     assertThat(server.requestCount).isEqualTo(0)
 
@@ -471,7 +483,10 @@ class EventInteractorTest {
 
     interactor.trackFetchEvaluationsSuccess("feature_tag_value", 1000, 723)
 
-    interactor.sendEvents(force = true)
+    val result = interactor.sendEvents(force = true)
+
+    require(result is SendEventsResult.Success)
+    assertThat(result.sent).isTrue()
 
     assertThat(server.requestCount).isEqualTo(1)
 

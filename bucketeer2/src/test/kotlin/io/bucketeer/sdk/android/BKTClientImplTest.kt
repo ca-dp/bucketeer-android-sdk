@@ -10,8 +10,12 @@ import io.bucketeer.sdk.android.internal.model.EventData
 import io.bucketeer.sdk.android.internal.model.EventType
 import io.bucketeer.sdk.android.internal.model.MetricsEventData
 import io.bucketeer.sdk.android.internal.model.MetricsEventType
+import io.bucketeer.sdk.android.internal.model.request.RegisterEventsRequest
+import io.bucketeer.sdk.android.internal.model.response.ErrorResponse
 import io.bucketeer.sdk.android.internal.model.response.GetEvaluationsDataResponse
 import io.bucketeer.sdk.android.internal.model.response.GetEvaluationsResponse
+import io.bucketeer.sdk.android.internal.model.response.RegisterEventsDataResponse
+import io.bucketeer.sdk.android.internal.model.response.RegisterEventsResponse
 import io.bucketeer.sdk.android.internal.user.toBKTUser
 import io.bucketeer.sdk.android.mocks.user1
 import io.bucketeer.sdk.android.mocks.user1Evaluations
@@ -244,6 +248,133 @@ class BKTClientImplTest {
     assertThrows(BKTException.IllegalArgumentException::class.java) {
       BKTClient.getInstance()
     }
+  }
+
+  @Test
+  fun `flush - success`() {
+    server.enqueue(
+      MockResponse()
+        .setResponseCode(200)
+        .setBody(
+          moshi.adapter(GetEvaluationsResponse::class.java)
+            .toJson(
+              GetEvaluationsResponse(
+                GetEvaluationsDataResponse(
+                  evaluations = user1Evaluations,
+                  user_evaluations_id = "user_evaluations_id_value",
+                ),
+              ),
+            ),
+        ),
+    )
+    server.enqueue(
+      MockResponse()
+        .setResponseCode(200)
+        .setBody(
+          moshi.adapter(RegisterEventsResponse::class.java).toJson(
+            RegisterEventsResponse(RegisterEventsDataResponse(errors = emptyMap())),
+          ),
+        ),
+    )
+
+    val initializeFuture = BKTClient.initialize(
+      ApplicationProvider.getApplicationContext(),
+      config,
+      user1.toBKTUser(),
+      1000,
+    )
+    initializeFuture.get()
+
+    assertThat(server.requestCount).isEqualTo(1)
+    server.takeRequest()
+
+    Thread.sleep(100)
+
+    // we should have 2 events now
+
+    val flushFuture = BKTClient.getInstance().flush()
+
+    // should return null if a request succeeds
+    val result = flushFuture.get()
+    assertThat(result).isNull()
+
+    assertThat(server.requestCount).isEqualTo(2)
+    val request = server.takeRequest()
+    val requestBody = requireNotNull(
+      moshi.adapter(RegisterEventsRequest::class.java)
+        .fromJson(request.body.readString(Charsets.UTF_8)),
+    )
+
+    assertThat(requestBody.events).hasSize(2)
+    assertThat(requestBody.events.map { it.type }).isEqualTo(
+      listOf(
+        EventType.METRICS,
+        EventType.METRICS,
+      ),
+    )
+  }
+
+  @Test
+  fun `flush - failure`() {
+    server.enqueue(
+      MockResponse()
+        .setResponseCode(200)
+        .setBody(
+          moshi.adapter(GetEvaluationsResponse::class.java)
+            .toJson(
+              GetEvaluationsResponse(
+                GetEvaluationsDataResponse(
+                  evaluations = user1Evaluations,
+                  user_evaluations_id = "user_evaluations_id_value",
+                ),
+              ),
+            ),
+        ),
+    )
+    server.enqueue(
+      MockResponse()
+        .setResponseCode(500)
+        .setBody(
+          moshi.adapter(ErrorResponse::class.java)
+            .toJson(ErrorResponse(ErrorResponse.ErrorDetail(code = 500, message = "500 error"))),
+        ),
+    )
+
+    val initializeFuture = BKTClient.initialize(
+      ApplicationProvider.getApplicationContext(),
+      config,
+      user1.toBKTUser(),
+      1000,
+    )
+    initializeFuture.get()
+
+    assertThat(server.requestCount).isEqualTo(1)
+    server.takeRequest()
+
+    Thread.sleep(100)
+
+    // we should have 2 events now
+
+    val flushFuture = BKTClient.getInstance().flush()
+
+    // should return exception if a request fails
+    val result = flushFuture.get()
+    assertThat(result).isInstanceOf(BKTException.ApiServerException::class.java)
+
+    assertThat(server.requestCount).isEqualTo(2)
+    val request = server.takeRequest()
+    val requestBody = requireNotNull(
+      moshi.adapter(RegisterEventsRequest::class.java)
+        .fromJson(request.body.readString(Charsets.UTF_8)),
+    )
+
+    assertThat(requestBody.events).hasSize(2)
+    assertThat(requestBody.events.map { it.type }).isEqualTo(
+      listOf(
+        EventType.METRICS,
+        EventType.METRICS,
+      ),
+    )
   }
 }
 

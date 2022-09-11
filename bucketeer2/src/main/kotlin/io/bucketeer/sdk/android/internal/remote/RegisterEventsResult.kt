@@ -1,5 +1,6 @@
 package io.bucketeer.sdk.android.internal.remote
 
+import io.bucketeer.sdk.android.BKTException
 import io.bucketeer.sdk.android.internal.model.response.RegisterEventsResponse
 
 sealed class RegisterEventsResult {
@@ -8,6 +9,6 @@ sealed class RegisterEventsResult {
   ) : RegisterEventsResult()
 
   data class Failure(
-    val error: Throwable,
+    val error: BKTException,
   ) : RegisterEventsResult()
 }

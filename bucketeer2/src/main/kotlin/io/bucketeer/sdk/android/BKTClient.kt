@@ -27,7 +27,7 @@ interface BKTClient {
 
   fun fetchEvaluations(timeoutMillis: Long? = null): Future<BKTException?>
 
-  fun flush()
+  fun flush(): Future<BKTException?>
 
   fun evaluationDetails(featureId: String): BKTEvaluation?
 

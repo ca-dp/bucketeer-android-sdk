@@ -6,6 +6,7 @@ import io.bucketeer.sdk.android.internal.di.Component
 import io.bucketeer.sdk.android.internal.di.DataModule
 import io.bucketeer.sdk.android.internal.di.InteractorModule
 import io.bucketeer.sdk.android.internal.evaluation.getVariationValue
+import io.bucketeer.sdk.android.internal.event.SendEventsResult
 import io.bucketeer.sdk.android.internal.logd
 import io.bucketeer.sdk.android.internal.remote.GetEvaluationsResult
 import io.bucketeer.sdk.android.internal.user.UserHolder
@@ -106,10 +107,15 @@ internal class BKTClientImpl(
     }
   }
 
-  // should we return Future?
-  override fun flush() {
-    executor.execute {
-      component.eventInteractor.sendEvents(force = true)
+  override fun flush(): Future<BKTException?> {
+    return executor.submit<BKTException?> {
+      @Suppress("MoveVariableDeclarationIntoWhen")
+      val result = component.eventInteractor.sendEvents(force = true)
+
+      when (result) {
+        is SendEventsResult.Success -> null
+        is SendEventsResult.Failure -> result.error
+      }
     }
   }
 

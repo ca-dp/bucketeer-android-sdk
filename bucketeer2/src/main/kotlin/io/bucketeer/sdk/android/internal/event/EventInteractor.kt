@@ -89,18 +89,24 @@ internal class EventInteractor(
     updateEventsAndNotify()
   }
 
-  fun sendEvents(force: Boolean = false) {
+  fun sendEvents(force: Boolean = false): SendEventsResult {
     val current = events.get()
 
-    if (current.isEmpty()) return
-    if (!force && current.size < eventsMaxBatchQueueCount) return
+    if (current.isEmpty()) {
+      logd { "no events to register" }
+      return SendEventsResult.Success(sent = false)
+    }
+    if (!force && current.size < eventsMaxBatchQueueCount) {
+      logd { "event count is less than threshold - current: ${current.size}, threshold: $eventsMaxBatchQueueCount" }
+      return SendEventsResult.Success(sent = false)
+    }
 
     val sendingEvents = current.take(eventsMaxBatchQueueCount)
 
     @Suppress("MoveVariableDeclarationIntoWhen")
     val result = apiClient.registerEvents(sendingEvents)
 
-    when (result) {
+    return when (result) {
       is RegisterEventsResult.Success -> {
         val errors = result.value.data.errors
         val deleteIds = sendingEvents.map { it.id }
@@ -114,9 +120,12 @@ internal class EventInteractor(
         eventDao.delete(deleteIds)
 
         updateEventsAndNotify()
+
+        SendEventsResult.Success(sent = true)
       }
       is RegisterEventsResult.Failure -> {
         logd(throwable = result.error) { "Failed to register events" }
+        SendEventsResult.Failure(result.error)
       }
     }
   }

@@ -1,12 +1,13 @@
 package io.bucketeer.sdk.android.internal.util
 
+import io.bucketeer.sdk.android.BKTException
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
 
 object Futures {
   fun <V> success(value: V): Future<V> = SuccessFuture(value)
-  fun <V> failure(error: Throwable): Future<V> = TODO()
+  fun <V> failure(error: BKTException): Future<V> = FailureFuture(error)
 }
 
 internal class SuccessFuture<V>(
@@ -24,7 +25,7 @@ internal class SuccessFuture<V>(
 }
 
 internal class FailureFuture<V>(
-  private val error: Throwable,
+  private val error: BKTException,
 ) : Future<V> {
   override fun cancel(p0: Boolean): Boolean = false
 
