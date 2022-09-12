@@ -17,6 +17,7 @@ import io.bucketeer.sdk.android.internal.evaluation.db.EvaluationDao
 import io.bucketeer.sdk.android.internal.evaluation.db.EvaluationDaoImpl
 import io.bucketeer.sdk.android.internal.event.db.EventDao
 import io.bucketeer.sdk.android.internal.event.db.EventDaoImpl
+import io.bucketeer.sdk.android.internal.model.User
 import io.bucketeer.sdk.android.internal.model.jsonadapter.EventAdapterFactory
 import io.bucketeer.sdk.android.internal.model.jsonadapter.EventTypeAdapter
 import io.bucketeer.sdk.android.internal.model.jsonadapter.MetricsEventAdapterFactory
@@ -25,9 +26,11 @@ import io.bucketeer.sdk.android.internal.model.jsonadapter.ReasonTypeAdapter
 import io.bucketeer.sdk.android.internal.model.jsonadapter.SourceIDAdapter
 import io.bucketeer.sdk.android.internal.remote.ApiClient
 import io.bucketeer.sdk.android.internal.remote.ApiClientImpl
+import io.bucketeer.sdk.android.internal.user.UserHolder
 
 internal open class DataModule(
   application: Application,
+  user: User,
   val config: BKTConfig,
 ) {
 
@@ -61,6 +64,8 @@ internal open class DataModule(
   internal val sharedPreferences: SharedPreferences by lazy {
     application.getSharedPreferences(Constants.PREFERENCES_NAME, Context.MODE_PRIVATE)
   }
+
+  internal val userHolder: UserHolder by lazy { UserHolder(user) }
 
   companion object {
     @VisibleForTesting

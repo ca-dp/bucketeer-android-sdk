@@ -41,6 +41,7 @@ class EvaluationInteractorTest {
     component = Component(
       dataModule = DataModule(
         application = ApplicationProvider.getApplicationContext(),
+        user = user1,
         config = BKTConfig.builder()
           .endpoint(server.url("").toString())
           .apiKey("api_key_value")

@@ -2,11 +2,16 @@ package io.bucketeer.sdk.android.internal.di
 
 import io.bucketeer.sdk.android.internal.evaluation.EvaluationInteractor
 import io.bucketeer.sdk.android.internal.event.EventInteractor
+import io.bucketeer.sdk.android.internal.user.UserHolder
 
 internal class Component(
   val dataModule: DataModule,
   val interactorModule: InteractorModule,
 ) {
+
+  val userHolder: UserHolder
+    get() = dataModule.userHolder
+
   val evaluationInteractor: EvaluationInteractor by lazy {
     interactorModule.evaluationInteractor(
       apiClient = dataModule.apiClient,

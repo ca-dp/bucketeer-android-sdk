@@ -9,7 +9,6 @@ import io.bucketeer.sdk.android.internal.evaluation.getVariationValue
 import io.bucketeer.sdk.android.internal.event.SendEventsResult
 import io.bucketeer.sdk.android.internal.logd
 import io.bucketeer.sdk.android.internal.remote.GetEvaluationsResult
-import io.bucketeer.sdk.android.internal.user.UserHolder
 import io.bucketeer.sdk.android.internal.user.toBKTUser
 import io.bucketeer.sdk.android.internal.user.toUser
 import org.json.JSONObject
@@ -21,11 +20,11 @@ internal class BKTClientImpl(
   private val context: Context,
   private val config: BKTConfig,
   user: BKTUser,
-  private val userHolder: UserHolder = UserHolder(user.toUser()),
   private val executor: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor(),
   internal val component: Component = Component(
     dataModule = DataModule(
       application = context.applicationContext as Application,
+      user = user.toUser(),
       config = config,
     ),
     interactorModule = InteractorModule(),
@@ -53,7 +52,7 @@ internal class BKTClientImpl(
   }
 
   override fun track(goalId: String, value: Double) {
-    val user = userHolder.get()
+    val user = component.userHolder.get()
     val featureTag = config.featureTag
     executor.execute {
       component.eventInteractor.trackGoalEvent(
@@ -66,15 +65,16 @@ internal class BKTClientImpl(
   }
 
   override fun currentUser(): BKTUser {
-    return userHolder.get().toBKTUser()
+    return component.userHolder.get().toBKTUser()
   }
 
   override fun setUserAttributes(attributes: Map<String, String>) {
-    userHolder.updateAttributes { attributes }
+    component.userHolder.updateAttributes { attributes }
   }
 
   private fun fetchEvaluationsSync(timeoutMillis: Long?): BKTException? {
-    val result = component.evaluationInteractor.fetch(user = userHolder.get(), timeoutMillis)
+    val result = component.evaluationInteractor
+      .fetch(user = component.userHolder.get(), timeoutMillis)
 
     executor.execute {
       val interactor = component.eventInteractor
@@ -120,7 +120,8 @@ internal class BKTClientImpl(
   }
 
   override fun evaluationDetails(featureId: String): BKTEvaluation? {
-    val raw = component.evaluationInteractor.getLatest(userHolder.userId, featureId) ?: return null
+    val raw = component.evaluationInteractor
+      .getLatest(component.userHolder.userId, featureId) ?: return null
 
     return BKTEvaluation(
       id = raw.id,
@@ -134,7 +135,7 @@ internal class BKTClientImpl(
   }
 
   private fun refreshCache() {
-    component.evaluationInteractor.refreshCache(userHolder.userId)
+    component.evaluationInteractor.refreshCache(component.userHolder.userId)
     component.eventInteractor.refreshCache()
   }
 
@@ -148,9 +149,9 @@ internal class BKTClientImpl(
   private inline fun <reified T : Any> getVariationValue(featureId: String, defaultValue: T): T {
     logd { "BKTClient.getVariation(featureId = $featureId, defaultValue = $defaultValue) called" }
 
-    val raw = component.evaluationInteractor.getLatest(userHolder.userId, featureId)
+    val raw = component.evaluationInteractor.getLatest(component.userHolder.userId, featureId)
 
-    val user = userHolder.get()
+    val user = component.userHolder.get()
     val featureTag = config.featureTag
     if (raw != null) {
       executor.execute {
