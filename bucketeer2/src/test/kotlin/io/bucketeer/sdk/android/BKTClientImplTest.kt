@@ -546,6 +546,8 @@ class BKTClientImplTest {
     val client = BKTClient.getInstance() as BKTClientImpl
     val result = client.fetchEvaluations().get()
 
+    Thread.sleep(100)
+
     assertThat(result).isNull()
 
     assertThat(client.component.evaluationInteractor.currentEvaluationsId)
@@ -593,6 +595,8 @@ class BKTClientImplTest {
 
     val client = BKTClient.getInstance() as BKTClientImpl
     val result = client.fetchEvaluations().get()
+
+    Thread.sleep(100)
 
     assertThat(result).isInstanceOf(BKTException.ApiServerException::class.java)
 
