@@ -2,6 +2,8 @@ package io.bucketeer.sdk.android
 
 import android.app.Application
 import android.content.Context
+import androidx.annotation.MainThread
+import androidx.lifecycle.ProcessLifecycleOwner
 import io.bucketeer.sdk.android.internal.di.Component
 import io.bucketeer.sdk.android.internal.di.ComponentImpl
 import io.bucketeer.sdk.android.internal.di.DataModule
@@ -10,6 +12,7 @@ import io.bucketeer.sdk.android.internal.evaluation.getVariationValue
 import io.bucketeer.sdk.android.internal.event.SendEventsResult
 import io.bucketeer.sdk.android.internal.logd
 import io.bucketeer.sdk.android.internal.remote.GetEvaluationsResult
+import io.bucketeer.sdk.android.internal.scheduler.TaskScheduler
 import io.bucketeer.sdk.android.internal.user.toBKTUser
 import io.bucketeer.sdk.android.internal.user.toUser
 import org.json.JSONObject
@@ -111,7 +114,9 @@ internal class BKTClientImpl(
     component.evaluationInteractor.refreshCache(component.userHolder.userId)
   }
 
+  @MainThread
   internal fun initializeInternal(timeoutMillis: Long): Future<BKTException?> {
+    scheduleBackgroundTasks()
     return executor.submit<BKTException?> {
       refreshCache()
       fetchEvaluationsSync(component, executor, timeoutMillis)
@@ -144,6 +149,11 @@ internal class BKTClientImpl(
     }
 
     return raw.getVariationValue(defaultValue)
+  }
+
+  @MainThread
+  private fun scheduleBackgroundTasks() {
+    ProcessLifecycleOwner.get().lifecycle.addObserver(TaskScheduler(component, executor))
   }
 
   companion object {
