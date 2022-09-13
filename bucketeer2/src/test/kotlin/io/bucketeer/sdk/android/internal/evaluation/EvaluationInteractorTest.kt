@@ -47,6 +47,7 @@ class EvaluationInteractorTest {
           .apiKey("api_key_value")
           .featureTag("feature_tag_value")
           .build(),
+        inMemoryDB = true,
       ),
       interactorModule = InteractorModule(),
     )

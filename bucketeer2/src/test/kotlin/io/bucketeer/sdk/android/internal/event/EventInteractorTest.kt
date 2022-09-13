@@ -693,7 +693,7 @@ private class TestDataModule(
   application: Application,
   config: BKTConfig,
   defaultRequestTimeoutMillis: Long,
-) : DataModule(application, user1, config) {
+) : DataModule(application, user1, config, inMemoryDB = true) {
 
   override val clock: Clock by lazy { FakeClock() }
 

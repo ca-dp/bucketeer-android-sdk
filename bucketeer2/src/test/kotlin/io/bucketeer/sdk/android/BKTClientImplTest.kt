@@ -58,6 +58,9 @@ class BKTClientImplTest {
   fun tearDown() {
     server.shutdown()
 
+    deleteDatabase(ApplicationProvider.getApplicationContext())
+    deleteSharedPreferences(ApplicationProvider.getApplicationContext())
+
     BKTClient.destroy()
   }
 

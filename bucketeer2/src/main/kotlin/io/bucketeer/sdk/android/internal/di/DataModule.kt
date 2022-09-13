@@ -12,6 +12,7 @@ import io.bucketeer.sdk.android.internal.ClockImpl
 import io.bucketeer.sdk.android.internal.Constants
 import io.bucketeer.sdk.android.internal.IdGenerator
 import io.bucketeer.sdk.android.internal.IdGeneratorImpl
+import io.bucketeer.sdk.android.internal.database.OpenHelperCallback
 import io.bucketeer.sdk.android.internal.database.createDatabase
 import io.bucketeer.sdk.android.internal.evaluation.db.EvaluationDao
 import io.bucketeer.sdk.android.internal.evaluation.db.EvaluationDaoImpl
@@ -32,6 +33,7 @@ internal open class DataModule(
   application: Application,
   user: User,
   val config: BKTConfig,
+  val inMemoryDB: Boolean = false,
 ) {
 
   open val clock: Clock by lazy { ClockImpl() }
@@ -50,7 +52,10 @@ internal open class DataModule(
   }
 
   private val sqliteOpenHelper: SupportSQLiteOpenHelper by lazy {
-    createDatabase(application)
+    createDatabase(
+      context = application,
+      fileName = if (inMemoryDB) null else OpenHelperCallback.FILE_NAME,
+    )
   }
 
   internal val evaluationDao: EvaluationDao by lazy {
