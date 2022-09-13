@@ -102,14 +102,6 @@ class BKTClientImplTest {
 
     Thread.sleep(100)
 
-    val memoryEvents = client.component.eventInteractor.events.get()
-    assertThat(memoryEvents).hasSize(2)
-    assertGetEvaluationLatencyMetricsEvent(memoryEvents[0], mapOf("tag" to config.featureTag))
-    assertGetEvaluationSizeMetricsEvent(
-      memoryEvents[1],
-      MetricsEventData.GetEvaluationSizeMetricsEvent(mapOf("tag" to config.featureTag), 734),
-    )
-
     val dbEvents = client.component.dataModule.eventDao.getEvents()
     assertThat(dbEvents).hasSize(2)
     assertGetEvaluationLatencyMetricsEvent(dbEvents[0], mapOf("tag" to config.featureTag))
@@ -161,12 +153,6 @@ class BKTClientImplTest {
     Thread.sleep(100)
 
     // timeout event should be saved
-    val memoryEvents = client.component.eventInteractor.events.get()
-    assertTimeoutErrorCountMetricsEvent(
-      memoryEvents[0],
-      MetricsEventData.TimeoutErrorCountMetricsEvent(config.featureTag),
-    )
-
     val dbEvents = client.component.dataModule.eventDao.getEvents()
     assertThat(dbEvents).hasSize(1)
     assertTimeoutErrorCountMetricsEvent(

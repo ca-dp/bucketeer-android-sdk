@@ -136,7 +136,6 @@ internal class BKTClientImpl(
 
   private fun refreshCache() {
     component.evaluationInteractor.refreshCache(component.userHolder.userId)
-    component.eventInteractor.refreshCache()
   }
 
   internal fun initializeInternal(timeoutMillis: Long): Future<BKTException?> {

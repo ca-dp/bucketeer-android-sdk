@@ -320,7 +320,7 @@ class EventInteractorTest {
     interactor.trackGoalEvent("feature_tag_value", user1, "goal_id_value", 0.5)
     interactor.trackGoalEvent("feature_tag_value", user1, "goal_id_value2", 0.4)
 
-    assertThat(interactor.events.get()).hasSize(4)
+    assertThat(component.dataModule.eventDao.getEvents()).hasSize(4)
 
     val result = interactor.sendEvents(force = false)
 
@@ -382,10 +382,10 @@ class EventInteractorTest {
     require(result is SendEventsResult.Success)
     assertThat(result.sent).isTrue()
 
-    assertThat(interactor.events.get()).hasSize(1)
-    assertThat(component.dataModule.eventDao.getEvents()).hasSize(1)
+    val actualEvents = component.dataModule.eventDao.getEvents()
+    assertThat(actualEvents).hasSize(1)
 
-    val eventData = interactor.events.get().first().event as EventData.GoalEvent
+    val eventData = actualEvents.first().event as EventData.GoalEvent
     assertThat(eventData.goal_id).isEqualTo("goal_id_value2")
     assertThat(eventData.value).isEqualTo(0.4)
   }
@@ -405,7 +405,6 @@ class EventInteractorTest {
     interactor.trackFetchEvaluationsSuccess("feature_tag_value", 1000, 723)
     interactor.trackGoalEvent("feature_tag_value", user1, "goal_id_value", 0.5)
 
-    assertThat(interactor.events.get()).hasSize(3)
     assertThat(component.dataModule.eventDao.getEvents()).hasSize(3)
 
     val result = interactor.sendEvents(force = false)
@@ -415,7 +414,6 @@ class EventInteractorTest {
     require(result is SendEventsResult.Failure)
     assertThat(result.error).isInstanceOf(BKTException.BadRequestException::class.java)
 
-    assertThat(interactor.events.get()).hasSize(3)
     assertThat(component.dataModule.eventDao.getEvents()).hasSize(3)
   }
 
@@ -431,7 +429,7 @@ class EventInteractorTest {
         ),
     )
 
-    assertThat(interactor.events.get()).isEmpty()
+    assertThat(component.dataModule.eventDao.getEvents()).isEmpty()
 
     val result = interactor.sendEvents(force = false)
 
@@ -440,7 +438,7 @@ class EventInteractorTest {
 
     assertThat(server.requestCount).isEqualTo(0)
 
-    assertThat(interactor.events.get()).isEmpty()
+    assertThat(component.dataModule.eventDao.getEvents()).isEmpty()
   }
 
   @Test
@@ -457,7 +455,7 @@ class EventInteractorTest {
 
     interactor.trackFetchEvaluationsSuccess("feature_tag_value", 1000, 723)
 
-    assertThat(interactor.events.get()).hasSize(2)
+    assertThat(component.dataModule.eventDao.getEvents()).hasSize(2)
 
     val result = interactor.sendEvents(force = false)
 
@@ -466,7 +464,7 @@ class EventInteractorTest {
 
     assertThat(server.requestCount).isEqualTo(0)
 
-    assertThat(interactor.events.get()).hasSize(2)
+    assertThat(component.dataModule.eventDao.getEvents()).hasSize(2)
   }
 
   @Test
@@ -529,7 +527,6 @@ class EventInteractorTest {
       ),
     )
 
-    assertThat(interactor.events.get()).isEmpty()
     assertThat(component.dataModule.eventDao.getEvents()).isEmpty()
   }
 
@@ -556,7 +553,7 @@ class EventInteractorTest {
         ),
     )
 
-    assertThat(interactor.events.get()).hasSize(4)
+    assertThat(component.dataModule.eventDao.getEvents()).hasSize(4)
 
     interactor.sendEvents(force = false)
 
@@ -615,11 +612,11 @@ class EventInteractorTest {
       ),
     )
 
-    assertThat(interactor.events.get()).hasSize(2)
-    assertThat(component.dataModule.eventDao.getEvents()).hasSize(2)
+    val actualEvents = component.dataModule.eventDao.getEvents()
+    assertThat(actualEvents).hasSize(2)
 
     // retriable evaluation shouldn't be deleted
-    assertThat(interactor.events.get()).isEqualTo(
+    assertThat(actualEvents).isEqualTo(
       listOf(
         Event(
           id = idGenerator.calls[0],
@@ -650,47 +647,6 @@ class EventInteractorTest {
         ),
       ),
     )
-  }
-
-  @Test
-  fun refreshCache() {
-    component.dataModule.eventDao.addEvents(
-      listOf(
-        Event(
-          id = idGenerator.newId(),
-          type = EventType.METRICS,
-          event = EventData.MetricsEvent(
-            timestamp = clock.currentTimeSeconds(),
-            type = MetricsEventType.GET_EVALUATION_LATENCY,
-            event = MetricsEventData.GetEvaluationLatencyMetricsEvent(
-              labels = mapOf(
-                "tag" to "feature_tag_value",
-              ),
-              duration = Duration(millis = 1000),
-            ),
-          ),
-        ),
-        Event(
-          id = idGenerator.newId(),
-          type = EventType.GOAL,
-          event = EventData.GoalEvent(
-            timestamp = clock.currentTimeSeconds(),
-            goal_id = "goal_id_value2",
-            user_id = user1.id,
-            value = 0.4,
-            user = user1,
-            tag = "feature_tag_value",
-            source_id = SourceID.ANDROID,
-          ),
-        ),
-      ),
-    )
-
-    assertThat(interactor.events.get()).isEmpty()
-
-    interactor.refreshCache()
-
-    assertThat(interactor.events.get()).hasSize(2)
   }
 }
 

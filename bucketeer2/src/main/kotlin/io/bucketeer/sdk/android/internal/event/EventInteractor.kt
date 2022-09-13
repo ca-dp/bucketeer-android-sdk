@@ -1,6 +1,5 @@
 package io.bucketeer.sdk.android.internal.event
 
-import androidx.annotation.VisibleForTesting
 import io.bucketeer.sdk.android.BKTException
 import io.bucketeer.sdk.android.internal.Clock
 import io.bucketeer.sdk.android.internal.IdGenerator
@@ -11,7 +10,6 @@ import io.bucketeer.sdk.android.internal.model.Event
 import io.bucketeer.sdk.android.internal.model.User
 import io.bucketeer.sdk.android.internal.remote.ApiClient
 import io.bucketeer.sdk.android.internal.remote.RegisterEventsResult
-import java.util.concurrent.atomic.AtomicReference
 
 internal class EventInteractor(
   private val eventsMaxBatchQueueCount: Int,
@@ -20,9 +18,6 @@ internal class EventInteractor(
   private val clock: Clock,
   private val idGenerator: IdGenerator,
 ) {
-
-  @VisibleForTesting
-  internal val events: AtomicReference<List<Event>> = AtomicReference(emptyList())
 
   private var eventUpdateListener: EventUpdateListener? = null
 
@@ -90,7 +85,7 @@ internal class EventInteractor(
   }
 
   fun sendEvents(force: Boolean = false): SendEventsResult {
-    val current = events.get()
+    val current = eventDao.getEvents()
 
     if (current.isEmpty()) {
       logd { "no events to register" }
@@ -130,13 +125,8 @@ internal class EventInteractor(
     }
   }
 
-  fun refreshCache() {
-    events.set(eventDao.getEvents())
-  }
-
   private fun updateEventsAndNotify() {
-    refreshCache()
-    eventUpdateListener?.onUpdate(this.events.get())
+    eventUpdateListener?.onUpdate(eventDao.getEvents())
   }
 
   fun interface EventUpdateListener {
