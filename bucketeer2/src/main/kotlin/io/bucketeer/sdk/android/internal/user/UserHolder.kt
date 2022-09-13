@@ -3,7 +3,7 @@ package io.bucketeer.sdk.android.internal.user
 import io.bucketeer.sdk.android.BKTUser
 import io.bucketeer.sdk.android.internal.model.User
 
-class UserHolder(
+internal class UserHolder(
   private var user: User,
 ) {
   val userId: String = user.id
