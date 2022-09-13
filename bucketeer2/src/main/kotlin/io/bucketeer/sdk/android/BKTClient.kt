@@ -1,6 +1,8 @@
 package io.bucketeer.sdk.android
 
 import android.content.Context
+import androidx.annotation.MainThread
+import io.bucketeer.sdk.android.internal.LoggerHolder
 import io.bucketeer.sdk.android.internal.logw
 import io.bucketeer.sdk.android.internal.util.Futures
 import io.bucketeer.sdk.android.internal.util.requireNotNull
@@ -42,7 +44,7 @@ interface BKTClient {
       }
     }
 
-    @Suppress("unused")
+    @MainThread
     fun initialize(
       context: Context,
       config: BKTConfig,
@@ -53,6 +55,10 @@ interface BKTClient {
         if (instance != null) {
           logw { "BKTClient is already initialized. not sure if initial fetch has been finished" }
           return Futures.success(null)
+        }
+
+        if (config.logger != null) {
+          LoggerHolder.addLogger(config.logger)
         }
 
         val client = BKTClientImpl(context, config, user)
