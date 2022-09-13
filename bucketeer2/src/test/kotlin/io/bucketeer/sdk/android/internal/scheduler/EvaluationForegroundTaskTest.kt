@@ -24,13 +24,13 @@ import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 
 @RunWith(RobolectricTestRunner::class)
-class EvaluationForegroundSchedulerTest {
+class EvaluationForegroundTaskTest {
   private lateinit var server: MockWebServer
 
   private lateinit var component: ComponentImpl
   private lateinit var moshi: Moshi
   private lateinit var executor: ScheduledExecutorService
-  private lateinit var scheduler: EvaluationForegroundScheduler
+  private lateinit var task: EvaluationForegroundTask
 
   @Before
   fun setup() {
@@ -55,12 +55,12 @@ class EvaluationForegroundSchedulerTest {
 
     executor = Executors.newSingleThreadScheduledExecutor()
 
-    scheduler = EvaluationForegroundScheduler(component, executor)
+    task = EvaluationForegroundTask(component, executor)
   }
 
   @After
   fun tearDown() {
-    scheduler.stop()
+    task.stop()
     server.shutdown()
     executor.shutdownNow()
   }
@@ -83,7 +83,7 @@ class EvaluationForegroundSchedulerTest {
         ),
     )
 
-    scheduler.start()
+    task.start()
     assertThat(server.requestCount).isEqualTo(0)
 
     val (time, _) = measureTimeMillisWithResult { server.takeRequest() }
@@ -110,8 +110,8 @@ class EvaluationForegroundSchedulerTest {
         ),
     )
 
-    scheduler.start()
-    scheduler.stop()
+    task.start()
+    task.stop()
 
     val request = server.takeRequest(2, TimeUnit.SECONDS)
     assertThat(request).isNull()

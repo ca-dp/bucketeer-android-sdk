@@ -11,8 +11,8 @@ internal class TaskScheduler(
 ) : DefaultLifecycleObserver {
 
   private val foregroundSchedulers: List<ScheduledTask> = listOf(
-    EvaluationForegroundScheduler(component, executor),
-    EventForegroundScheduler(component, executor),
+    EvaluationForegroundTask(component, executor),
+    EventForegroundTask(component, executor),
   )
 
   // app start or back to foreground

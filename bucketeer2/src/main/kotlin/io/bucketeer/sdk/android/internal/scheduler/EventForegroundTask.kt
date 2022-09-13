@@ -7,10 +7,7 @@ import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
 
-/**
- * use ExecutorService
- */
-internal class EventForegroundScheduler(
+internal class EventForegroundTask(
   private val component: Component,
   private val executor: ScheduledExecutorService,
 ) : ScheduledTask {

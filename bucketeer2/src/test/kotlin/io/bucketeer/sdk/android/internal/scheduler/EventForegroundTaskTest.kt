@@ -27,13 +27,13 @@ import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 
 @RunWith(RobolectricTestRunner::class)
-class EventForegroundSchedulerTest {
+class EventForegroundTaskTest {
   private lateinit var server: MockWebServer
 
   private lateinit var component: ComponentImpl
   private lateinit var moshi: Moshi
   private lateinit var executor: ScheduledExecutorService
-  private lateinit var scheduler: EventForegroundScheduler
+  private lateinit var task: EventForegroundTask
 
   @Before
   fun setup() {
@@ -58,12 +58,12 @@ class EventForegroundSchedulerTest {
 
     executor = Executors.newSingleThreadScheduledExecutor()
 
-    scheduler = EventForegroundScheduler(component, executor)
+    task = EventForegroundTask(component, executor)
   }
 
   @After
   fun tearDown() {
-    scheduler.stop()
+    task.stop()
     server.shutdown()
     executor.shutdownNow()
   }
@@ -80,7 +80,7 @@ class EventForegroundSchedulerTest {
         ),
     )
 
-    scheduler.start()
+    task.start()
 
     assertThat(server.requestCount).isEqualTo(0)
 
@@ -114,8 +114,8 @@ class EventForegroundSchedulerTest {
         ),
     )
 
-    scheduler.start()
-    assertThat(scheduler.isStarted).isTrue()
+    task.start()
+    assertThat(task.isStarted).isTrue()
 
     component.eventInteractor.trackEvaluationEvent("feature_tag_value", user1, evaluation1)
     component.eventInteractor.trackEvaluationEvent("feature_tag_value", user1, evaluation2)
@@ -160,8 +160,8 @@ class EventForegroundSchedulerTest {
         ),
     )
 
-    scheduler.start()
-    scheduler.stop()
+    task.start()
+    task.stop()
 
     val request = server.takeRequest(2, TimeUnit.SECONDS)
     assertThat(request).isNull()

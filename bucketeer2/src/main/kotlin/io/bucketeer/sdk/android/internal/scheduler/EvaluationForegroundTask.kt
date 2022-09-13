@@ -6,7 +6,7 @@ import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
 
-internal class EvaluationForegroundScheduler(
+internal class EvaluationForegroundTask(
   private val component: Component,
   private val executor: ScheduledExecutorService,
 ) : ScheduledTask {
