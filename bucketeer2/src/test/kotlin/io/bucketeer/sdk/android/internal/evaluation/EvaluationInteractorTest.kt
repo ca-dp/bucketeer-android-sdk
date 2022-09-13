@@ -4,7 +4,7 @@ import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
 import com.squareup.moshi.Moshi
 import io.bucketeer.sdk.android.BKTConfig
-import io.bucketeer.sdk.android.internal.di.Component
+import io.bucketeer.sdk.android.internal.di.ComponentImpl
 import io.bucketeer.sdk.android.internal.di.DataModule
 import io.bucketeer.sdk.android.internal.di.InteractorModule
 import io.bucketeer.sdk.android.internal.model.request.GetEvaluationsRequest
@@ -29,7 +29,7 @@ import org.robolectric.RobolectricTestRunner
 class EvaluationInteractorTest {
   private lateinit var server: MockWebServer
 
-  private lateinit var component: Component
+  private lateinit var component: ComponentImpl
   private lateinit var moshi: Moshi
 
   private lateinit var interactor: EvaluationInteractor
@@ -38,7 +38,7 @@ class EvaluationInteractorTest {
   fun setup() {
     server = MockWebServer()
 
-    component = Component(
+    component = ComponentImpl(
       dataModule = DataModule(
         application = ApplicationProvider.getApplicationContext(),
         user = user1,

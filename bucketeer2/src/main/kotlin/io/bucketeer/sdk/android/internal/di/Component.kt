@@ -1,18 +1,29 @@
 package io.bucketeer.sdk.android.internal.di
 
+import io.bucketeer.sdk.android.BKTConfig
 import io.bucketeer.sdk.android.internal.evaluation.EvaluationInteractor
 import io.bucketeer.sdk.android.internal.event.EventInteractor
 import io.bucketeer.sdk.android.internal.user.UserHolder
 
-internal class Component(
+internal interface Component {
+  val config: BKTConfig
+  val userHolder: UserHolder
+  val evaluationInteractor: EvaluationInteractor
+  val eventInteractor: EventInteractor
+}
+
+internal class ComponentImpl(
   val dataModule: DataModule,
   val interactorModule: InteractorModule,
-) {
+) : Component {
 
-  val userHolder: UserHolder
+  override val config: BKTConfig
+    get() = dataModule.config
+
+  override val userHolder: UserHolder
     get() = dataModule.userHolder
 
-  val evaluationInteractor: EvaluationInteractor by lazy {
+  override val evaluationInteractor: EvaluationInteractor by lazy {
     interactorModule.evaluationInteractor(
       apiClient = dataModule.apiClient,
       evaluationDao = dataModule.evaluationDao,
@@ -20,7 +31,7 @@ internal class Component(
     )
   }
 
-  val eventInteractor: EventInteractor by lazy {
+  override val eventInteractor: EventInteractor by lazy {
     interactorModule.eventInteractor(
       eventsMaxBatchQueueCount = dataModule.config.eventsMaxBatchQueueCount,
       apiClient = dataModule.apiClient,

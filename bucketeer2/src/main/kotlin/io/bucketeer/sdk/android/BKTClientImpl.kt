@@ -3,6 +3,7 @@ package io.bucketeer.sdk.android
 import android.app.Application
 import android.content.Context
 import io.bucketeer.sdk.android.internal.di.Component
+import io.bucketeer.sdk.android.internal.di.ComponentImpl
 import io.bucketeer.sdk.android.internal.di.DataModule
 import io.bucketeer.sdk.android.internal.di.InteractorModule
 import io.bucketeer.sdk.android.internal.evaluation.getVariationValue
@@ -21,7 +22,7 @@ internal class BKTClientImpl(
   private val config: BKTConfig,
   user: BKTUser,
   private val executor: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor(),
-  internal val component: Component = Component(
+  internal val component: Component = ComponentImpl(
     dataModule = DataModule(
       application = context.applicationContext as Application,
       user = user.toUser(),

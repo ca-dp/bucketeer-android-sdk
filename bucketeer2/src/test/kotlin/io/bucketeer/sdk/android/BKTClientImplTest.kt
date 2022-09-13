@@ -3,6 +3,7 @@ package io.bucketeer.sdk.android
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
 import com.squareup.moshi.Moshi
+import io.bucketeer.sdk.android.internal.di.ComponentImpl
 import io.bucketeer.sdk.android.internal.di.DataModule
 import io.bucketeer.sdk.android.internal.model.Evaluation
 import io.bucketeer.sdk.android.internal.model.Event
@@ -94,15 +95,15 @@ class BKTClientImplTest {
 
     val client = BKTClient.getInstance() as BKTClientImpl
 
-    assertThat(client.component.evaluationInteractor.evaluations)
+    assertThat(client.componentImpl.evaluationInteractor.evaluations)
       .isEqualTo(mapOf(user1.id to user1Evaluations.evaluations))
 
-    assertThat(client.component.dataModule.evaluationDao.get(user1.id))
+    assertThat(client.componentImpl.dataModule.evaluationDao.get(user1.id))
       .isEqualTo(user1Evaluations.evaluations)
 
     Thread.sleep(100)
 
-    val dbEvents = client.component.dataModule.eventDao.getEvents()
+    val dbEvents = client.componentImpl.dataModule.eventDao.getEvents()
     assertThat(dbEvents).hasSize(2)
     assertGetEvaluationLatencyMetricsEvent(dbEvents[0], mapOf("tag" to config.featureTag))
     assertGetEvaluationSizeMetricsEvent(
@@ -146,14 +147,14 @@ class BKTClientImplTest {
 
     val client = BKTClient.getInstance() as BKTClientImpl
 
-    assertThat(client.component.evaluationInteractor.evaluations)
+    assertThat(client.componentImpl.evaluationInteractor.evaluations)
       .isEqualTo(mapOf(user1.id to emptyList<Evaluation>()))
-    assertThat(client.component.dataModule.evaluationDao.get(user1.id)).isEmpty()
+    assertThat(client.componentImpl.dataModule.evaluationDao.get(user1.id)).isEmpty()
 
     Thread.sleep(100)
 
     // timeout event should be saved
-    val dbEvents = client.component.dataModule.eventDao.getEvents()
+    val dbEvents = client.componentImpl.dataModule.eventDao.getEvents()
     assertThat(dbEvents).hasSize(1)
     assertTimeoutErrorCountMetricsEvent(
       dbEvents[0],
@@ -397,7 +398,7 @@ class BKTClientImplTest {
 
     Thread.sleep(100)
 
-    val actualEvents = client.component.dataModule.eventDao.getEvents()
+    val actualEvents = client.componentImpl.dataModule.eventDao.getEvents()
 
     assertThat(actualEvents).hasSize(3)
     val goalEvent = actualEvents.last()
@@ -536,13 +537,13 @@ class BKTClientImplTest {
 
     assertThat(result).isNull()
 
-    assertThat(client.component.evaluationInteractor.currentEvaluationsId)
+    assertThat(client.componentImpl.evaluationInteractor.currentEvaluationsId)
       .isEqualTo("user_evaluations_id_value_updated")
 
-    assertThat(client.component.dataModule.evaluationDao.get(user1.id))
+    assertThat(client.componentImpl.dataModule.evaluationDao.get(user1.id))
       .isEqualTo(listOf(updatedEvaluation1))
 
-    assertThat(client.component.dataModule.eventDao.getEvents()).hasSize(4)
+    assertThat(client.componentImpl.dataModule.eventDao.getEvents()).hasSize(4)
   }
 
   @Test
@@ -586,12 +587,12 @@ class BKTClientImplTest {
 
     assertThat(result).isInstanceOf(BKTException.ApiServerException::class.java)
 
-    assertThat(client.component.evaluationInteractor.currentEvaluationsId)
+    assertThat(client.componentImpl.evaluationInteractor.currentEvaluationsId)
       .isEqualTo("user_evaluations_id_value")
 
-    assertThat(client.component.dataModule.evaluationDao.get(user1.id)).hasSize(2)
+    assertThat(client.componentImpl.dataModule.evaluationDao.get(user1.id)).hasSize(2)
 
-    val actualEvents = client.component.dataModule.eventDao.getEvents()
+    val actualEvents = client.componentImpl.dataModule.eventDao.getEvents()
     assertThat(actualEvents).hasSize(3)
 
     val lastEvent = actualEvents.last()
@@ -634,6 +635,9 @@ class BKTClientImplTest {
       .isEqualTo(user1.toBKTUser().copy(attributes = attributes))
   }
 }
+
+private val BKTClient.componentImpl: ComponentImpl
+  get() = (this as BKTClientImpl).component as ComponentImpl
 
 // these assertion methods do not check full-equality, but that should be covered in other tests
 fun assertGetEvaluationLatencyMetricsEvent(actual: Event, expectedLabels: Map<String, String>) {
