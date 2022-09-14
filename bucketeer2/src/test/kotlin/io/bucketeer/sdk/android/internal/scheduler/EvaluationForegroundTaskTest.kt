@@ -4,15 +4,16 @@ import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
 import com.squareup.moshi.Moshi
 import io.bucketeer.sdk.android.BKTConfig
+import io.bucketeer.sdk.android.enqueueResponse
 import io.bucketeer.sdk.android.internal.di.ComponentImpl
 import io.bucketeer.sdk.android.internal.di.DataModule
 import io.bucketeer.sdk.android.internal.di.InteractorModule
+import io.bucketeer.sdk.android.internal.model.response.ErrorResponse
 import io.bucketeer.sdk.android.internal.model.response.GetEvaluationsDataResponse
 import io.bucketeer.sdk.android.internal.model.response.GetEvaluationsResponse
 import io.bucketeer.sdk.android.internal.remote.measureTimeMillisWithResult
 import io.bucketeer.sdk.android.mocks.user1
 import io.bucketeer.sdk.android.mocks.user1Evaluations
-import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
@@ -67,20 +68,14 @@ class EvaluationForegroundTaskTest {
 
   @Test
   fun start() {
-    server.enqueue(
-      MockResponse()
-        .setResponseCode(200)
-        .setBody(
-          moshi.adapter(GetEvaluationsResponse::class.java)
-            .toJson(
-              GetEvaluationsResponse(
-                GetEvaluationsDataResponse(
-                  evaluations = user1Evaluations,
-                  user_evaluations_id = "user_evaluations_id_value",
-                ),
-              ),
-            ),
+    server.enqueueResponse(
+      moshi, 200,
+      GetEvaluationsResponse(
+        GetEvaluationsDataResponse(
+          evaluations = user1Evaluations,
+          user_evaluations_id = "user_evaluations_id_value",
         ),
+      ),
     )
 
     task.start()
@@ -94,20 +89,14 @@ class EvaluationForegroundTaskTest {
 
   @Test
   fun `stop should cancel scheduling`() {
-    server.enqueue(
-      MockResponse()
-        .setResponseCode(200)
-        .setBody(
-          moshi.adapter(GetEvaluationsResponse::class.java)
-            .toJson(
-              GetEvaluationsResponse(
-                GetEvaluationsDataResponse(
-                  evaluations = user1Evaluations,
-                  user_evaluations_id = "user_evaluations_id_value",
-                ),
-              ),
-            ),
+    server.enqueueResponse(
+      moshi, 200,
+      GetEvaluationsResponse(
+        GetEvaluationsDataResponse(
+          evaluations = user1Evaluations,
+          user_evaluations_id = "user_evaluations_id_value",
         ),
+      ),
     )
 
     task.start()
@@ -116,5 +105,108 @@ class EvaluationForegroundTaskTest {
     val request = server.takeRequest(2, TimeUnit.SECONDS)
     assertThat(request).isNull()
     assertThat(server.requestCount).isEqualTo(0)
+  }
+
+  @Test
+  fun `retry - should back to normal interval after maxRetryCount`() {
+    task = EvaluationForegroundTask(
+      component, executor,
+      retryPollingInterval = 800, maxRetryCount = 3,
+    )
+
+    server.enqueueResponse(moshi, 500, ErrorResponse(ErrorResponse.ErrorDetail(500, "500 error")))
+    server.enqueueResponse(moshi, 500, ErrorResponse(ErrorResponse.ErrorDetail(500, "500 error")))
+    server.enqueueResponse(moshi, 500, ErrorResponse(ErrorResponse.ErrorDetail(500, "500 error")))
+    server.enqueueResponse(moshi, 500, ErrorResponse(ErrorResponse.ErrorDetail(500, "500 error")))
+    server.enqueueResponse(moshi, 500, ErrorResponse(ErrorResponse.ErrorDetail(500, "500 error")))
+    server.enqueueResponse(
+      moshi, 500,
+      GetEvaluationsResponse(
+        GetEvaluationsDataResponse(
+          evaluations = user1Evaluations,
+          user_evaluations_id = "user_evaluations_id_value",
+        ),
+      ),
+    )
+
+
+    task.start()
+
+    // initial request
+    val (time1, _) = measureTimeMillisWithResult { server.takeRequest() }
+
+    assertThat(time1).isGreaterThan(1000)
+
+    // retry request 1
+    val (time2, _) = measureTimeMillisWithResult { server.takeRequest() }
+
+    assertThat(time2).isGreaterThan(800)
+    assertThat(time2).isLessThan(1000)
+
+    // retry request 2
+    val (time3, _) = measureTimeMillisWithResult { server.takeRequest() }
+    assertThat(time3).isGreaterThan(800)
+    assertThat(time3).isLessThan(1000)
+
+    // retry request 3
+    val (time4, _) = measureTimeMillisWithResult { server.takeRequest() }
+    assertThat(time4).isGreaterThan(800)
+    assertThat(time4).isLessThan(1000)
+
+    // back to normal interval after retryMaxCount
+    val (time5, _) = measureTimeMillisWithResult { server.takeRequest() }
+    assertThat(time5).isGreaterThan(1000)
+
+    // and then retry interval again
+    val (time6, _) = measureTimeMillisWithResult { server.takeRequest() }
+    assertThat(time6).isGreaterThan(800)
+    assertThat(time6).isLessThan(1000)
+  }
+
+  @Test
+  fun `retry - should back to normal after successful request`() {
+    task = EvaluationForegroundTask(
+      component, executor,
+      retryPollingInterval = 800, maxRetryCount = 3,
+    )
+
+    server.enqueueResponse(moshi, 500, ErrorResponse(ErrorResponse.ErrorDetail(500, "500 error")))
+    server.enqueueResponse(
+      moshi,
+      200,
+      GetEvaluationsResponse(
+        GetEvaluationsDataResponse(
+          evaluations = user1Evaluations,
+          user_evaluations_id = "user_evaluations_id_value",
+        ),
+      ),
+    )
+    server.enqueueResponse(
+      moshi,
+      200,
+      GetEvaluationsResponse(
+        GetEvaluationsDataResponse(
+          evaluations = user1Evaluations,
+          user_evaluations_id = "user_evaluations_id_value",
+        ),
+      ),
+    )
+
+    task.start()
+
+    // initial request
+    val (time1, _) = measureTimeMillisWithResult { server.takeRequest() }
+
+    assertThat(time1).isGreaterThan(1000)
+
+    // retry request 1
+    val (time2, _) = measureTimeMillisWithResult { server.takeRequest() }
+
+    assertThat(time2).isGreaterThan(800)
+    assertThat(time2).isLessThan(1000)
+
+    // back to normal interval after successful request
+    val (time3, _) = measureTimeMillisWithResult { server.takeRequest() }
+    assertThat(time3).isGreaterThan(1000)
   }
 }

@@ -4,6 +4,7 @@ import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
 import com.squareup.moshi.Moshi
 import io.bucketeer.sdk.android.BKTConfig
+import io.bucketeer.sdk.android.enqueueResponse
 import io.bucketeer.sdk.android.internal.di.ComponentImpl
 import io.bucketeer.sdk.android.internal.di.DataModule
 import io.bucketeer.sdk.android.internal.di.InteractorModule
@@ -15,7 +16,6 @@ import io.bucketeer.sdk.android.internal.remote.measureTimeMillisWithResult
 import io.bucketeer.sdk.android.mocks.evaluation1
 import io.bucketeer.sdk.android.mocks.evaluation2
 import io.bucketeer.sdk.android.mocks.user1
-import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
@@ -70,15 +70,12 @@ class EventForegroundTaskTest {
 
   @Test
   fun start() {
-    server.enqueue(
-      MockResponse()
-        .setResponseCode(200)
-        .setBody(
-          moshi.adapter(RegisterEventsResponse::class.java).toJson(
-            RegisterEventsResponse(RegisterEventsDataResponse(errors = emptyMap())),
-          ),
-        ),
+    server.enqueueResponse(
+      moshi,
+      200,
+      RegisterEventsResponse(RegisterEventsDataResponse(errors = emptyMap())),
     )
+
 
     task.start()
 
@@ -94,24 +91,15 @@ class EventForegroundTaskTest {
 
   @Test
   fun `sending via EventUpdateListener should reschedule`() {
-    server.enqueue(
-      MockResponse()
-        .setResponseCode(200)
-        .setBody(
-          moshi.adapter(RegisterEventsResponse::class.java).toJson(
-            RegisterEventsResponse(RegisterEventsDataResponse(errors = emptyMap())),
-          ),
-        ),
+    server.enqueueResponse(
+      moshi,
+      200,
+      RegisterEventsResponse(RegisterEventsDataResponse(errors = emptyMap())),
     )
-
-    server.enqueue(
-      MockResponse()
-        .setResponseCode(200)
-        .setBody(
-          moshi.adapter(RegisterEventsResponse::class.java).toJson(
-            RegisterEventsResponse(RegisterEventsDataResponse(errors = emptyMap())),
-          ),
-        ),
+    server.enqueueResponse(
+      moshi,
+      200,
+      RegisterEventsResponse(RegisterEventsDataResponse(errors = emptyMap())),
     )
 
     task.start()
@@ -150,15 +138,12 @@ class EventForegroundTaskTest {
 
   @Test
   fun `stop should cancel scheduling`() {
-    server.enqueue(
-      MockResponse()
-        .setResponseCode(200)
-        .setBody(
-          moshi.adapter(RegisterEventsResponse::class.java).toJson(
-            RegisterEventsResponse(RegisterEventsDataResponse(errors = emptyMap())),
-          ),
-        ),
+    server.enqueueResponse(
+      moshi,
+      200,
+      RegisterEventsResponse(RegisterEventsDataResponse(errors = emptyMap())),
     )
+
 
     task.start()
     task.stop()
