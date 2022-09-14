@@ -76,7 +76,6 @@ class EventForegroundTaskTest {
       RegisterEventsResponse(RegisterEventsDataResponse(errors = emptyMap())),
     )
 
-
     task.start()
 
     assertThat(server.requestCount).isEqualTo(0)
@@ -143,7 +142,6 @@ class EventForegroundTaskTest {
       200,
       RegisterEventsResponse(RegisterEventsDataResponse(errors = emptyMap())),
     )
-
 
     task.start()
     task.stop()

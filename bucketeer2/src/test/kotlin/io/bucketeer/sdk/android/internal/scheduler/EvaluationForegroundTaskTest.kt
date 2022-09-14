@@ -69,7 +69,8 @@ class EvaluationForegroundTaskTest {
   @Test
   fun start() {
     server.enqueueResponse(
-      moshi, 200,
+      moshi,
+      200,
       GetEvaluationsResponse(
         GetEvaluationsDataResponse(
           evaluations = user1Evaluations,
@@ -90,7 +91,8 @@ class EvaluationForegroundTaskTest {
   @Test
   fun `stop should cancel scheduling`() {
     server.enqueueResponse(
-      moshi, 200,
+      moshi,
+      200,
       GetEvaluationsResponse(
         GetEvaluationsDataResponse(
           evaluations = user1Evaluations,
@@ -110,8 +112,10 @@ class EvaluationForegroundTaskTest {
   @Test
   fun `retry - should back to normal interval after maxRetryCount`() {
     task = EvaluationForegroundTask(
-      component, executor,
-      retryPollingInterval = 800, maxRetryCount = 3,
+      component,
+      executor,
+      retryPollingInterval = 800,
+      maxRetryCount = 3,
     )
 
     server.enqueueResponse(moshi, 500, ErrorResponse(ErrorResponse.ErrorDetail(500, "500 error")))
@@ -120,7 +124,8 @@ class EvaluationForegroundTaskTest {
     server.enqueueResponse(moshi, 500, ErrorResponse(ErrorResponse.ErrorDetail(500, "500 error")))
     server.enqueueResponse(moshi, 500, ErrorResponse(ErrorResponse.ErrorDetail(500, "500 error")))
     server.enqueueResponse(
-      moshi, 500,
+      moshi,
+      500,
       GetEvaluationsResponse(
         GetEvaluationsDataResponse(
           evaluations = user1Evaluations,
@@ -128,7 +133,6 @@ class EvaluationForegroundTaskTest {
         ),
       ),
     )
-
 
     task.start()
 
@@ -166,8 +170,10 @@ class EvaluationForegroundTaskTest {
   @Test
   fun `retry - should back to normal after successful request`() {
     task = EvaluationForegroundTask(
-      component, executor,
-      retryPollingInterval = 800, maxRetryCount = 3,
+      component,
+      executor,
+      retryPollingInterval = 800,
+      maxRetryCount = 3,
     )
 
     server.enqueueResponse(moshi, 500, ErrorResponse(ErrorResponse.ErrorDetail(500, "500 error")))
