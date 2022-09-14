@@ -86,7 +86,7 @@ class EventForegroundTaskTest {
     val (time, _) = measureTimeMillisWithResult { server.takeRequest() }
 
     assertThat(server.requestCount).isEqualTo(1)
-    assertThat(time).isGreaterThan(1000)
+    assertThat(time).isAtLeast(1000)
   }
 
   @Test
@@ -133,7 +133,7 @@ class EventForegroundTaskTest {
         .fromJson(request2.body.readString(Charsets.UTF_8)),
     )
     assertThat(requestBody2.events).hasSize(1)
-    assertThat(time2).isGreaterThan(1000)
+    assertThat(time2).isAtLeast(1000)
   }
 
   @Test
