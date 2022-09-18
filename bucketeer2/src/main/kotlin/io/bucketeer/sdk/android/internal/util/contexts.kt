@@ -1,3 +1,5 @@
+@file:Suppress("ktlint:filename")
+
 package io.bucketeer.sdk.android.internal.util
 
 import android.app.AlarmManager

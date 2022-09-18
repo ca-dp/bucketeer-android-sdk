@@ -34,7 +34,7 @@ class EventBackgroundTaskTest {
     config = createTestBKTConfig(
       apiKey = "api_key_value",
       endpoint = server.url("").toString(),
-      featureTag = "feature_tag_value"
+      featureTag = "feature_tag_value",
     )
 
     context = ApplicationProvider.getApplicationContext()
