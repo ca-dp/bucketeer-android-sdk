@@ -108,7 +108,7 @@ internal class ApiClientImplTest {
     assertThat(result).isInstanceOf(GetEvaluationsResult.Success::class.java)
     val success = result as GetEvaluationsResult.Success
     assertThat(success.value).isEqualTo(expected)
-    assertThat(success.millis).isGreaterThan(TimeUnit.SECONDS.toMillis(1))
+    assertThat(success.seconds).isAtLeast(1)
     assertThat(success.sizeByte).isEqualTo(727)
     assertThat(success.featureTag).isEqualTo("feature_tag_value")
   }

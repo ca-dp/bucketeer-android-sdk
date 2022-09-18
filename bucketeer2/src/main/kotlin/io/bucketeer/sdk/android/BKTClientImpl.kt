@@ -177,7 +177,7 @@ internal class BKTClientImpl(
           is GetEvaluationsResult.Success -> {
             interactor.trackFetchEvaluationsSuccess(
               featureTag = result.featureTag,
-              mills = result.millis,
+              seconds = result.seconds,
               sizeByte = result.sizeByte,
             )
           }

@@ -2,7 +2,6 @@ package io.bucketeer.sdk.android.internal.event
 
 import io.bucketeer.sdk.android.internal.Clock
 import io.bucketeer.sdk.android.internal.IdGenerator
-import io.bucketeer.sdk.android.internal.model.Duration
 import io.bucketeer.sdk.android.internal.model.Evaluation
 import io.bucketeer.sdk.android.internal.model.Event
 import io.bucketeer.sdk.android.internal.model.EventData
@@ -88,7 +87,7 @@ internal fun newGoalEvent(
 internal fun newGetEvaluationLatencyMetricsEvent(
   clock: Clock,
   idGenerator: IdGenerator,
-  mills: Long,
+  seconds: Long,
   featureTag: String,
 ): Event {
   return Event(
@@ -101,7 +100,7 @@ internal fun newGetEvaluationLatencyMetricsEvent(
         labels = mapOf(
           "tag" to featureTag,
         ),
-        duration = Duration(millis = mills),
+        duration = seconds,
       ),
     ),
   )

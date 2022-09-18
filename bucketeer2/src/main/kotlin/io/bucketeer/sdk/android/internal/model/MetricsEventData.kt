@@ -7,7 +7,8 @@ sealed class MetricsEventData {
   @JsonClass(generateAdapter = true)
   data class GetEvaluationLatencyMetricsEvent(
     val labels: Map<String, String> = emptyMap(),
-    val duration: Duration,
+    // in seconds
+    val duration: Long,
   ) : MetricsEventData()
 
   @JsonClass(generateAdapter = true)

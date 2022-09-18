@@ -5,7 +5,6 @@ import com.google.testing.junit.testparameterinjector.TestParameter
 import com.google.testing.junit.testparameterinjector.TestParameterInjector
 import com.squareup.moshi.JsonAdapter
 import io.bucketeer.sdk.android.internal.di.DataModule
-import io.bucketeer.sdk.android.internal.model.Duration
 import io.bucketeer.sdk.android.internal.model.EventData
 import io.bucketeer.sdk.android.internal.model.MetricsEventData
 import io.bucketeer.sdk.android.internal.model.MetricsEventType
@@ -28,10 +27,7 @@ class MetricsEventAdapterFactoryTest {
         |      "key1": "value1",
         |      "key2": "value2"
         |    },
-        |    "duration": {
-        |      "seconds": 5,
-        |      "nanos": 32000000
-        |    }
+        |    "duration": 5
         |  }
         |}
       """.trimMargin(),
@@ -43,7 +39,7 @@ class MetricsEventAdapterFactoryTest {
             "key1" to "value1",
             "key2" to "value2",
           ),
-          duration = Duration(5, 32000000),
+          duration = 5,
         ),
       ),
     ),

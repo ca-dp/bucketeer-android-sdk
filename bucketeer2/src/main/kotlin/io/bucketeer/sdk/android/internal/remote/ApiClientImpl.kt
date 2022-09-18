@@ -12,7 +12,7 @@ import io.bucketeer.sdk.android.internal.model.response.GetEvaluationsResponse
 import io.bucketeer.sdk.android.internal.model.response.RegisterEventsResponse
 import io.bucketeer.sdk.android.internal.util.requireNotNull
 import okhttp3.HttpUrl.Companion.toHttpUrl
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
@@ -92,7 +92,7 @@ internal class ApiClientImpl(
 
       GetEvaluationsResult.Success(
         value = response,
-        millis = millis,
+        seconds = TimeUnit.MILLISECONDS.toSeconds(millis),
         sizeByte = contentLength,
         featureTag = featureTag,
       )
@@ -153,7 +153,7 @@ internal class ApiClientImpl(
 
   private inline fun <reified T> T.toJsonRequestBody(): RequestBody {
     return this.toJson()
-      .toRequestBody("application/json".toMediaTypeOrNull())
+      .toRequestBody("application/json".toMediaType())
   }
 
   private fun Request.Builder.applyHeaders(): Request.Builder {

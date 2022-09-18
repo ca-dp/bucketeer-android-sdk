@@ -13,7 +13,6 @@ import io.bucketeer.sdk.android.internal.IdGeneratorImpl
 import io.bucketeer.sdk.android.internal.di.ComponentImpl
 import io.bucketeer.sdk.android.internal.di.DataModule
 import io.bucketeer.sdk.android.internal.di.InteractorModule
-import io.bucketeer.sdk.android.internal.model.Duration
 import io.bucketeer.sdk.android.internal.model.Event
 import io.bucketeer.sdk.android.internal.model.EventData
 import io.bucketeer.sdk.android.internal.model.EventType
@@ -189,7 +188,7 @@ class EventInteractorTest {
 
     interactor.setEventUpdateListener(listener)
 
-    interactor.trackFetchEvaluationsSuccess("feature_tag_value", 1000, 723)
+    interactor.trackFetchEvaluationsSuccess("feature_tag_value", 1, 723)
 
     assertThat(listener.calls).hasSize(1)
     assertThat(listener.calls[0]).hasSize(2)
@@ -210,7 +209,7 @@ class EventInteractorTest {
             labels = mapOf(
               "tag" to "feature_tag_value",
             ),
-            duration = Duration(millis = 1000),
+            duration = 1,
           ),
         ),
       ),
@@ -316,7 +315,7 @@ class EventInteractorTest {
         ),
     )
 
-    interactor.trackFetchEvaluationsSuccess("feature_tag_value", 1000, 723)
+    interactor.trackFetchEvaluationsSuccess("feature_tag_value", 1, 723)
     interactor.trackGoalEvent("feature_tag_value", user1, "goal_id_value", 0.5)
     interactor.trackGoalEvent("feature_tag_value", user1, "goal_id_value2", 0.4)
 
@@ -344,7 +343,7 @@ class EventInteractorTest {
                 labels = mapOf(
                   "tag" to "feature_tag_value",
                 ),
-                duration = Duration(millis = 1000),
+                duration = 1,
               ),
             ),
           ),
@@ -402,7 +401,7 @@ class EventInteractorTest {
         ),
     )
 
-    interactor.trackFetchEvaluationsSuccess("feature_tag_value", 1000, 723)
+    interactor.trackFetchEvaluationsSuccess("feature_tag_value", 1, 723)
     interactor.trackGoalEvent("feature_tag_value", user1, "goal_id_value", 0.5)
 
     assertThat(component.dataModule.eventDao.getEvents()).hasSize(3)
@@ -453,7 +452,7 @@ class EventInteractorTest {
         ),
     )
 
-    interactor.trackFetchEvaluationsSuccess("feature_tag_value", 1000, 723)
+    interactor.trackFetchEvaluationsSuccess("feature_tag_value", 1, 723)
 
     assertThat(component.dataModule.eventDao.getEvents()).hasSize(2)
 
@@ -479,7 +478,7 @@ class EventInteractorTest {
         ),
     )
 
-    interactor.trackFetchEvaluationsSuccess("feature_tag_value", 1000, 723)
+    interactor.trackFetchEvaluationsSuccess("feature_tag_value", 1, 723)
 
     val result = interactor.sendEvents(force = true)
 
@@ -505,7 +504,7 @@ class EventInteractorTest {
                 labels = mapOf(
                   "tag" to "feature_tag_value",
                 ),
-                duration = Duration(millis = 1000),
+                duration = 1,
               ),
             ),
           ),
@@ -532,7 +531,7 @@ class EventInteractorTest {
 
   @Test
   fun `sendEvents - retriable error`() {
-    interactor.trackFetchEvaluationsSuccess("feature_tag_value", 1000, 723)
+    interactor.trackFetchEvaluationsSuccess("feature_tag_value", 1, 723)
     interactor.trackGoalEvent("feature_tag_value", user1, "goal_id_value", 0.5)
     interactor.trackGoalEvent("feature_tag_value", user1, "goal_id_value2", 0.4)
 
@@ -577,7 +576,7 @@ class EventInteractorTest {
                 labels = mapOf(
                   "tag" to "feature_tag_value",
                 ),
-                duration = Duration(millis = 1000),
+                duration = 1,
               ),
             ),
           ),
@@ -628,7 +627,7 @@ class EventInteractorTest {
               labels = mapOf(
                 "tag" to "feature_tag_value",
               ),
-              duration = Duration(millis = 1000),
+              duration = 1,
             ),
           ),
         ),

@@ -51,12 +51,12 @@ internal class EventInteractor(
 
   fun trackFetchEvaluationsSuccess(
     featureTag: String,
-    mills: Long,
+    seconds: Long,
     sizeByte: Int,
   ) {
     eventDao.addEvents(
       listOf(
-        newGetEvaluationLatencyMetricsEvent(clock, idGenerator, mills, featureTag),
+        newGetEvaluationLatencyMetricsEvent(clock, idGenerator, seconds, featureTag),
         newGetEvaluationSizeMetricsEvent(clock, idGenerator, sizeByte, featureTag),
       ),
     )
