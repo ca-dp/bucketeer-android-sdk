@@ -79,8 +79,6 @@ dependencies {
   // Google Play Services
   compileOnly libs.googlePlayServices.basement
 
-  implementation 'com.github.mrmike:ok2curl:0.8.0'
-
   testImplementation projects.mocks
   testImplementation libs.okhttp.mockwebserver
   testImplementation libs.junit
