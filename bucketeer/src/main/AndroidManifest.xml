@@ -6,5 +6,8 @@
         <receiver
             android:name="io.bucketeer.sdk.android.internal.scheduler.EvaluationBackgroundTask"
             android:enabled="true" />
+        <receiver
+            android:name="io.bucketeer.sdk.android.internal.scheduler.EventBackgroundTask"
+            android:enabled="true" />
     </application>
 </manifest>
