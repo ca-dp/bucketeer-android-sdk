@@ -41,7 +41,7 @@ android {
 }
 
 dependencies {
-  implementation(project(":bucketeer2"))
+  implementation projects.bucketeer
 
   implementation libs.stetho
   implementation libs.androidx.appcompat

@@ -8,7 +8,6 @@ import com.facebook.stetho.Stetho
 import io.bucketeer.sdk.android.BKTClient
 import io.bucketeer.sdk.android.BKTConfig
 import io.bucketeer.sdk.android.BKTUser
-import io.bucketeer.sdk.android.BuildConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch

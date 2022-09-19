@@ -1,9 +1,12 @@
+import com.vanniktech.maven.publish.AndroidSingleVariantLibrary
+
 plugins {
   alias(libs.plugins.android.library)
   alias(libs.plugins.kotlin.android)
   alias(libs.plugins.ksp)
   alias(libs.plugins.kotlin.dokka)
   alias(libs.plugins.kotlinter)
+  alias(libs.plugins.publish)
 }
 
 def properties = new Properties()
@@ -34,7 +37,6 @@ android {
       buildConfigField("String", "API_URL", "\"${API_URL}\"")
     }
     release {
-      minifyEnabled true
       consumerProguardFiles 'proguard-rules.pro'
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
     }
@@ -91,4 +93,10 @@ dependencies {
   androidTestImplementation libs.androidx.test.ext
   androidTestImplementation libs.truth
   androidTestUtil libs.androidx.test.orchestrator
+}
+
+mavenPublishing {
+  signAllPublications()
+  configure(new AndroidSingleVariantLibrary("release"))
+  pomFromGradleProperties()
 }
