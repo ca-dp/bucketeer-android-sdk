@@ -6,8 +6,8 @@
 
 Install prerequisite tools.
 
-- Android Studio
-- Java
+- Android Studio Chipmunk or later
+- Java 11
 
 Then, you need to create `local.properties`.
 
@@ -64,18 +64,10 @@ Deletes the build directory and assembles all Release builds. (Create `./buckete
 ./gradlew clean :bucketeer:assembleRelease
 ```
 
-Installs and runs the integration tests for debug on connected devices.
-Open Android Emulator, then run the command below.
+Installs and runs the e2e tests for debug on connected devices. Open Android Emulator, then run the command below.
 
 ```
-./gradlew :bucketeer:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.package=jp.bucketeer.sdk.test.integration
-```
-
-Installs and runs the e2e tests for debug on connected devices.
-Open Android Emulator, then run the command below.
-
-```
-./gradlew :bucketeer:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.package=jp.bucketeer.sdk.test.e2e
+./gradlew :bucketeer:connectedCheck
 ```
 
 Publishes SDK to Sonatype repository and releases to Maven Central.

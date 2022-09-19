@@ -1,12 +1,9 @@
-import com.vanniktech.maven.publish.AndroidSingleVariantLibrary
-
 plugins {
   alias(libs.plugins.android.library)
   alias(libs.plugins.kotlin.android)
-  alias(libs.plugins.kotlin.kapt)
-  alias(libs.plugins.protobuf)
-  alias(libs.plugins.kotlin.dokka)
+  alias(libs.plugins.ksp)
   alias(libs.plugins.publish)
+  alias(libs.plugins.kotlin.dokka)
   alias(libs.plugins.kotlinter)
 }
 
@@ -14,20 +11,20 @@ def properties = new Properties()
 properties.load(rootProject.file('local.properties').newDataInputStream())
 
 android {
-  namespace = "jp.bucketeer.sdk"
+  namespace = "io.bucketeer.sdk.android"
 
   compileSdkVersion project.findProperty("android.compileSdkVersion") as int
+
   defaultConfig {
-    def isTest = !gradle.startParameter.taskNames.findAll { it.contains("Test") }.isEmpty()
-    if (isTest) {
-      minSdkVersion project.findProperty("android.testMinSdkVersion") as int
-    } else {
-      minSdkVersion project.findProperty("android.minSdkVersion") as int
-    }
+    minSdkVersion project.findProperty("android.minSdkVersion") as int
     targetSdkVersion project.findProperty("android.targetSdkVersion") as int
 
     testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-    testInstrumentationRunnerArguments clearPackageData: 'true'
+    testInstrumentationRunnerArguments clearPackageData: "true"
+
+    testOptions {
+      execution "ANDROIDX_TEST_ORCHESTRATOR"
+    }
   }
 
   buildTypes {
@@ -38,104 +35,74 @@ android {
       buildConfigField("String", "API_URL", "\"${API_URL}\"")
     }
     release {
-      minifyEnabled true
       consumerProguardFiles 'proguard-rules.pro'
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
     }
   }
 
-  sourceSets {
-    String sharedTestDir = 'src/sharedTest/java'
-    test {
-      java.srcDir sharedTestDir
-    }
-    androidTest {
-      java.srcDir sharedTestDir
-    }
-  }
   compileOptions {
-    sourceCompatibility 1.8
-    targetCompatibility 1.8
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
   }
-  packagingOptions {
-    exclude 'google/protobuf/descriptor.proto'
+
+  kotlinOptions {
+    jvmTarget = "1.8"
   }
+
   lintOptions {
     disable 'InvalidPackage'
     xmlReport true
   }
 }
 
+androidComponents {
+  onVariants(selector().all(), { variant ->
+    // manually add ksp source dir
+    // https://github.com/google/ksp/issues/37
+    def ss = kotlin.sourceSets.findByName(variant.name)
+    if (ss != null) {
+      ss.kotlin.srcDirs(file("$buildDir/generated/ksp/${variant.name}/kotlin"))
+    }
+  })
+}
+
 dependencies {
-  // gRPC
-  implementation libs.grpc.okhttp
-  implementation libs.okhttp2
-  implementation libs.grpc.protobufLite
-  implementation libs.grpc.stub
-  compileOnly libs.javaxAnnotation
-  // This provides the protobuf.Duration for event.proto
-  compileOnly libs.proto.googleCommon
-  implementation libs.proto.javalite
+  implementation libs.androidx.sqlite
+
+  implementation libs.okhttp.client
+
+  implementation libs.moshi.kotlin
+  ksp(libs.moshi.codegen)
+
+  implementation libs.androidx.lifecycle.process
 
   // Google Play Services
   compileOnly libs.googlePlayServices.basement
 
-  // Test
+  testImplementation projects.mocks
+  testImplementation libs.okhttp.mockwebserver
   testImplementation libs.junit
+  testImplementation libs.truth
   testImplementation libs.robolectric
-  testImplementation libs.mockito.core
-  testImplementation libs.mockito.kotlin
-  testImplementation libs.kluent
   testImplementation libs.androidx.test.core
-  androidTestImplementation libs.androidx.test.espresso.core
-  androidTestImplementation(libs.androidx.test.espresso.contrib) {
-    exclude group: 'com.google.protobuf', module: 'protobuf-lite'
-  }
-  // Explicitly depending on accessibility-test-framework to solve duplicate class error
-  // https://github.com/android/android-test/issues/861
-  androidTestImplementation libs.android.test.accessibility
+  testImplementation libs.testParameterInjector
+
   androidTestImplementation libs.androidx.test.rules
   androidTestImplementation libs.androidx.test.ext
-  androidTestImplementation libs.mockito.android
-  androidTestImplementation(libs.mockito.kotlin) {
-    exclude group: 'org.mockito', module: 'mockito-core'
-  }
-  androidTestImplementation(libs.kluent) {
-    exclude group: 'org.mockito', module: 'mockito-core'
-  }
+  androidTestImplementation libs.truth
   androidTestUtil libs.androidx.test.orchestrator
 }
 
-protobuf {
-  protoc {
-    artifact = libs.proto.protoc.get().toString()
-  }
-  plugins {
-    javalite {
-      artifact = libs.proto.protocJavalite.get().toString()
-    }
-    grpc {
-      artifact = libs.proto.protocGrpc.get().toString()
-    }
-  }
-  generateProtoTasks {
-    all().each { task ->
-      task.builtins {
-        java {
-          option 'lite'
-        }
-      }
-      task.plugins {
-        grpc {
-          option 'lite'
-        }
-      }
+publishing {
+  repositories {
+    maven {
+      name = "testLocal"
+      url = "${rootProject.buildDir}/localMaven"
     }
   }
 }
 
-mavenPublishing {
-  signAllPublications()
-  configure(new AndroidSingleVariantLibrary("release"))
-  pomFromGradleProperties()
+// https://github.com/Kotlin/dokka/issues/2472
+afterEvaluate {
+  tasks.getByName("javaDocReleaseGeneration").enabled(false)
 }
