@@ -1,12 +1,10 @@
-import com.vanniktech.maven.publish.AndroidSingleVariantLibrary
-
 plugins {
   alias(libs.plugins.android.library)
   alias(libs.plugins.kotlin.android)
   alias(libs.plugins.ksp)
+  alias(libs.plugins.publish)
   alias(libs.plugins.kotlin.dokka)
   alias(libs.plugins.kotlinter)
-  alias(libs.plugins.publish)
 }
 
 def properties = new Properties()
@@ -95,8 +93,16 @@ dependencies {
   androidTestUtil libs.androidx.test.orchestrator
 }
 
-mavenPublishing {
-  signAllPublications()
-  configure(new AndroidSingleVariantLibrary("release"))
-  pomFromGradleProperties()
+publishing {
+  repositories {
+    maven {
+      name = "testLocal"
+      url = "${rootProject.buildDir}/localMaven"
+    }
+  }
+}
+
+// https://github.com/Kotlin/dokka/issues/2472
+afterEvaluate {
+  tasks.getByName("javaDocReleaseGeneration").enabled(false)
 }
