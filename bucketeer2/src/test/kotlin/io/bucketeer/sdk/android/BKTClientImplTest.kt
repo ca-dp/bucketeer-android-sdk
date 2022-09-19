@@ -445,7 +445,7 @@ class BKTClientImplTest {
         userId = evaluation1.user_id,
         variationId = evaluation1.variation_id,
         variationValue = evaluation1.variation_value,
-        reason = evaluation1.reason.type.value,
+        reason = BKTEvaluation.Reason.DEFAULT,
       ),
     )
   }
