@@ -1,3 +1,10 @@
+# DEPRECATED
+This repository is no longer maintained. Please update to version V2 following the instructions in the repository below.
+
+https://github.com/bucketeer-io/android-client-sdk
+
+<br><br>
+
 [![Build Status](https://app.bitrise.io/app/16337d5c0c8d6081/status.svg?token=l2E3TXU8-dnAmep6MJ8cIA&branch=master)](https://app.bitrise.io/app/16337d5c0c8d6081)
 
 # Bucketeer Client-side SDK for Android
